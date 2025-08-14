@@ -1,0 +1,1468 @@
+/* Font Faces - AMX */
+@font-face {
+  font-family: 'AMX';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-LightItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-MediumItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-BoldItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-Black.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMX';
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMX-BlackItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'AMXClaro-Brands';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/AMX/AMXClaro-Brands.woff2') format('woff2');
+}
+
+/* Font Faces - Roboto */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Thin.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-ThinItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-LightItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-MediumItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-BoldItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-Black.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./assets/fonts/Roboto-BlackItalic.ttf') format('truetype');
+}
+
+/* Font Faces - Roboto Condensed */
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/RobotoCondensed-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/RobotoCondensed-LightItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/RobotoCondensed-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/RobotoCondensed-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/RobotoCondensed-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/RobotoCondensed-BoldItalic.ttf') format('truetype');
+}
+
+/* Font Faces - Icons */
+@font-face {
+  font-family: 'clarodashicons';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/clarodashicons.woff2') format('woff2');
+}
+
+:host {
+  display: block;
+  font-family: 'AMX', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+  /* CSS Custom Properties for Shadow DOM */
+  --font-primary: 'AMX', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-secondary: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-condensed: 'Roboto Condensed', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-icons: 'clarodashicons';
+  --font-brands: 'AMXClaro-Brands';
+
+  /* Brand Colors */
+  --color-primary: #DA291C;
+  --color-secondary: #0097A9;
+  --color-green: #006B4F;
+  --color-text: #3C3C3C;
+  --color-text-gray: #6A6C6C;
+  --color-status-pending-bg: #FFF3E5;
+  --color-status-pending-fg: #FF8300;
+  --color-border: #F4F4F4;
+  --color-border-light: #BBBBBB;
+  --color-accordion-header-bg: #F9F9F9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.invoice-container {
+  width: 100%;
+  padding: 1rem;
+}
+
+.invoice-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Responsive layout */
+@media (min-width: 768px) {
+  .invoice-grid {
+    grid-template-columns: 30% 70%;
+  }
+}
+
+/* Card styles */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+/* Payment Summary Card */
+.payment-summary .card-title {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--color-secondary);
+  margin: 0 0 1rem 0;
+}
+
+.summary-text {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+.separator {
+  height: 1px;
+  background-color: #E0E0E0;
+  margin: 1rem 0;
+}
+
+.total-section {
+  margin: 1.5rem 0;
+}
+
+.total-label {
+  color: #666;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+
+.due-label {
+  color: #666;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.due-description {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--color-text-gray);
+}
+
+.table-cell.cell-bold {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 16px;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+.table-cell.cell-amount {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: 0;
+  color: var(--color-primary) !important;
+}
+
+.total-amount {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.due-amount {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--color-text-gray);
+  margin: 0;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.toggle-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.toggle-button:hover {
+  opacity: 0.8;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  font-size: 0.75rem;
+}
+
+.arrow.up {
+  transform: rotate(180deg);
+}
+
+.expandable-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.expandable-content.expanded {
+  max-height: 700px;
+  transition: max-height 0.3s ease-in;
+}
+
+.expandable-inner {
+  /*padding-top: 1rem;*/
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+.expandable-inner ul {
+  margin: 0.5rem 0 0 1.5rem;
+  padding: 0;
+}
+
+/* First Column Container */
+.first-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Promotional Card */
+.support-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.5rem 1rem calc(1.5rem + 16px);
+  gap: 1rem;
+  overflow: hidden;
+}
+
+/* Left border accent with rounded corners */
+.promo-border-accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  background-color: var(--color-secondary);
+  border-radius: 12px 0 0 12px;
+}
+
+.support-image {
+  width: 47px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.support-button {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 0.5rem 1.5rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.support-button:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Second Column Container */
+.second-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Invoice Header Row */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.invoice-title {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 32px;
+  letter-spacing: 0;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.account-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.account-label {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 25px;
+  letter-spacing: 0px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.account-select {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  min-width: 245px;
+  height: 47px;
+}
+
+.account-select:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+}
+
+/* Hide account selector on mobile */
+@media (max-width: 767px) {
+  .account-selector {
+    display: none;
+  }
+}
+
+/* Invoice Details Card */
+.tabs {
+  display: flex;
+  border-bottom: 8px solid #E0E0E0;
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 25px;
+  letter-spacing: 0px;
+  text-align: center;
+  color: var(--color-text);
+  border-bottom: 8px solid transparent;
+  transition: all 0.3s ease;
+  margin-bottom: -8px;
+  flex: 1;
+  width: 50%;
+}
+
+.tab:hover {
+  opacity: 0.8;
+}
+
+.tab.active {
+  font-weight: 700;
+  color: var(--color-text);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Table styles */
+.invoice-table {
+  width: 100%;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr 1.5fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 4px solid var(--color-border);
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0px;
+  color: var(--color-text-gray);
+}
+
+.table-row-container {
+  border-bottom: 1px solid #F0F0F0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.table-row-container.expanded {
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  background: white;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr 1.5fr;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.table-cell {
+  color: var(--color-text);
+}
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-secondary);
+}
+
+.status.pendiente {
+  background-color: var(--color-status-pending-bg);
+  color: var(--color-status-pending-fg);
+}
+
+.status.pagada {
+  background-color: #D4EDDA;
+  color: #155724;
+}
+
+.pay-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  min-width: 140px;
+  height: 44px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  transition: background-color 0.3s ease;
+}
+
+.pay-button:hover {
+  opacity: 0.9;
+}
+
+.detail-button {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.1s ease;
+}
+
+.detail-button:hover {
+ font-weight: bold;
+}
+
+.invoice-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  /*background-color: #F8F9FA;*/
+}
+
+.invoice-detail.expanded {
+  max-height: 1000px;
+  transition: max-height 0.3s ease-in;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.detail-inner {
+  padding: 1rem 1.5rem;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  border-top: 2px solid var(--color-secondary);
+}
+
+.detail-inner h4 {
+  margin: 0 0 0.75rem 0;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 25px;
+  letter-spacing: 0px;
+  color: var(--color-text);
+}
+
+.detail-inner ul {
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding: 0;
+  color: var(--color-text);
+}
+
+/* Subscriber Row */
+.subscriber-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+}
+
+.subscriber-info {
+  display: flex;
+  align-items: center;
+}
+
+.subscriber-number {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-secondary);
+}
+
+.subscriber-amount {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.amount-value {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 18px;
+  color: var(--color-secondary);
+  text-align: right;
+}
+
+.expand-subscriber {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-icon {
+  /*font-size: 24px;*/
+  /*line-height: 1;*/
+  /*color: var(--color-secondary);*/
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.expand-icon.expanded {
+  transform: rotate(45deg);
+}
+
+/* Subscriber Detail */
+.subscriber-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  padding: 0 1rem;
+}
+
+.subscriber-detail.expanded {
+  max-height: 800px;
+  transition: max-height 0.3s ease-in;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.subscriber-detail p {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.subscriber-detail ul {
+  margin: 0 0 0 1.5rem;
+  padding: 0;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-text);
+}
+
+/* Accordion Styles */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.accordion-item {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--color-accordion-header-bg);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+  background-color: #f0f0f0;
+}
+
+.accordion-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.accordion-title {
+  font-family: var(--font-secondary);
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text);
+  font-weight: 700;
+  text-align: center;
+
+}
+
+.accordion-info {
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.accordion-description {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-gray);
+  margin-left: 1rem;
+}
+
+.accordion-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.accordion-price {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 18px;
+  color: var(--color-text);
+  text-align: right;
+}
+
+.accordion-arrow {
+  font-size: 14px;
+  color: var(--color-text-gray);
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.accordion-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background-color: white;
+}
+
+.accordion-content.expanded {
+  max-height: 500px;
+  transition: max-height 0.3s ease-in;
+}
+
+.accordion-content p {
+  padding: 1rem;
+  margin: 0;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text);
+}
+
+/* Charges Detail List Styles */
+.charges-detail-list {
+  padding: 1rem;
+}
+
+.charge-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid transparent;
+}
+
+.charge-label {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-gray);
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.charge-label.bold {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.charge-amount {
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-gray);
+  white-space: nowrap;
+}
+
+.charge-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.75rem 0;
+}
+
+/* Sublist styles for bullet points */
+.charge-sublist {
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.charge-subrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.25rem 0;
+  position: relative;
+}
+
+.charge-subrow::before {
+  content: '•';
+  color: var(--color-text-gray);
+  font-size: 14px;
+  position: absolute;
+  left: -1rem;
+}
+
+.charge-sublabel {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-gray);
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.charge-subamount {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-gray);
+  white-space: nowrap;
+}
+
+/* Invoice Actions */
+.invoice-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-secondary);
+  margin-top: 1rem;
+}
+
+.actions-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-link {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--color-secondary);
+  text-decoration: none;
+  position: relative;
+}
+
+.action-link:hover {
+  text-decoration: underline;
+}
+
+.action-separator {
+  color: var(--color-secondary);
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.actions-right .action-link {
+  text-decoration: underline;
+}
+
+.previous-invoices {
+  padding: 2rem;
+  text-align: center;
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 767px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .header-cell:not(:first-child) {
+    display: none;
+  }
+
+  .table-row {
+    padding: 1rem;
+    background-color: #F8F9FA;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
+
+  .table-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+  }
+
+  .table-cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #333;
+  }
+
+  .pay-button,
+  .detail-button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Skeleton Loading Styles */
+.skeleton {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-text {
+  height: 16px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
+
+.skeleton-text.title {
+  height: 32px;
+  width: 200px;
+  margin-bottom: 16px;
+}
+
+.skeleton-text.subtitle {
+  height: 24px;
+  width: 300px;
+  margin-bottom: 12px;
+}
+
+.skeleton-text.amount {
+  height: 40px;
+  width: 150px;
+  margin: 16px 0;
+}
+
+.skeleton-button {
+  height: 44px;
+  width: 140px;
+  border-radius: 30px;
+  margin: 8px 0;
+}
+
+.skeleton-select {
+  height: 47px;
+  width: 245px;
+  border-radius: 12px;
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1.5fr 1.5fr;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+}
+
+.skeleton-cell {
+  height: 20px;
+  border-radius: 4px;
+}
+
+.skeleton-status {
+  height: 28px;
+  width: 80px;
+  border-radius: 12px;
+}
+
+.skeleton-support-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.5rem 1rem calc(1.5rem + 16px);
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.skeleton-image {
+  width: 47px;
+  height: 44px;
+  border-radius: 4px;
+}
+
+/* Chart Styles */
+.chart-section {
+  margin: 1rem 0;
+}
+
+.chart-title {
+  font-family: var(--font-secondary);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--color-text);
+  margin: 0 0 1rem 0;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 120px;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  gap: 1rem;
+}
+
+.chart-bar-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.chart-bar-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  position: relative;
+}
+
+.chart-bar {
+  width: 100%;
+  min-height: 20px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+}
+
+.chart-bar.pending {
+  background-color: #BBBBBB;
+}
+
+.chart-bar.current {
+  background-color: #FF8300;
+}
+
+.chart-bar.estimated {
+  background-color: #FF8300;
+}
+
+.chart-amount {
+  font-family: var(--font-secondary);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text);
+  margin: 0.5rem 0 0.25rem 0;
+  text-align: center;
+}
+
+.chart-label {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-gray);
+  text-align: center;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-color.pending {
+  background-color: #BBBBBB;
+}
+
+.legend-color.current {
+  background-color: #FF8300;
+}
+
+.legend-text {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-gray);
+}
+
+/* Auto Pay Section */
+.autopay-section {
+  margin: 1rem 0;
+}
+
+.autopay-question {
+  font-family: var(--font-secondary);
+  color: var(--color-text-gray);
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  font-size: 18px;
+  leading-trim: NONE;
+  line-height: 24px;
+
+}
+
+.autopay-description {
+  font-family: var(--font-secondary);
+  color: var(--color-text);
+  margin: 0 0 1rem 0;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 21px;
+
+}
+
+.autopay-action {
+  color: var(--color-green);
+  font-weight: 700;
+}
+
+.autopay-toggle-container {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 12px;
+  padding: 1rem;
+  align-items: center;
+  margin: 1rem .5rem 2rem .5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-label {
+  font-family: var(--font-secondary);
+  font-weight: 500;
+  color: var(--color-text);
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background-color: #BBBBBB;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-switch.enabled {
+  background-color: var(--color-secondary);
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.enabled .toggle-slider {
+  transform: translateX(24px);
+}
+
+.pay-pending-button {
+  width: 100%;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-secondary);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pay-pending-button:hover {
+  background-color: #C02318;
+}

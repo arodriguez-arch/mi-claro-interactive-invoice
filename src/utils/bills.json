@@ -1,0 +1,1388 @@
+[
+  {
+    "cuenta": "805437569",
+    "cliente": "ROSA RIVERA",
+    "facturas": [
+      {
+        "fechaFactura": "2025-05-19",
+        "fechaVencimiento": "2025-06-14",
+        "balanceAnterior": 218.23,
+        "pagosRecibidos": 272.09,
+        "ajustes": 0.0,
+        "totalActual": 103.98,
+        "detalle": [
+          {
+            "numero": "787-438-2564",
+            "total": 72.5,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "05/19-06/18",
+                "cargo": 50.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 319,
+                      "minutos": 2251,
+                      "cargo": 0.0
+                    },
+                    "largaDistancia": {
+                      "unidades": 1,
+                      "minutos": 1,
+                      "cargo": 0.0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0.0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 10,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 25829168,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "hotspot": {
+                      "unidades": 1024000,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "cargo": 18.73,
+                "detalleEquipos": {
+                  "descripcion": "IPADPRO11M2",
+                  "cargo": 18.73,
+                  "detalleCargos": {
+                    "cargo": 18.73,
+                    "descuento": 0.0
+                  }
+                }
+              },
+              {
+                "seccion": "Impuestos",
+                "descripcion": "Impuestos",
+                "cargo": 3.77,
+                "detalle": {
+                  "SalesTax": 1.41,
+                  "FederalUSF": 1.83,
+                  "PRUSF": 0.03,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "Paquete HotSpot 5G",
+                "cargo": 4.99,
+                "detalleCargos": {
+                  "cargo": 4.99,
+                  "descuento": 0.0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "IPADPRO11M2",
+                "cargo": 18.73,
+                "detalleCargos": {
+                  "cargo": 18.73,
+                  "descuento": 0.0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-451-6350",
+            "total": 22.7,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "05/19-06/18",
+                "cargo": 20.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 212,
+                      "minutos": 489,
+                      "cargo": 0.0
+                    },
+                    "largaDistancia": {
+                      "unidades": 4,
+                      "minutos": 4,
+                      "cargo": 0.0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0.0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 25829168,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 1.7,
+                "detalle": {
+                  "SalesTax": 1.08,
+                  "FederalUSF": 1.11,
+                  "PRUSF": 0.01,
+                  "911Service": 0.5
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-596-8222",
+            "total": 51.15,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "05/19-06/18",
+                "cargo": 35.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 329,
+                      "minutos": 1256,
+                      "cargo": 0.0
+                    },
+                    "largaDistancia": {
+                      "unidades": 5,
+                      "minutos": 10,
+                      "cargo": 0.0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0.0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 4,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 1024970,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "cargo": 13.32,
+                "detalleEquipos": {
+                  "descripcion": "GXY S22ULTRA",
+                  "cargo": 13.32,
+                  "detalleCargos": {
+                    "cargo": 39.99,
+                    "descuento": 26.67
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 2.83,
+                "detalle": {
+                  "SalesTax": 1.19,
+                  "FederalUSF": 1.11,
+                  "PRUSF": 0.03,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0.0,
+                  "descuento": 0.0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-964-8040",
+            "total": 11.49,
+            "detalleServicios": [
+              {
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "05/19-06/18",
+                "cargo": 20.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 206,
+                      "minutos": 963,
+                      "cargo": 0.0
+                    },
+                    "largaDistancia": {
+                      "unidades": 25,
+                      "minutos": 35,
+                      "cargo": 0.0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0.0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 3,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 4889060,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0.0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "detalleEquipos": {
+                  "descripcion": "GXYA25128GB",
+                  "cargo": 0.0,
+                  "detalleCargos": {
+                    "cargo": 10.0,
+                    "descuento": -10.0
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo" : 1.49,
+                "detalle": {
+                  "SalesTax": 0.45,
+                  "FederalUSF": 0.54,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Otros",
+                "cargo": -10,
+                "detalle": {
+                  "descripcion": "Recurring Charge Discount",
+                  "cargo": -10.0
+                }
+              }
+            ]
+          }
+        ],
+        "metodosPago": [
+          {
+            "metodo": "Visa",
+            "monto": 5.1,
+            "fecha": "2025-04-22"
+          },
+          {
+            "metodo": "Debit Card",
+            "monto": 5.03,
+            "fecha": "2025-04-22"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 5.54,
+            "fecha": "2025-04-22"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 5.01,
+            "fecha": "2025-04-22"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 5.12,
+            "fecha": "2025-04-25"
+          },
+          {
+            "metodo": "Check",
+            "monto": 5.13,
+            "fecha": "2025-04-25"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 16.0,
+            "fecha": "2025-04-26"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 187.3,
+            "fecha": "2025-04-26"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 7.0,
+            "fecha": "2025-04-29"
+          },
+          {
+            "metodo": "Funds Transfer",
+            "monto": 12.65,
+            "fecha": "2025-04-30"
+          },
+          {
+            "metodo": "Funds Transfer",
+            "monto": 12.65,
+            "fecha": "2025-04-30"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 5.56,
+            "fecha": "2025-05-08"
+          }
+        ]
+      },
+      {
+        "fechaFactura": "2025-06-19",
+        "fechaVencimiento": "2025-07-15",
+        "balanceAnterior": 103.98,
+        "pagosRecibidos": 103.98,
+        "ajustes": 0.0,
+        "totalActual": 144.52,
+        "detalle": [
+          {
+            "numero": "787-438-2564",
+            "total": 72.5,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "06/19-07/18",
+                "cargo": 50.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 450,
+                      "minutos": 2612,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 7,
+                      "minutos": 18,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 18,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 1,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 12332252,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "cargo": 18.73,
+                "detalleEquipos": {
+                  "descripcion": "IPADPRO11M2",
+                  "cargo": 18.73,
+                  "detalleCargos": {
+                    "cargo": 18.73,
+                    "descuento": 0
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 3.77,
+                "detalle": {
+                  "SalesTax": 1.41,
+                  "FederalUSF": 1.83,
+                  "PRUSF": 0.03,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0.0,
+                "detalleCargos": {}
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-451-6350",
+            "total": 22.7,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "06/19-07/18",
+                "cargo": 20.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 193,
+                      "minutos": 595,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 2,
+                      "minutos": 12,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 4,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 50985198,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 2.7,
+                "detalle": {
+                  "SalesTax": 1.08,
+                  "FederalUSF": 1.11,
+                  "PRUSF": 0.01,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0.0,
+                "detalleCargos": {}
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-596-8222",
+            "total": 37.83,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "06/19-07/18",
+                "cargo": 35.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 381,
+                      "minutos": 1668,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 10,
+                      "minutos": 29,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 2,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 2601843,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "cargo": 13.32,
+                "detalleEquipos": {
+                  "descripcion": "GXY S22ULTRA",
+                  "cargo": 13.32,
+                  "detalleCargos": {
+                    "cargo": 39.99,
+                    "descuento": 26.67
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 1.83,
+                "detalle": {
+                  "SalesTax": 1.19,
+                  "FederalUSF": 1.11,
+                  "PRUSF": 0.03,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-964-8040",
+            "total": 11.49,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "06/19-07/18",
+                "cargo": 20.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 206,
+                      "minutos": 963,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 25,
+                      "minutos": 35,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 3,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 4889060,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "detalleEquipos": {
+                  "descripcion": "GXYA25128GB",
+                  "cargo": 0.0,
+                  "detalleCargos": {
+                    "cargo": 10.0,
+                    "descuento": -10.0
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargos" : 1.49,
+                "detalle": {
+                  "SalesTax": 0.45,
+                  "FederalUSF": 0.54,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "cargo": -10,
+                "detalle": {
+                  "descripcion": "Recurring Charge Discount",
+                  "cargo": -10.0
+                }
+              }
+            ]
+          }
+        ],
+        "metodosPago": [
+          {
+            "metodo": "Visa",
+            "monto": 5.0,
+            "fecha": "2025-05-20"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 7.0,
+            "fecha": "2025-05-20"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 42.0,
+            "fecha": "2025-06-13"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 30.0,
+            "fecha": "2025-06-13"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 6.22,
+            "fecha": "2025-06-17"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 13.76,
+            "fecha": "2025-06-18"
+          }
+        ]
+      },
+      {
+        "fechaFactura": "2025-07-19",
+        "fechaVencimiento": "2025-08-14",
+        "balanceAnterior": 144.52,
+        "pagosRecibidos": 150.27,
+        "ajustes": 0.0,
+        "totalActual": 158.68,
+        "detalle": [
+          {
+            "numero": "787-438-2564",
+            "total": 72.47,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "07/19-08/18",
+                "cargo": 50.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 312,
+                      "minutos": 2726,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 1,
+                      "minutos": 1,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 21,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 1,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 14130732,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "detalleEquipos": {
+                  "descripcion": "IPADPRO11M2",
+                  "cargo": 18.73,
+                  "detalleCargos": {
+                    "cargo": 18.73,
+                    "descuento": 0
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "detalle": {
+                  "SalesTax": 1.41,
+                  "FederalUSF": 1.8,
+                  "PRUSF": 0.03,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0.0,
+                  "descuento": 0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-451-6350",
+            "total": 22.67,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "07/19-08/18",
+                "cargo": 20.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 140,
+                      "minutos": 409,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 3,
+                      "minutos": 17,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 52994573,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "detalleEquipos": {}
+              },
+              {
+                "descripcion": "Impuestos",
+                "detalle": {
+                  "SalesTax": 1.08,
+                  "FederalUSF": 1.08,
+                  "PRUSF": 0.01,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-596-8222",
+            "total": 37.8,
+            "detalleServicios": [
+              {
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "07/19-08/18",
+                "cargo": 35.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 408,
+                      "minutos": 1764,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 11,
+                      "minutos": 46,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 3,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 3420265,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "detalleEquipos": {
+                  "descripcion": "GXY S22ULTRA",
+                  "cargo": 13.32,
+                  "detalleCargos": {
+                    "cargo": 39.99,
+                    "descuento": 26.67
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "detalle": {
+                  "SalesTax": 1.19,
+                  "FederalUSF": 1.08,
+                  "PRUSF": 0.03,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              }
+            ]
+          },
+          {
+            "numero": "787-964-8040",
+            "total": 31.49,
+            "detalleServicios": [
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "ICP1 VZ+MSG+DATPRUSMXCN",
+                "periodo": "07/19-08/18",
+                "cargo": 20.0,
+                "detalleConsumo": {
+                  "llamadas": {
+                    "locales": {
+                      "unidades": 206,
+                      "minutos": 963,
+                      "cargo": 0
+                    },
+                    "largaDistancia": {
+                      "unidades": 25,
+                      "minutos": 35,
+                      "cargo": 0
+                    },
+                    "internacional": {
+                      "unidades": 0,
+                      "minutos": 1,
+                      "cargo": 0
+                    }
+                  },
+                  "mensajes": {
+                    "texto": {
+                      "unidades": 3,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "multimedio": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  },
+                  "dataVolume": {
+                    "data": {
+                      "unidades": 4889060,
+                      "minutos": 0,
+                      "cargo": 0
+                    },
+                    "hotspot": {
+                      "unidades": 0,
+                      "minutos": 0,
+                      "cargo": 0
+                    }
+                  }
+                }
+              },
+              {
+                "seccion": "Equipo",
+                "detalleEquipos": {
+                  "descripcion": "GXYA25128GB",
+                  "cargo": 0.0,
+                  "detalleCargos": {
+                    "cargo": 10.0,
+                    "descuento": -10.0
+                  }
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargos" : 1.49,
+                "detalle": {
+                  "SalesTax": 0.45,
+                  "FederalUSF": 0.54,
+                  "911Service": 0.5
+                }
+              },
+              {
+                "seccion": "Servicios Digitales",
+                "descripcion": "",
+                "cargo": 0,
+                "detalleCargos": {
+                  "cargo": 0,
+                  "descuento": 0
+                }
+              },
+              {
+                "seccion": "Otros",
+                "descripcion": "",
+                "cargo": 10,
+                "detalleCargos": {
+                  "descripcion": "Recarga 10",
+                  "cargo": 10.0
+                }
+              }
+            ]
+          }
+        ],
+        "metodosPago": [
+          {
+            "metodo": "Visa",
+            "monto": 5.0,
+            "fecha": "2025-06-25"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 6.0,
+            "fecha": "2025-06-26"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 5.75,
+            "fecha": "2025-07-17"
+          },
+          {
+            "metodo": "Visa",
+            "monto": 133.52,
+            "fecha": "2025-07-17"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "cuenta": "712331792",
+    "cliente": "LUISA AGOSTO",
+    "facturas": [
+      {
+        "fechaFactura": "2025-05-07",
+        "fechaVencimiento": "2025-05-30",
+        "balanceAnterior": 59.64,
+        "pagosRecibidos": 70.64,
+        "ajustes": 0.0,
+        "totalActual": 48.64,
+        "detalle": [
+          {
+            "numero": "787-799-5683",
+            "total": 59.64,
+            "detalleServicios": [
+              {
+                "seccion": "Otros",
+                "cargo": 1.1,
+                "detalle": {
+                  "descripcion": "Access Recovery Charge",
+                  "cargo": 1.1
+                }
+              },
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "50M ILIM PRUS CONTR G",
+                "periodo": "05/07-06/06",
+                "cargo": 51.99,
+                "detalleConsumo": {
+                  "descripcion": "50 MINS RD, CAN, MEX Y COLOM",
+                  "periodo": "05/07-06/06",
+                  "cargo": 51.99
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 6.55,
+                "detalle": {
+                  "SalesTax": 2.55,
+                  "FederalUSF": 3.33,
+                  "PRUSF": 0.17,
+                  "911Service": 0.5
+                }
+              }
+            ]
+          }
+        ],
+        "metodosPago": [
+          {
+            "metodo": "Check",
+            "monto": 59.64,
+            "fecha": "2025-04-14"
+          },
+          {
+            "metodo": "Debit Card",
+            "monto": 5.0,
+            "fecha": "2025-04-22"
+          },
+          {
+            "metodo": "Check",
+            "monto": 6.0,
+            "fecha": "2025-04-22"
+          }
+        ]
+      },
+      {
+        "fechaFactura": "2025-06-07",
+        "fechaVencimiento": "2025-06-30",
+        "balanceAnterior": 48.64,
+        "pagosRecibidos": 48.64,
+        "ajustes": 0.0,
+        "totalActual": 59.64,
+        "detalle": [
+          {
+            "numero": "787-799-5683",
+            "total": 59.64,
+            "detalleServicios": [
+              {
+                "seccion": "Otros",
+                "cargo": 1.1,
+                "detalle": {
+                  "descripcion": "Access Recovery Charge",
+                  "cargo": 1.1
+                }
+              },
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "50M ILIM PRUS CONTR G",
+                "periodo": "06/07-07/06",
+                "cargo": 51.99,
+                "detalleConsumo": {
+                  "descripcion": "50 MINS RD, CAN, MEX Y COLOM",
+                  "periodo": "06/07-07/06",
+                  "cargo": 51.99
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 6.55,
+                "detalle": {
+                  "SalesTax": 2.55,
+                  "FederalUSF": 3.33,
+                  "PRUSF": 0.17,
+                  "911Service": 0.5
+                }
+              }
+            ]
+          }
+        ],
+        "metodosPago": [
+          {
+            "metodo": "Check",
+            "monto": 48.64,
+            "fecha": "2025-05-14"
+          }
+        ]
+      },
+      {
+        "fechaFactura": "2025-07-07",
+        "fechaVencimiento": "2025-07-30",
+        "balanceAnterior": 59.64,
+        "pagosRecibidos": 69.65,
+        "ajustes": 0.0,
+        "totalActual": 49.43,
+        "detalle": [
+          {
+            "numero": "787-799-5683",
+            "total": 59.44,
+            "detalleServicios": [
+              {
+                "seccion": "Otros",
+                "cargo": 1.1,
+                "detalle": {
+                  "descripcion": "Access Recovery Charge",
+                  "cargo": 1.1
+                }
+              },
+              {
+                "seccion": "Cargos Mensuales",
+                "descripcion": "50M ILIM PRUS CONTR G",
+                "periodo": "07/07-08/06",
+                "cargo": 51.99,
+                "detalleConsumo": {
+                  "descripcion": "50 MINS RD, CAN, MEX Y COLOM",
+                  "periodo": "07/07-08/06",
+                  "cargo": 51.99
+                }
+              },
+              {
+                "descripcion": "Impuestos",
+                "cargo": 6.55,
+                "detalle": {
+                  "SalesTax": 2.55,
+                  "FederalUSF": 3.24,
+                  "PRUSF": 0.17,
+                  "911Service": 0.5
+                }
+              }
+            ]
+          }
+        ],
+        "metodosPago": [
+          {
+            "metodo": "Check",
+            "monto": 59.64,
+            "fecha": "2025-06-12"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 5.01,
+            "fecha": "2025-06-18"
+          },
+          {
+            "metodo": "American Express",
+            "monto": 5.0,
+            "fecha": "2025-06-18"
+          }
+        ]
+      }
+    ]
+  }
+]
