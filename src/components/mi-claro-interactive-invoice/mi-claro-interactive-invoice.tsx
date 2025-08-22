@@ -1820,15 +1820,17 @@ export class MiClaroInteractiveInvoice {
             <div class="tab-content">
               {this.activeTab === 'current' && (
                 <div class="invoice-table">
-                  <div class="table-header">
-                    <div class="header-cell">Título de factura</div>
-                    <div class="header-cell">Fecha</div>
-                    <div class="header-cell">Monto</div>
-                    <div class="header-cell">Estado</div>
-                    <div class="header-cell"></div>
-                    <div class="header-cell"></div>
-                  </div>
-                  {this.invoices.map(invoice => {
+                  {this.invoices.length > 0 ? (
+                    <>
+                      <div class="table-header">
+                        <div class="header-cell">Título de factura</div>
+                        <div class="header-cell">Fecha</div>
+                        <div class="header-cell">Monto</div>
+                        <div class="header-cell">Estado</div>
+                        <div class="header-cell"></div>
+                        <div class="header-cell"></div>
+                      </div>
+                      {this.invoices.map(invoice => {
                     const isPaid = invoice.status === 'Pagado';
                     return (
                       <div key={invoice.id} class={`table-row-container ${this.expandedInvoiceId === invoice.id ? 'expanded' : ''}`}>
@@ -2046,6 +2048,15 @@ export class MiClaroInteractiveInvoice {
                     </div>
                     );
                   })}
+                    </>
+                  ) : (
+                    <div class="no-invoices-message">
+                      <p>
+                        No encontramos facturas para este número de suscriptor, si esta información es incorrecta, por favor comunícate a servicio al cliente al{' '}
+                        <a href="tel:787-775-0000" class="phone-link">787-775-0000</a>
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
               {this.activeTab === 'previous' && (

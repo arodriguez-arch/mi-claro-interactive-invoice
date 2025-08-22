@@ -574,10 +574,48 @@
   border-color: var(--color-secondary);
 }
 
-/* Hide account selector on mobile */
+/* Keep account selector visible on mobile with adjusted styling */
 @media (max-width: 767px) {
+  .invoice-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #F8F9FA;
+    padding: 1.5rem;
+    margin: -1rem -1rem 0 -1rem;
+    border-radius: 12px;
+    width: calc(100% + 2rem);
+  }
+
+  .invoice-title {
+    font-size: 24px;
+    line-height: 28px;
+    margin: 0;
+  }
+
   .account-selector {
-    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .account-label {
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--color-text-gray);
+    font-weight: 400;
+  }
+
+  .account-select {
+    width: 100%;
+    min-width: unset;
+    font-size: 16px;
+    font-weight: 500;
+    background: white;
+    border: 1px solid #E0E0E0;
+    padding: 0.75rem 1rem;
+    height: 48px;
   }
 }
 
@@ -1114,10 +1152,72 @@
   color: var(--color-text);
 }
 
+/* No invoices message */
+.no-invoices-message {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.no-invoices-message p {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.no-invoices-message .phone-link {
+  color: var(--color-secondary);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.no-invoices-message .phone-link:hover {
+  opacity: 0.8;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 767px) {
   .invoice-container {
     padding: 0;
+  }
+
+
+  .invoice-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Order: 1. Header (title + selector) */
+  .invoice-header {
+    order: 1;
+  }
+
+  /* Order: 2. Payment summary (left panel) */
+  .payment-summary {
+    order: 2;
+  }
+
+  /* Order: 3. Invoice table */
+  .invoice-details {
+    order: 3;
+    width: 100%;
+  }
+
+  /* Order: 4. Support card */
+  .support-card {
+    order: 4;
+    width: 100%;
+  }
+
+  .first-column {
+    display: contents; /* Break apart the first column container */
+  }
+
+  .second-column {
+    display: contents; /* Break apart the second column container */
   }
 
   .table-header {
