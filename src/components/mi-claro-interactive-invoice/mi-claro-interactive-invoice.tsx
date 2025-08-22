@@ -2074,7 +2074,7 @@ export class MiClaroInteractiveInvoice {
                       {this.previousBills.map((bill, index) => {
                         const billId = `prev-${index}`;
                         const accountData = this.accountsData.find(acc => acc.cuenta === this.selectedAccount);
-                        const invoice = this.mapBillToInvoice(bill, accountData?.cliente || 'Cliente', index);
+                        // const invoice = this.mapBillToInvoice(bill, accountData?.cliente || 'Cliente', index);
                         const isPaid = bill.pagosRecibidos >= bill.totalActual;
                         return (
                           <div key={billId} class={`table-row-container ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>

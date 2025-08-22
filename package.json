@@ -1,6 +1,6 @@
 {
   "name": "intellisoft-mi-claro-interactive-invoice",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
