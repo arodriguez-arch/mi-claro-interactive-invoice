@@ -1833,7 +1833,7 @@ export class MiClaroInteractiveInvoice {
                     return (
                       <div key={invoice.id} class={`table-row-container ${this.expandedInvoiceId === invoice.id ? 'expanded' : ''}`}>
                         <div class="table-row">
-                          <div class="table-cell cell-bold">{invoice.title}</div>
+                          <div class="table-cell cell-bold" data-name={invoice.title} data-date={invoice.date}>{invoice.title}</div>
                           <div class="table-cell">{invoice.date}</div>
                           <div class="table-cell cell-amount">{invoice.amount}</div>
                           <div class="table-cell">
