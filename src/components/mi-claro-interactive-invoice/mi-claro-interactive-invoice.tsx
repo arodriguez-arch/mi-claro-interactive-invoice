@@ -2061,36 +2061,145 @@ export class MiClaroInteractiveInvoice {
               )}
               {this.activeTab === 'previous' && (
                 <div class="invoice-table">
-                  <div class="table-header">
-                    <div class="header-cell">Fecha factura</div>
-                    <div class="header-cell">Fecha vencimiento</div>
-                    <div class="header-cell">Balance anterior</div>
-                    <div class="header-cell">Pagos recibidos</div>
-                    <div class="header-cell">Total</div>
-                    <div class="header-cell"></div>
-                  </div>
-                  {this.previousBills.map((bill, index) => {
-                    const billId = `prev-${index}`;
-                    return (
-                      <div key={billId} class="table-row">
-                        <div class="table-cell">{this.formatDate(bill.fechaFactura)}</div>
-                        <div class="table-cell">{this.formatDate(bill.fechaVencimiento)}</div>
-                        <div class="table-cell cell-amount">{this.formatCurrency(bill.balanceAnterior)}</div>
-                        <div class="table-cell cell-amount">{this.formatCurrency(bill.pagosRecibidos)}</div>
-                        <div class="table-cell cell-amount cell-bold">{this.formatCurrency(bill.totalActual)}</div>
-                        <div class="table-cell">
-                          <button class="detail-button" onClick={() => alert('Ver detalle de factura anterior')}>
-                            Ver detalle
-                          </button>
-                        </div>
+                  {this.previousBills.length > 0 ? (
+                    <>
+                      <div class="table-header">
+                        <div class="header-cell">Título de Factura</div>
+                        <div class="header-cell">Fecha</div>
+                        <div class="header-cell">Monto</div>
+                        <div class="header-cell">Estado</div>
+                        <div class="header-cell"></div>
+                        <div class="header-cell"></div>
                       </div>
-                    );
-                  })}
-                  {this.previousBills.length === 0 && (
-                    <div class="table-row">
-                      <div class="table-cell" style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
-                        No hay facturas anteriores disponibles
-                      </div>
+                      {this.previousBills.map((bill, index) => {
+                        const billId = `prev-${index}`;
+                        const accountData = this.accountsData.find(acc => acc.cuenta === this.selectedAccount);
+                        const invoice = this.mapBillToInvoice(bill, accountData?.cliente || 'Cliente', index);
+                        const isPaid = bill.pagosRecibidos >= bill.totalActual;
+                        return (
+                          <div key={billId} class={`table-row-container ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>
+                            <div class="table-row">
+                              <div class="table-cell cell-bold" data-name={accountData?.cliente} data-date={this.formatDate(bill.fechaFactura)}>{accountData?.cliente}</div>
+                              <div class="table-cell">{this.formatDate(bill.fechaFactura)}</div>
+                              <div class="table-cell cell-amount">{this.formatCurrency(bill.totalActual)}</div>
+                              <div class="table-cell">
+                                <span class={`status ${isPaid ? 'pagada' : 'vencida'}`}>
+                                  {isPaid ? 'Pagada' : 'Vencida'}
+                                </span>
+                              </div>
+                              <div class="table-cell">
+                                <button class={`pay-button ${isPaid ? 'disabled' : ''}`} disabled={isPaid} onClick={() => !isPaid && alert('Pagar factura!')}>
+                                  Pagar factura
+                                </button>
+                              </div>
+                              <div class="table-cell">
+                                <button
+                                  class="detail-button"
+                                  onClick={() => this.toggleInvoiceDetail(billId)}
+                                >
+                                  Ver detalle
+                                  <span class={`arrow ${this.expandedInvoiceId === billId ? 'up' : 'down'}`}>▼</span>
+                                </button>
+                              </div>
+                            </div>
+                            <div class={`invoice-detail ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>
+                              <div class="detail-inner">
+                                {/* Map through all phone numbers in this specific bill */}
+                                {bill.detalle.map((detail, detailIndex) => {
+                                  const subscriberId = `${billId}-sub-${detailIndex}`;
+                                  return (
+                                    <>
+                                      {/* Subscriber details row */}
+                                      <div class="subscriber-row">
+                                        <div class="subscriber-info">
+                                          <span class="subscriber-number">{detail.numero}</span>
+                                        </div>
+                                        <div class="subscriber-amount">
+                                          <span class="amount-value">{this.formatCurrency(detail.total)}</span>
+                                          <button
+                                            class="expand-subscriber"
+                                            onClick={() => this.toggleSubscriberDetail(subscriberId)}
+                                          >
+                                            <span class={`expand-icon ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                              <img src="/assets/icons/expand-plus.png" alt="Expandir suscriptor" />
+                                            </span>
+                                          </button>
+                                        </div>
+                                      </div>
+
+                                      {/* Expanded subscriber content - Accordion */}
+                                      <div class={`subscriber-detail ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                        <div class="accordion">
+                                          {/* Map through detalleServicios to create accordion items */}
+                                          {detail.detalleServicios.map((servicio, serviceIndex) => {
+                                            const accordionId = `${subscriberId}-${serviceIndex}`;
+                                            const seccion = servicio.seccion || servicio.descripcion || 'Otros';
+                                            const cargo = servicio.cargo || 0;
+                                            const periodo = servicio.periodo || '';
+
+                                            return (
+                                              <div class="accordion-item" key={accordionId}>
+                                                <div
+                                                  class="accordion-header"
+                                                  onClick={() => this.toggleAccordionItem(accordionId)}
+                                                >
+                                                  <div class="accordion-header-left">
+                                                    <span class="accordion-title">{seccion}</span>
+                                                    {seccion === 'Cargos Mensuales' && (
+                                                      <div class="accordion-info">
+                                                        <img src="/assets/icons/info.png" alt="Info" class="info-icon" title="¿Qué incluye este cargo? Este monto corresponde al plan móvil activo durante el ciclo de facturación." />
+                                                      </div>
+                                                    )}
+                                                    {periodo && <span class="accordion-description">{periodo}</span>}
+                                                  </div>
+                                                  <div class="accordion-header-right">
+                                                    <span class="accordion-price">{typeof cargo === 'number' ? this.formatCurrency(cargo) : ''}</span>
+                                                    <span class={`accordion-arrow ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
+                                                      <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="info-icon" />
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                                <div class={`accordion-content ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
+                                                  <div class="charges-detail-list">
+                                                    {/* Same detail content as current invoice */}
+                                                    {servicio.descripcion && (
+                                                      <div class="charge-row">
+                                                        <span class="charge-label">{servicio.descripcion}</span>
+                                                        <span class="charge-amount">{typeof servicio.cargo === 'number' ? this.formatCurrency(servicio.cargo) : ''}</span>
+                                                      </div>
+                                                    )}
+                                                    {/* ... rest of the detail content similar to current invoice ... */}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    </>
+                                  );
+                                })}
+
+                                {/* Actions row */}
+                                <div class="invoice-actions">
+                                  <div class="actions-left">
+                                    <a href="#" class="action-link">¿Tienes dudas?</a>
+                                    <span class="action-separator">|</span>
+                                    <a href="#" class="action-link">Contáctanos aquí</a>
+                                  </div>
+                                  <div class="actions-right">
+                                    <a href="#" class="action-link">Descarga mi factura</a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <div class="no-invoices-message">
+                      <p>No hay facturas anteriores disponibles</p>
                     </div>
                   )}
                 </div>

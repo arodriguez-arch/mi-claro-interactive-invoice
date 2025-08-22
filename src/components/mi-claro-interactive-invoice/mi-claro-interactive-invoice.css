@@ -719,8 +719,13 @@
 }
 
 .status.pagada {
-  background-color: #D4EDDA;
-  color: #155724;
+  background-color: #D4F4EC;
+  color: var(--color-green);
+}
+
+.status.vencida {
+  background-color: #FFE5E5;
+  color: #DA291C;
 }
 
 .pay-button {
@@ -740,8 +745,21 @@
   transition: background-color 0.3s ease;
 }
 
-.pay-button:hover {
+.pay-button:hover:not(:disabled) {
   opacity: 0.9;
+}
+
+.pay-button.disabled,
+.pay-button:disabled {
+  background-color: transparent;
+  color: #BBBBBB;
+  border: 1px solid #BBBBBB;
+  cursor: not-allowed;
+}
+
+.pay-button.disabled:hover,
+.pay-button:disabled:hover {
+  opacity: 1;
 }
 
 .detail-button {
