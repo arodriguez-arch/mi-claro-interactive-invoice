@@ -1444,6 +1444,11 @@ export class MiClaroInteractiveInvoice {
   @Prop() accountList: string[] = ['805437569', '712331792'];
 
   @Event() goToSupport: EventEmitter<void>;
+  @Event() onPayPendingBills: EventEmitter<void>;
+  @Event() onAutomatePayments: EventEmitter<boolean>;
+  @Event() onQuestionsPressed: EventEmitter<void>;
+  @Event() onContactPressed: EventEmitter<void>;
+  @Event() onDownloadBills: EventEmitter<void>;
 
   private invoices: Invoice[] = [];
 
@@ -1473,6 +1478,23 @@ export class MiClaroInteractiveInvoice {
 
   private toggleAutoPay = () => {
     this.autoPayEnabled = !this.autoPayEnabled;
+    this.onAutomatePayments.emit(this.autoPayEnabled);
+  };
+
+  private handlePayPendingBills = () => {
+    this.onPayPendingBills.emit();
+  };
+
+  private handleQuestionsPressed = () => {
+    this.onQuestionsPressed.emit();
+  };
+
+  private handleContactPressed = () => {
+    this.onContactPressed.emit();
+  };
+
+  private handleDownloadBills = () => {
+    this.onDownloadBills.emit();
   };
 
   private calculateChartData = (bills: BillData[]): any[] => {
@@ -1755,7 +1777,7 @@ export class MiClaroInteractiveInvoice {
                       </div>
                     </div>
 
-                    <button class="pay-pending-button">
+                    <button class="pay-pending-button" onClick={this.handlePayPendingBills}>
                       Pagar facturas pendientes
                     </button>
                   </div>
@@ -2035,12 +2057,12 @@ export class MiClaroInteractiveInvoice {
                             {/* Actions row */}
                             <div class="invoice-actions">
                             <div class="actions-left">
-                              <a href="#" class="action-link">¿Tienes dudas?</a>
+                              <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleQuestionsPressed(); }}>¿Tienes dudas?</a>
                               <span class="action-separator">|</span>
-                              <a href="#" class="action-link">Contáctanos aquí</a>
+                              <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleContactPressed(); }}>Contáctanos aquí</a>
                             </div>
                             <div class="actions-right">
-                              <a href="#" class="action-link">Descarga mi factura</a>
+                              <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleDownloadBills(); }}>Descarga mi factura</a>
                             </div>
                           </div>
                         </div>
@@ -2183,12 +2205,12 @@ export class MiClaroInteractiveInvoice {
                                 {/* Actions row */}
                                 <div class="invoice-actions">
                                   <div class="actions-left">
-                                    <a href="#" class="action-link">¿Tienes dudas?</a>
+                                    <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleQuestionsPressed(); }}>¿Tienes dudas?</a>
                                     <span class="action-separator">|</span>
-                                    <a href="#" class="action-link">Contáctanos aquí</a>
+                                    <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleContactPressed(); }}>Contáctanos aquí</a>
                                   </div>
                                   <div class="actions-right">
-                                    <a href="#" class="action-link">Descarga mi factura</a>
+                                    <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleDownloadBills(); }}>Descarga mi factura</a>
                                   </div>
                                 </div>
                               </div>
