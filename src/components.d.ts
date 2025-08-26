@@ -20,11 +20,11 @@ export interface MiClaroInteractiveInvoiceCustomEvent<T> extends CustomEvent<T> 
 declare global {
     interface HTMLMiClaroInteractiveInvoiceElementEventMap {
         "goToSupport": void;
-        "onPayPendingBills": void;
-        "onAutomatePayments": boolean;
-        "onQuestionsPressed": void;
-        "onContactPressed": void;
-        "onDownloadBills": void;
+        "payPendingBills": void;
+        "automatePayments": boolean;
+        "questionsPressed": void;
+        "contactPressed": void;
+        "downloadBills": void;
     }
     interface HTMLMiClaroInteractiveInvoiceElement extends Components.MiClaroInteractiveInvoice, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMiClaroInteractiveInvoiceElementEventMap>(type: K, listener: (this: HTMLMiClaroInteractiveInvoiceElement, ev: MiClaroInteractiveInvoiceCustomEvent<HTMLMiClaroInteractiveInvoiceElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -50,12 +50,12 @@ declare namespace LocalJSX {
           * @default ['805437569', '712331792']
          */
         "accountList"?: string[];
+        "onAutomatePayments"?: (event: MiClaroInteractiveInvoiceCustomEvent<boolean>) => void;
+        "onContactPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        "onDownloadBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onGoToSupport"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
-        "onOnAutomatePayments"?: (event: MiClaroInteractiveInvoiceCustomEvent<boolean>) => void;
-        "onOnContactPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
-        "onOnDownloadBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
-        "onOnPayPendingBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
-        "onOnQuestionsPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        "onPayPendingBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        "onQuestionsPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
     }
     interface IntrinsicElements {
         "mi-claro-interactive-invoice": MiClaroInteractiveInvoice;

@@ -37,9 +37,14 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Events
 
-| Event         | Description | Type                |
-| ------------- | ----------- | ------------------- |
-| `goToSupport` |             | `CustomEvent<void>` |
+| Event                | Description | Type                   |
+| -------------------- | ----------- | ---------------------- |
+| `goToSupport`        |             | `CustomEvent<void>`    |
+| `onAutomatePayments` |             | `CustomEvent<boolean>` |
+| `onContactPressed`   |             | `CustomEvent<void>`    |
+| `onDownloadBills`    |             | `CustomEvent<void>`    |
+| `onPayPendingBills`  |             | `CustomEvent<void>`    |
+| `onQuestionsPressed` |             | `CustomEvent<void>`    |
 
 
 ----------------------------------------------

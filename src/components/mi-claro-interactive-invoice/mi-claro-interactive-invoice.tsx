@@ -1444,11 +1444,11 @@ export class MiClaroInteractiveInvoice {
   @Prop() accountList: string[] = ['805437569', '712331792'];
 
   @Event() goToSupport: EventEmitter<void>;
-  @Event() onPayPendingBills: EventEmitter<void>;
-  @Event() onAutomatePayments: EventEmitter<boolean>;
-  @Event() onQuestionsPressed: EventEmitter<void>;
-  @Event() onContactPressed: EventEmitter<void>;
-  @Event() onDownloadBills: EventEmitter<void>;
+  @Event() payPendingBills: EventEmitter<void>;
+  @Event() automatePayments: EventEmitter<boolean>;
+  @Event() questionsPressed: EventEmitter<void>;
+  @Event() contactPressed: EventEmitter<void>;
+  @Event() downloadBills: EventEmitter<void>;
 
   private invoices: Invoice[] = [];
 
@@ -1478,23 +1478,23 @@ export class MiClaroInteractiveInvoice {
 
   private toggleAutoPay = () => {
     this.autoPayEnabled = !this.autoPayEnabled;
-    this.onAutomatePayments.emit(this.autoPayEnabled);
+    this.automatePayments.emit(this.autoPayEnabled);
   };
 
   private handlePayPendingBills = () => {
-    this.onPayPendingBills.emit();
+    this.payPendingBills.emit();
   };
 
   private handleQuestionsPressed = () => {
-    this.onQuestionsPressed.emit();
+    this.questionsPressed.emit();
   };
 
   private handleContactPressed = () => {
-    this.onContactPressed.emit();
+    this.contactPressed.emit();
   };
 
   private handleDownloadBills = () => {
-    this.onDownloadBills.emit();
+    this.downloadBills.emit();
   };
 
   private calculateChartData = (bills: BillData[]): any[] => {
