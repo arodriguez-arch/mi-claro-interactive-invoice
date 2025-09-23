@@ -366,7 +366,7 @@ export class MiClaroInteractiveInvoice {
     if (this.accountList && this.accountList.length > 0) {
       console.log('Initial account list:', this.accountList);
       this.selectedAccount = this.defaultSelectedAccount;
-      this.fetchInvoiceData(this.selectedAccount);
+      this.fetchInvoiceData(this.defaultSelectedAccount);
     }
   }
 
