@@ -460,6 +460,7 @@ export class MiClaroInteractiveInvoice {
             {/* Payment Summary Card */}
             <div class="card payment-summary">
               <h2 class="card-title">¡Hola, {this.customerName || this.invoiceData?.customerName}!</h2>
+              <p class="summary-text">Este es el resumen de tu factura actual.</p>
               <div class="separator"></div>
               <div class="total-section">
                 <p class="total-label">Total a pagar</p>
