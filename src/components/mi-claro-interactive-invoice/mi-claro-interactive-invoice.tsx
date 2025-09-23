@@ -59,9 +59,10 @@ export class MiClaroInteractiveInvoice {
   @State() loadingBillDetail: { [key: string]: boolean } = {};
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
-  @Prop() accountList: string[] = ['805437569', '712331792'];
+  @Prop() accountList: string[] = [];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
+  @Prop() defaultSelectedAccount?: string = '';
   @Prop() customerName?: string;
   @Prop() billDueDate?: string;
   @Prop() totalAPagar?: number;
@@ -364,7 +365,7 @@ export class MiClaroInteractiveInvoice {
     // Set initial selected account and fetch data on component initialization
     if (this.accountList && this.accountList.length > 0) {
       console.log('Initial account list:', this.accountList);
-      this.selectedAccount = this.accountList[0];
+      this.selectedAccount = this.defaultSelectedAccount;
       this.fetchInvoiceData(this.selectedAccount);
     }
   }

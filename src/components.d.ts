@@ -10,15 +10,16 @@ export { Environment } from "./services/bill.service";
 export namespace Components {
     interface MiClaroInteractiveInvoice {
         /**
-          * @default ['805437569', '712331792']
+          * @default []
          */
         "accountList": string[];
         "balanceVencido"?: number;
         "billDueDate"?: string;
         "customerName"?: string;
         /**
-          * @default 'prod'
+          * @default ''
          */
+        "defaultSelectedAccount"?: string;
         "environment": Environment;
         /**
           * @default ''
@@ -63,16 +64,17 @@ declare global {
 declare namespace LocalJSX {
     interface MiClaroInteractiveInvoice {
         /**
-          * @default ['805437569', '712331792']
+          * @default []
          */
         "accountList"?: string[];
         "balanceVencido"?: number;
         "billDueDate"?: string;
         "customerName"?: string;
         /**
-          * @default 'prod'
+          * @default ''
          */
-        "environment"?: Environment;
+        "defaultSelectedAccount"?: string;
+        "environment": Environment;
         "onAccountChanged"?: (event: MiClaroInteractiveInvoiceCustomEvent<string>) => void;
         "onAutomatePayments"?: (event: MiClaroInteractiveInvoiceCustomEvent<boolean>) => void;
         "onContactPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
