@@ -119,8 +119,10 @@ export class BillService {
     cycleCode: number
   ): Promise<BillDetailResponse> {
     try {
+      const url = `${this.baseUrl}/v2/compose/${accountNumber}/${cycleRunYear}/${cycleRunMonth}/${cycleCode}`;
+      console.log('Fetching bill detail from:', url);
       const response = await fetch(
-        `${this.baseUrl}/v2/compose/${accountNumber}/${cycleRunYear}/${cycleRunMonth}/${cycleCode}`,
+        url,
         {
           method: 'GET',
           headers: {
