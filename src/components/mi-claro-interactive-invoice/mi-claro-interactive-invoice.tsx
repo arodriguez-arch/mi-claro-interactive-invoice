@@ -119,10 +119,10 @@ export class MiClaroInteractiveInvoice {
 
     // Check if we already have the details cached
     const cacheKey = `${bill.ban}-${bill.cycleRunYear}-${bill.cycleRunMonth}-${bill.cycleCode}`;
-    if (this.billDetails[cacheKey]) {
-      // Already have data and already expanded
-      return;
-    }
+    // if (this.billDetails[cacheKey]) {
+    //   // Already have data and already expanded
+    //   return;
+    // }
 
     // Set loading state based on bill type
     if (isHistoryBill) {
@@ -459,12 +459,12 @@ export class MiClaroInteractiveInvoice {
           <div class="first-column">
             {/* Payment Summary Card */}
             <div class="card payment-summary">
-              <h2 class="card-title">¡Hola, {this.customerName || this.invoiceData?.customerName || 'María'}!</h2>
-              <p class="summary-text">Tu factura vence el {this.billDueDate ? this.formatDate(this.billDueDate) : this.invoiceData?.dueDate || '20 de marzo de 2024'}</p>
+              <h2 class="card-title">¡Hola, {this.customerName || this.invoiceData?.customerName}!</h2>
+              <p class="summary-text">Tu factura vence el {this.billDueDate ? this.formatDate(this.billDueDate) : this.invoiceData?.dueDate}</p>
               <div class="separator"></div>
               <div class="total-section">
                 <p class="total-label">Total a pagar</p>
-                <p class="total-amount">{this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.invoiceData?.totalAmount || '$45.990'}</p>
+                <p class="total-amount">{this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.invoiceData?.totalAmount || '$0'}</p>
               </div>
               <div class="separator"></div>
 
@@ -472,8 +472,8 @@ export class MiClaroInteractiveInvoice {
                 <div class="expandable-inner">
                   <div class="due-section">
                     <p class="due-label">Balance vencido</p>
-                    <p class="due-amount">{this.balanceVencido ? this.formatCurrency(this.balanceVencido) : '$57.25'}</p>
-                    <p class="due-description">Vencimiento: {this.vencimientoDate ? this.formatDate(this.vencimientoDate) : '05/04/2025'}</p>
+                    <p class="due-amount">{this.balanceVencido ? this.formatCurrency(this.balanceVencido) : '$0'}</p>
+                    <p class="due-description">Vencimiento: {this.vencimientoDate ? this.formatDate(this.vencimientoDate) : ''}</p>
                   </div>
                   <div class="separator"></div>
 
