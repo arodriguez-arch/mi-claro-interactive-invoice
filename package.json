@@ -1,5 +1,5 @@
 {
-  "name": "intellisoft-mi-claro-interactive-invoice",
+  "name": "@e4gs/mi-claro-interactive-invoice",
   "version": "0.2.1",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
@@ -38,7 +38,7 @@
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate",
-    "npm-publish": "npm publish --access public",
+    "npm-publish": "npm publish --access restricted",
     "copy-assets": "node scripts/copy-assets.js"
   },
   "bin": {

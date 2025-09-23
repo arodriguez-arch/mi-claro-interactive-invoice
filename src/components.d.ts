@@ -5,12 +5,18 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Environment } from "./services/bill.service";
+export { Environment } from "./services/bill.service";
 export namespace Components {
     interface MiClaroInteractiveInvoice {
         /**
           * @default ['805437569', '712331792']
          */
         "accountList": string[];
+        /**
+          * @default 'prod'
+         */
+        "environment": Environment;
     }
 }
 export interface MiClaroInteractiveInvoiceCustomEvent<T> extends CustomEvent<T> {
@@ -50,6 +56,10 @@ declare namespace LocalJSX {
           * @default ['805437569', '712331792']
          */
         "accountList"?: string[];
+        /**
+          * @default 'prod'
+         */
+        "environment"?: Environment;
         "onAutomatePayments"?: (event: MiClaroInteractiveInvoiceCustomEvent<boolean>) => void;
         "onContactPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onDownloadBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;

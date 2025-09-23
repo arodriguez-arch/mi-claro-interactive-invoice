@@ -30,9 +30,10 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Properties
 
-| Property      | Attribute      | Description | Type       | Default                      |
-| ------------- | -------------- | ----------- | ---------- | ---------------------------- |
-| `accountList` | `account-list` |             | `string[]` | `['805437569', '712331792']` |
+| Property      | Attribute      | Description | Type                      | Default                      |
+| ------------- | -------------- | ----------- | ------------------------- | ---------------------------- |
+| `accountList` | `account-list` |             | `string[]`                | `['805437569', '712331792']` |
+| `environment` | `environment`  |             | `"dev" \| "prod" \| "qa"` | `'prod'`                     |
 
 
 ## Events

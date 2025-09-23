@@ -1,4 +1,5 @@
 import { Component, State, h, Prop, Event, EventEmitter } from '@stencil/core';
+import { BillService, Environment, BillApiResponse } from '../../services/bill.service';
 
 interface Invoice {
   id: string;
@@ -31,13 +32,7 @@ interface AccountData {
   facturas: BillData[];
 }
 
-const BILLS_DATA: AccountData[] = [
-  {
-    "cuenta": "805437569",
-    "cliente": "ROSA RIVERA",
-    "facturas": [
-      {
-        "fechaFactura": "2025-05-19",
+// BILLS_DATA constant removed - now using API directly
         "fechaVencimiento": "2025-06-14",
         "balanceAnterior": 218.23,
         "pagosRecibidos": 272.09,
@@ -1441,7 +1436,13 @@ export class MiClaroInteractiveInvoice {
   @State() allBills: BillData[] = [];
   @State() autoPayEnabled: boolean = false;
   @State() chartData: any[] = [];
+  @State() apiBills: BillApiResponse[] = [];
+  @State() pendingBill: BillApiResponse | null = null;
+  @State() historyBills: BillApiResponse[] = [];
+  @State() loadingBillDetail: { [key: string]: boolean } = {};
+  @State() billDetails: { [key: string]: any } = {};
   @Prop() accountList: string[] = ['805437569', '712331792'];
+  @Prop() environment: Environment = 'prod';
 
   @Event() goToSupport: EventEmitter<void>;
   @Event() payPendingBills: EventEmitter<void>;
@@ -1451,6 +1452,7 @@ export class MiClaroInteractiveInvoice {
   @Event() downloadBills: EventEmitter<void>;
 
   private invoices: Invoice[] = [];
+  private billService: BillService;
 
   private toggleShowMore = () => {
     this.showMoreInfo = !this.showMoreInfo;
@@ -1460,8 +1462,71 @@ export class MiClaroInteractiveInvoice {
     this.activeTab = tab;
   };
 
-  private toggleInvoiceDetail = (invoiceId: string) => {
-    this.expandedInvoiceId = this.expandedInvoiceId === invoiceId ? null : invoiceId;
+  private toggleInvoiceDetail = async (invoiceId: string) => {
+    // If collapsing, just update the state
+    if (this.expandedInvoiceId === invoiceId) {
+      this.expandedInvoiceId = null;
+      return;
+    }
+
+    // Expand immediately so user sees the loading state
+    this.expandedInvoiceId = invoiceId;
+
+    // Get the bill index from the invoice ID
+    const billIndex = parseInt(invoiceId.split('-')[1]);
+    const isHistoryBill = invoiceId.startsWith('prev-');
+
+    // Get the bill data based on whether it's current or history
+    const bill = isHistoryBill ? this.historyBills[billIndex] : this.pendingBill;
+
+    if (!bill) {
+      // If no bill data, already expanded, just return
+      return;
+    }
+
+    // Check if we already have the details cached
+    const cacheKey = `${bill.ban}-${bill.cycleRunYear}-${bill.cycleRunMonth}-${bill.cycleCode}`;
+    if (this.billDetails[cacheKey]) {
+      // Already have data and already expanded
+      return;
+    }
+
+    // Set loading state
+    this.loadingBillDetail[invoiceId] = true;
+
+    try {
+      // Fetch bill details
+      const detailResponse = await this.billService.getBillDetail(
+        bill.ban.toString(),
+        bill.cycleRunYear,
+        bill.cycleRunMonth,
+        bill.cycleCode
+      );
+
+      if (detailResponse.isSuccess && detailResponse.data && detailResponse.data.facturas.length > 0) {
+        // Cache the bill details
+        this.billDetails[cacheKey] = detailResponse.data.facturas[0];
+
+        // Update the current or previous bill with detailed data
+        if (isHistoryBill) {
+          this.previousBills[billIndex] = {
+            ...this.previousBills[billIndex],
+            detalle: detailResponse.data.facturas[0].detalle || []
+          };
+        } else {
+          this.currentBill = {
+            ...this.currentBill,
+            detalle: detailResponse.data.facturas[0].detalle || []
+          };
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching bill details:', error);
+      // Already expanded at the beginning, just log the error
+    } finally {
+      // Clear loading state
+      this.loadingBillDetail[invoiceId] = false;
+    }
   };
 
   private toggleSubscriberDetail = (subscriberId: string) => {
@@ -1517,6 +1582,16 @@ export class MiClaroInteractiveInvoice {
     const selectedAccount = (event.target as HTMLSelectElement).value;
     console.log('Selected account changed to:', selectedAccount);
     this.selectedAccount = selectedAccount;
+    // Reset states before fetching new data
+    this.invoiceData = null;
+    this.invoices = [];
+    this.currentBill = null;
+    this.previousBills = [];
+    this.allBills = [];
+    this.apiBills = [];
+    this.pendingBill = null;
+    this.historyBills = [];
+    // Activate loader and fetch new data
     this.fetchInvoiceData(selectedAccount);
   };
 
@@ -1559,6 +1634,126 @@ export class MiClaroInteractiveInvoice {
   private fetchInvoiceData = async (accountNumber: string) => {
     this.isLoading = true;
     try {
+      // First try to fetch from API
+      const billsResponse = await this.billService.getBills(accountNumber);
+
+      if (billsResponse && billsResponse.data && billsResponse.data.length > 0) {
+        // Store API bills
+        this.apiBills = billsResponse.data;
+
+        // First bill is for "Mi factura" tab, rest are for "Facturas anteriores"
+        this.pendingBill = billsResponse.data[0];
+        this.historyBills = billsResponse.data.slice(1);
+
+        // For now, create simple invoice data from API response
+        // This will be the current pending bill
+        if (this.pendingBill) {
+          this.currentBill = {
+            fechaFactura: this.pendingBill.productionDate,
+            fechaVencimiento: this.pendingBill.billDueDate,
+            balanceAnterior: 0, // Not provided by API
+            pagosRecibidos: 0, // Not provided by API
+            ajustes: 0,
+            totalActual: this.pendingBill.totalDueAmt,
+            detalle: [], // Will need detail endpoint
+            metodosPago: []
+          };
+
+          // Map history bills
+          this.previousBills = this.historyBills.map(bill => ({
+            fechaFactura: bill.productionDate,
+            fechaVencimiento: bill.billDueDate,
+            balanceAnterior: 0,
+            pagosRecibidos: bill.billStatus === 0 ? 0 : bill.totalDueAmt, // Status 0 = pending
+            ajustes: 0,
+            totalActual: bill.totalDueAmt,
+            detalle: [],
+            metodosPago: []
+          }));
+
+          // Create invoices for display - only show the first bill in "Mi factura" tab
+          this.invoices = [{
+            id: `bill-0`,
+            title: `Cuenta ${this.pendingBill.ban}`,
+            date: this.formatDate(this.pendingBill.productionDate),
+            amount: this.formatCurrency(this.pendingBill.totalDueAmt),
+            status: this.pendingBill.billStatus === 0 ? 'Pendiente' : 'Pagado'
+          }];
+
+          // Update invoice data
+          this.invoiceData = {
+            accountNumber: accountNumber,
+            customerName: `Cliente ${accountNumber}`, // Will need customer endpoint
+            dueDate: this.formatDate(this.pendingBill.billDueDate),
+            totalAmount: this.formatCurrency(this.pendingBill.totalDueAmt),
+            invoices: this.invoices,
+            planDetails: {
+              name: 'Plan Móvil',
+              period: `${this.formatDate(this.pendingBill.productionDate)} - ${this.formatDate(this.pendingBill.billDueDate)}`,
+              paymentMethod: 'No especificado'
+            },
+            balanceAnterior: 0,
+            pagosRecibidos: 0,
+            ajustes: 0
+          };
+
+          // Calculate chart data with API bills
+          const chartBills = billsResponse.data.slice(0, 3).map(bill => ({
+            totalActual: bill.totalDueAmt
+          }));
+          this.chartData = this.calculateChartData(chartBills as any);
+        }
+      } else {
+        // Fallback to local data if API fails or returns no data
+        if (this.accountsData.length === 0) {
+          this.accountsData = await this.fetchBillsData();
+        }
+
+        const accountData = this.accountsData.find(acc => acc.cuenta === accountNumber);
+
+        if (accountData && accountData.facturas.length > 0) {
+          // Store all bills
+          this.allBills = accountData.facturas;
+          this.currentBill = accountData.facturas[accountData.facturas.length - 1];
+          this.previousBills = accountData.facturas.slice(0, -1);
+
+          // Map ALL bills to invoices for the table (one row per bill)
+          this.invoices = accountData.facturas.map((bill, index) =>
+            this.mapBillToInvoice(bill, accountData.cliente, index)
+          );
+
+          // Calculate chart data
+          this.chartData = this.calculateChartData(accountData.facturas);
+
+          // Update invoice data for summary display
+          this.invoiceData = {
+            accountNumber: accountData.cuenta,
+            customerName: accountData.cliente,
+            dueDate: this.formatDate(this.currentBill.fechaVencimiento),
+            totalAmount: this.formatCurrency(this.currentBill.totalActual),
+            invoices: this.invoices,
+            planDetails: {
+              name: 'Plan Móvil',
+              period: `${this.formatDate(this.currentBill.fechaFactura)} - ${this.formatDate(this.currentBill.fechaVencimiento)}`,
+              paymentMethod: this.currentBill.metodosPago.length > 0 ? this.currentBill.metodosPago[0].metodo : 'No especificado'
+            },
+            balanceAnterior: this.currentBill.balanceAnterior,
+            pagosRecibidos: this.currentBill.pagosRecibidos,
+            ajustes: this.currentBill.ajustes
+          };
+        } else {
+          // No data found for this account
+          this.invoiceData = null;
+          this.invoices = [];
+          this.currentBill = null;
+          this.previousBills = [];
+          this.allBills = [];
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching invoice data:', error);
+
+      // Fallback to local data on error
       if (this.accountsData.length === 0) {
         this.accountsData = await this.fetchBillsData();
       }
@@ -1566,20 +1761,16 @@ export class MiClaroInteractiveInvoice {
       const accountData = this.accountsData.find(acc => acc.cuenta === accountNumber);
 
       if (accountData && accountData.facturas.length > 0) {
-        // Store all bills
         this.allBills = accountData.facturas;
         this.currentBill = accountData.facturas[accountData.facturas.length - 1];
         this.previousBills = accountData.facturas.slice(0, -1);
 
-        // Map ALL bills to invoices for the table (one row per bill)
         this.invoices = accountData.facturas.map((bill, index) =>
           this.mapBillToInvoice(bill, accountData.cliente, index)
         );
 
-        // Calculate chart data
         this.chartData = this.calculateChartData(accountData.facturas);
 
-        // Update invoice data for summary display
         this.invoiceData = {
           accountNumber: accountData.cuenta,
           customerName: accountData.cliente,
@@ -1596,24 +1787,19 @@ export class MiClaroInteractiveInvoice {
           ajustes: this.currentBill.ajustes
         };
       } else {
-        // No data found for this account
         this.invoiceData = null;
         this.invoices = [];
-        this.currentBill = null;
-        this.previousBills = [];
         this.allBills = [];
       }
-    } catch (error) {
-      console.error('Error fetching invoice data:', error);
-      this.invoiceData = null;
-      this.invoices = [];
-      this.allBills = [];
     } finally {
       this.isLoading = false;
     }
   };
 
   componentWillLoad() {
+    // Initialize bill service with environment prop
+    this.billService = new BillService(this.environment);
+
     // Set initial selected account and fetch data on component initialization
     if (this.accountList && this.accountList.length > 0) {
       console.log('Initial account list:', this.accountList);
@@ -1872,16 +2058,24 @@ export class MiClaroInteractiveInvoice {
                             <button
                               class="detail-button"
                               onClick={() => this.toggleInvoiceDetail(invoice.id)}
+                              disabled={this.loadingBillDetail[invoice.id]}
                             >
-                              Ver detalle
+                              {this.loadingBillDetail[invoice.id] ? 'Cargando...' : 'Ver detalle'}
                               <span class={`arrow ${this.expandedInvoiceId === invoice.id ? 'up' : 'down'}`}>▼</span>
                             </button>
                           </div>
                         </div>
                         <div class={`invoice-detail ${this.expandedInvoiceId === invoice.id ? 'expanded' : ''}`}>
                           <div class="detail-inner">
+                            {/* Show loading spinner if fetching details */}
+                            {this.loadingBillDetail[invoice.id] && (
+                              <div class="detail-loading">
+                                <div class="spinner"></div>
+                                <p class="loading-text">Cargando detalles de factura...</p>
+                              </div>
+                            )}
                             {/* Map through all phone numbers in this specific bill */}
-                            {this.allBills[parseInt(invoice.id.split('-')[1])] && this.allBills[parseInt(invoice.id.split('-')[1])].detalle.map((detail, detailIndex) => {
+                            {!this.loadingBillDetail[invoice.id] && this.currentBill && this.currentBill.detalle && this.currentBill.detalle.map((detail, detailIndex) => {
                               const subscriberId = `${invoice.id}-sub-${detailIndex}`;
                               return (
                                 <>
@@ -1907,9 +2101,9 @@ export class MiClaroInteractiveInvoice {
                                   <div class={`subscriber-detail ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
                                     <div class="accordion">
                                       {/* Map through detalleServicios to create accordion items */}
-                                      {detail.detalleServicios.map((servicio, serviceIndex) => {
+                                      {detail.detalleServicios && detail.detalleServicios.map((servicio, serviceIndex) => {
                                         const accordionId = `${subscriberId}-${serviceIndex}`;
-                                  const seccion = servicio.seccion || servicio.descripcion || 'Otros';
+                                  const seccion = servicio.seccion || 'Otros';
                                   const cargo = servicio.cargo || 0;
                                   const periodo = servicio.periodo || '';
 
@@ -1937,18 +2131,55 @@ export class MiClaroInteractiveInvoice {
                                       </div>
                                       <div class={`accordion-content ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
                                         <div class="charges-detail-list">
-                                          {/* Display service details based on section type */}
-                                          {servicio.descripcion && (
+                                          {/* Display plan details */}
+                                          {servicio.detallePlan && (
                                             <div class="charge-row">
-                                              <span class="charge-label">{servicio.descripcion}</span>
-                                              <span class="charge-amount">{typeof servicio.cargo === 'number' ? this.formatCurrency(servicio.cargo) : ''}</span>
+                                              <span class="charge-label">{servicio.detallePlan.descripcion}</span>
+                                              <span class="charge-amount">{this.formatCurrency(servicio.detallePlan.cargo)}</span>
                                             </div>
                                           )}
 
-                                          {/* Display consumption details if available */}
+                                          {/* Display equipment details */}
+                                          {servicio.detalleEquipos && servicio.detalleEquipos.items && servicio.detalleEquipos.items.map((equipo, equipoIndex) => (
+                                            <div key={equipoIndex}>
+                                              <div class="charge-row">
+                                                <span class="charge-label">{equipo.descripcion}</span>
+                                                <span class="charge-amount">{this.formatCurrency(equipo.cargo)}</span>
+                                              </div>
+                                              {equipo.detalleCargos && equipo.detalleCargos.descuento !== 0 && (
+                                                <div class="charge-sublist">
+                                                  <div class="charge-subrow">
+                                                    <span class="charge-sublabel">Precio regular</span>
+                                                    <span class="charge-subamount">{this.formatCurrency(equipo.detalleCargos.cargo)}</span>
+                                                  </div>
+                                                  <div class="charge-subrow">
+                                                    <span class="charge-sublabel">Descuento</span>
+                                                    <span class="charge-subamount">-{this.formatCurrency(Math.abs(equipo.detalleCargos.descuento))}</span>
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+                                          ))}
+
+                                          {/* Display tax details */}
+                                          {servicio.detalleTaxes && servicio.detalleTaxes.map((tax, taxIndex) => (
+                                            <div key={taxIndex} class="charge-row">
+                                              <span class="charge-label">{tax.descripcion}</span>
+                                              <span class="charge-amount">{this.formatCurrency(tax.cargo)}</span>
+                                            </div>
+                                          ))}
+
+                                          {/* Display item details */}
+                                          {servicio.detalleItem && servicio.detalleItem.map((item, itemIndex) => (
+                                            <div key={itemIndex} class="charge-row">
+                                              <span class="charge-label">{item.descripcion}</span>
+                                              <span class="charge-amount">{this.formatCurrency(item.cargo)}</span>
+                                            </div>
+                                          ))}
+
+                                          {/* Keep old consumption details for fallback */}
                                           {servicio.detalleConsumo && (
                                             <>
-                                              {/* Calls section */}
                                               {servicio.detalleConsumo.llamadas && (
                                                 <>
                                                   <div class="charge-row">
@@ -2118,16 +2349,24 @@ export class MiClaroInteractiveInvoice {
                                 <button
                                   class="detail-button"
                                   onClick={() => this.toggleInvoiceDetail(billId)}
+                                  disabled={this.loadingBillDetail[billId]}
                                 >
-                                  Ver detalle
+                                  {this.loadingBillDetail[billId] ? 'Cargando...' : 'Ver detalle'}
                                   <span class={`arrow ${this.expandedInvoiceId === billId ? 'up' : 'down'}`}>▼</span>
                                 </button>
                               </div>
                             </div>
                             <div class={`invoice-detail ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>
                               <div class="detail-inner">
+                                {/* Show loading spinner if fetching details */}
+                                {this.loadingBillDetail[billId] && (
+                                  <div class="detail-loading">
+                                    <div class="spinner"></div>
+                                    <p class="loading-text">Cargando detalles de factura...</p>
+                                  </div>
+                                )}
                                 {/* Map through all phone numbers in this specific bill */}
-                                {bill.detalle.map((detail, detailIndex) => {
+                                {!this.loadingBillDetail[billId] && bill.detalle && bill.detalle.map((detail, detailIndex) => {
                                   const subscriberId = `${billId}-sub-${detailIndex}`;
                                   return (
                                     <>
