@@ -60,7 +60,8 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   @Prop() accountList: string[] = ['805437569', '712331792'];
-  @Prop() environment: Environment = 'prod';
+  @Prop() environment!: Environment;
+  @Prop() token?: string = '';
   @Prop() customerName?: string;
   @Prop() billDueDate?: string;
   @Prop() totalAPagar?: number;
@@ -357,8 +358,8 @@ export class MiClaroInteractiveInvoice {
   };
 
   componentWillLoad() {
-    // Initialize bill service with environment prop
-    this.billService = new BillService(this.environment);
+    // Initialize bill service with environment and token props
+    this.billService = new BillService(this.environment, this.token || '');
 
     // Set initial selected account and fetch data on component initialization
     if (this.accountList && this.accountList.length > 0) {

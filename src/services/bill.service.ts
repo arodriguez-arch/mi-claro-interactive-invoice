@@ -1,4 +1,4 @@
-export type Environment = 'prod' | 'qa' | 'dev';
+export type Environment = 'prod' | 'dss' | 'dev' | 'uat' | 'local';
 
 export interface BillApiResponse {
   billSeqNo: number;
@@ -79,25 +79,34 @@ export interface BillDetailResponse {
 }
 
 const ENVIRONMENT_CONFIG: Record<Environment, string> = {
-  prod: 'https://wsibill.claropr.com',
-  qa: 'https://qa-wsibill.claropr.com',
-  dev: 'https://dev-wsibill.claropr.com'
+  prod: 'https://miclaro.claropr.com/api',
+  dss: 'https://dssmiclaro.claropr.com/api',
+  dev: 'https://dev-miclaro.claropr.com/api',
+  uat: 'https://uat-miclaro.claropr.com/api',
+  local: 'http://localhost:55651/api'
 };
 
 export class BillService {
   private baseUrl: string;
+  private token: string;
 
-  constructor(environment: Environment = 'prod') {
+  constructor(environment: Environment, token: string = '') {
     this.baseUrl = ENVIRONMENT_CONFIG[environment];
+    this.token = token;
   }
 
   async getBills(accountNumber: string): Promise<BillServiceResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/Bill/${accountNumber}`, {
-        method: 'GET',
+      const response = await fetch(`${this.baseUrl}/bill/GetBill`, {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'accept': '*/*',
-        }
+        },
+        body: JSON.stringify({
+          token: this.token,
+          account: accountNumber
+        })
       });
 
       if (!response.ok) {
@@ -119,15 +128,23 @@ export class BillService {
     cycleCode: number
   ): Promise<BillDetailResponse> {
     try {
-      const url = `${this.baseUrl}/v2/compose/${accountNumber}/${cycleRunYear}/${cycleRunMonth}/${cycleCode}`;
+      const url = `${this.baseUrl}/bill/GetBillCompose`;
       console.log('Fetching bill detail from:', url);
       const response = await fetch(
         url,
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'accept': '*/*',
-          }
+          },
+          body: JSON.stringify({
+            token: this.token,
+            account: accountNumber,
+            year: cycleRunYear.toString(),
+            month: cycleRunMonth.toString(),
+            day: cycleCode.toString()
+          })
         }
       );
 

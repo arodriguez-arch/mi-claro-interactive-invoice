@@ -20,6 +20,10 @@ export namespace Components {
           * @default 'prod'
          */
         "environment": Environment;
+        /**
+          * @default ''
+         */
+        "token"?: string;
         "totalAPagar"?: number;
         "vencimientoDate"?: string;
     }
@@ -76,6 +80,10 @@ declare namespace LocalJSX {
         "onGoToSupport"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onPayPendingBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onQuestionsPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        /**
+          * @default ''
+         */
+        "token"?: string;
         "totalAPagar"?: number;
         "vencimientoDate"?: string;
     }

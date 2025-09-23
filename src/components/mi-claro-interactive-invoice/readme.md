@@ -30,15 +30,16 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Properties
 
-| Property          | Attribute          | Description | Type                      | Default                      |
-| ----------------- | ------------------ | ----------- | ------------------------- | ---------------------------- |
-| `accountList`     | `account-list`     |             | `string[]`                | `['805437569', '712331792']` |
-| `balanceVencido`  | `balance-vencido`  |             | `number`                  | `undefined`                  |
-| `billDueDate`     | `bill-due-date`    |             | `string`                  | `undefined`                  |
-| `customerName`    | `customer-name`    |             | `string`                  | `undefined`                  |
-| `environment`     | `environment`      |             | `"dev" \| "prod" \| "qa"` | `'prod'`                     |
-| `totalAPagar`     | `total-a-pagar`    |             | `number`                  | `undefined`                  |
-| `vencimientoDate` | `vencimiento-date` |             | `string`                  | `undefined`                  |
+| Property          | Attribute          | Description | Type                                           | Default                      |
+| ----------------- | ------------------ | ----------- | ---------------------------------------------- | ---------------------------- |
+| `accountList`     | `account-list`     |             | `string[]`                                     | `['805437569', '712331792']` |
+| `balanceVencido`  | `balance-vencido`  |             | `number`                                       | `undefined`                  |
+| `billDueDate`     | `bill-due-date`    |             | `string`                                       | `undefined`                  |
+| `customerName`    | `customer-name`    |             | `string`                                       | `undefined`                  |
+| `environment`     | `environment`      |             | `"dev" \| "dss" \| "local" \| "prod" \| "uat"` | `'prod'`                     |
+| `token`           | `token`            |             | `string`                                       | `''`                         |
+| `totalAPagar`     | `total-a-pagar`    |             | `number`                                       | `undefined`                  |
+| `vencimientoDate` | `vencimiento-date` |             | `string`                                       | `undefined`                  |
 
 
 ## Events
