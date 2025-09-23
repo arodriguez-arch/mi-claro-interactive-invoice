@@ -365,8 +365,9 @@ export class MiClaroInteractiveInvoice {
     // Set initial selected account and fetch data on component initialization
     if (this.accountList && this.accountList.length > 0) {
       console.log('Initial account list:', this.accountList);
-      this.selectedAccount = this.defaultSelectedAccount;
-      this.fetchInvoiceData(this.defaultSelectedAccount);
+      console.log('Initial  selected account:', this.defaultSelectedAccount);
+      this.selectedAccount = this.defaultSelectedAccount || this.accountList[0];
+      this.fetchInvoiceData(this.selectedAccount);
     }
   }
 
