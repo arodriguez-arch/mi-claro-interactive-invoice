@@ -13,10 +13,15 @@ export namespace Components {
           * @default ['805437569', '712331792']
          */
         "accountList": string[];
+        "balanceVencido"?: number;
+        "billDueDate"?: string;
+        "customerName"?: string;
         /**
           * @default 'prod'
          */
         "environment": Environment;
+        "totalAPagar"?: number;
+        "vencimientoDate"?: string;
     }
 }
 export interface MiClaroInteractiveInvoiceCustomEvent<T> extends CustomEvent<T> {
@@ -31,6 +36,7 @@ declare global {
         "questionsPressed": void;
         "contactPressed": void;
         "downloadBills": void;
+        "accountChanged": string;
     }
     interface HTMLMiClaroInteractiveInvoiceElement extends Components.MiClaroInteractiveInvoice, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMiClaroInteractiveInvoiceElementEventMap>(type: K, listener: (this: HTMLMiClaroInteractiveInvoiceElement, ev: MiClaroInteractiveInvoiceCustomEvent<HTMLMiClaroInteractiveInvoiceElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -56,16 +62,22 @@ declare namespace LocalJSX {
           * @default ['805437569', '712331792']
          */
         "accountList"?: string[];
+        "balanceVencido"?: number;
+        "billDueDate"?: string;
+        "customerName"?: string;
         /**
           * @default 'prod'
          */
         "environment"?: Environment;
+        "onAccountChanged"?: (event: MiClaroInteractiveInvoiceCustomEvent<string>) => void;
         "onAutomatePayments"?: (event: MiClaroInteractiveInvoiceCustomEvent<boolean>) => void;
         "onContactPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onDownloadBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onGoToSupport"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onPayPendingBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onQuestionsPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        "totalAPagar"?: number;
+        "vencimientoDate"?: string;
     }
     interface IntrinsicElements {
         "mi-claro-interactive-invoice": MiClaroInteractiveInvoice;

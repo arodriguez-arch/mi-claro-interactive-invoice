@@ -61,6 +61,11 @@ export class MiClaroInteractiveInvoice {
   @State() billDetails: { [key: string]: any } = {};
   @Prop() accountList: string[] = ['805437569', '712331792'];
   @Prop() environment: Environment = 'prod';
+  @Prop() customerName?: string;
+  @Prop() billDueDate?: string;
+  @Prop() totalAPagar?: number;
+  @Prop() balanceVencido?: number;
+  @Prop() vencimientoDate?: string;
 
   @Event() goToSupport: EventEmitter<void>;
   @Event() payPendingBills: EventEmitter<void>;
@@ -68,6 +73,7 @@ export class MiClaroInteractiveInvoice {
   @Event() questionsPressed: EventEmitter<void>;
   @Event() contactPressed: EventEmitter<void>;
   @Event() downloadBills: EventEmitter<void>;
+  @Event() accountChanged: EventEmitter<string>;
 
   private invoices: Invoice[] = [];
   private billService: BillService;
@@ -218,6 +224,10 @@ export class MiClaroInteractiveInvoice {
     const selectedAccount = (event.target as HTMLSelectElement).value;
     console.log('Selected account changed to:', selectedAccount);
     this.selectedAccount = selectedAccount;
+
+    // Emit the account change event so parent can update props
+    this.accountChanged.emit(selectedAccount);
+
     // Reset states before fetching new data
     this.invoiceData = null;
     this.invoices = [];
@@ -272,11 +282,11 @@ export class MiClaroInteractiveInvoice {
         if (this.pendingBill) {
           this.currentBill = {
             fechaFactura: this.pendingBill.productionDate,
-            fechaVencimiento: this.pendingBill.billDueDate,
+            fechaVencimiento: this.billDueDate || this.pendingBill.billDueDate,
             balanceAnterior: 0, // Not provided by API
             pagosRecibidos: 0, // Not provided by API
             ajustes: 0,
-            totalActual: this.pendingBill.totalDueAmt,
+            totalActual: this.totalAPagar || this.pendingBill.totalDueAmt,
             detalle: [], // Will need detail endpoint
             metodosPago: []
           };
@@ -296,18 +306,18 @@ export class MiClaroInteractiveInvoice {
           // Create invoices for display - only show the first bill in "Mi factura" tab
           this.invoices = [{
             id: `bill-0`,
-            title: `Cuenta ${this.pendingBill.ban}`,
-            date: this.formatDate(this.pendingBill.productionDate),
-            amount: this.formatCurrency(this.pendingBill.totalDueAmt),
+            title: this.customerName || `Cuenta ${this.pendingBill.ban}`,
+            date: this.billDueDate ? this.formatDate(this.billDueDate) : this.formatDate(this.pendingBill.productionDate),
+            amount: this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.formatCurrency(this.pendingBill.totalDueAmt),
             status: this.pendingBill.billStatus === 0 ? 'Pendiente' : 'Pagado'
           }];
 
           // Update invoice data
           this.invoiceData = {
             accountNumber: accountNumber,
-            customerName: `Cliente ${accountNumber}`, // Will need customer endpoint
-            dueDate: this.formatDate(this.pendingBill.billDueDate),
-            totalAmount: this.formatCurrency(this.pendingBill.totalDueAmt),
+            customerName: this.customerName || `Cliente ${accountNumber}`, // Use prop if available
+            dueDate: this.billDueDate ? this.formatDate(this.billDueDate) : this.formatDate(this.pendingBill.billDueDate),
+            totalAmount: this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.formatCurrency(this.pendingBill.totalDueAmt),
             invoices: this.invoices,
             planDetails: {
               name: 'Plan Móvil',
@@ -446,12 +456,12 @@ export class MiClaroInteractiveInvoice {
           <div class="first-column">
             {/* Payment Summary Card */}
             <div class="card payment-summary">
-              <h2 class="card-title">¡Hola, {this.invoiceData?.customerName || 'María'}!</h2>
-              <p class="summary-text">Tu factura vence el {this.invoiceData?.dueDate || '20 de marzo de 2024'}</p>
+              <h2 class="card-title">¡Hola, {this.customerName || this.invoiceData?.customerName || 'María'}!</h2>
+              <p class="summary-text">Tu factura vence el {this.billDueDate ? this.formatDate(this.billDueDate) : this.invoiceData?.dueDate || '20 de marzo de 2024'}</p>
               <div class="separator"></div>
               <div class="total-section">
                 <p class="total-label">Total a pagar</p>
-                <p class="total-amount">{this.invoiceData?.totalAmount || '$45.990'}</p>
+                <p class="total-amount">{this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.invoiceData?.totalAmount || '$45.990'}</p>
               </div>
               <div class="separator"></div>
 
@@ -459,8 +469,8 @@ export class MiClaroInteractiveInvoice {
                 <div class="expandable-inner">
                   <div class="due-section">
                     <p class="due-label">Balance vencido</p>
-                    <p class="due-amount">$57.25</p>
-                    <p class="due-description">Vencimiento: 05/04/2025</p>
+                    <p class="due-amount">{this.balanceVencido ? this.formatCurrency(this.balanceVencido) : '$57.25'}</p>
+                    <p class="due-description">Vencimiento: {this.vencimientoDate ? this.formatDate(this.vencimientoDate) : '05/04/2025'}</p>
                   </div>
                   <div class="separator"></div>
 

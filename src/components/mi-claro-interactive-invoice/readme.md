@@ -30,16 +30,22 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Properties
 
-| Property      | Attribute      | Description | Type                      | Default                      |
-| ------------- | -------------- | ----------- | ------------------------- | ---------------------------- |
-| `accountList` | `account-list` |             | `string[]`                | `['805437569', '712331792']` |
-| `environment` | `environment`  |             | `"dev" \| "prod" \| "qa"` | `'prod'`                     |
+| Property          | Attribute          | Description | Type                      | Default                      |
+| ----------------- | ------------------ | ----------- | ------------------------- | ---------------------------- |
+| `accountList`     | `account-list`     |             | `string[]`                | `['805437569', '712331792']` |
+| `balanceVencido`  | `balance-vencido`  |             | `number`                  | `undefined`                  |
+| `billDueDate`     | `bill-due-date`    |             | `string`                  | `undefined`                  |
+| `customerName`    | `customer-name`    |             | `string`                  | `undefined`                  |
+| `environment`     | `environment`      |             | `"dev" \| "prod" \| "qa"` | `'prod'`                     |
+| `totalAPagar`     | `total-a-pagar`    |             | `number`                  | `undefined`                  |
+| `vencimientoDate` | `vencimiento-date` |             | `string`                  | `undefined`                  |
 
 
 ## Events
 
 | Event              | Description | Type                   |
 | ------------------ | ----------- | ---------------------- |
+| `accountChanged`   |             | `CustomEvent<string>`  |
 | `automatePayments` |             | `CustomEvent<boolean>` |
 | `contactPressed`   |             | `CustomEvent<void>`    |
 | `downloadBills`    |             | `CustomEvent<void>`    |
