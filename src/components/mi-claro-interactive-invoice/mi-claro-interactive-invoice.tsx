@@ -460,7 +460,6 @@ export class MiClaroInteractiveInvoice {
             {/* Payment Summary Card */}
             <div class="card payment-summary">
               <h2 class="card-title">¡Hola, {this.customerName || this.invoiceData?.customerName}!</h2>
-              <p class="summary-text">Tu factura vence el {this.billDueDate ? this.formatDate(this.billDueDate) : this.invoiceData?.dueDate}</p>
               <div class="separator"></div>
               <div class="total-section">
                 <p class="total-label">Total a pagar</p>
