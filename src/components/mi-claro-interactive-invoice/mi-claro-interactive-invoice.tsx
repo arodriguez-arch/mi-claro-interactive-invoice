@@ -1,5 +1,7 @@
-import { Component, State, h, Prop, Event, EventEmitter } from '@stencil/core';
+import { Component, State, h, Prop, Event, EventEmitter, Element } from '@stencil/core';
 import { BillService, Environment, BillApiResponse } from '../../services/bill.service';
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css';
 
 interface Invoice {
   id: string;
@@ -39,6 +41,8 @@ interface AccountData {
   assetsDirs: ['assets']
 })
 export class MiClaroInteractiveInvoice {
+  @Element() el: HTMLElement;
+  private tooltipInstances: any[] = [];
   @State() showMoreInfo: boolean = false;
   @State() activeTab: 'current' | 'previous' = 'current';
   @State() expandedInvoiceId: string | null = null;
@@ -59,7 +63,8 @@ export class MiClaroInteractiveInvoice {
   @State() loadingBillDetail: { [key: string]: boolean } = {};
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
-  @Prop() accountList: string[] = [];
+  // @Prop() accountList: string[] = [];
+  @Prop() accountList: string[] = ['805437569', '712331792'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -79,6 +84,45 @@ export class MiClaroInteractiveInvoice {
 
   private invoices: Invoice[] = [];
   private billService: BillService;
+
+  private cleanupTooltips = () => {
+    this.tooltipInstances.forEach(instance => instance.destroy());
+    this.tooltipInstances = [];
+  };
+
+  private getTooltipContent = (sectionName: string): string => {
+    const tooltips = {
+      'Cargos Mensuales': '<strong>¿Qué incluye este cargo?</strong><br/>Este monto corresponde al plan móvil activo durante el ciclo de facturación.',
+      'Cargos por Consumo': '<strong>Cargos por Consumo</strong><br/>Incluye llamadas, mensajes y datos utilizados fuera de tu plan.',
+      'Impuestos y Cargos Gubernamentales': '<strong>Impuestos y Cargos</strong><br/>Impuestos federales, estatales y cargos regulatorios aplicables.',
+      'Equipos y Accesorios': '<strong>Equipos y Accesorios</strong><br/>Pagos mensuales por equipos financiados o accesorios adquiridos.',
+      'Otros Cargos': '<strong>Otros Cargos</strong><br/>Cargos adicionales o ajustes aplicados a tu cuenta.',
+    };
+    return tooltips[sectionName] || '<strong>Información del cargo</strong><br/>Detalles sobre este cargo en tu factura.';
+  };
+
+  private initializeTooltips = (detailData?: any) => {
+    setTimeout(() => {
+      this.cleanupTooltips();
+
+      const infoIcons = this.el.shadowRoot.querySelectorAll('.info-icon[data-tooltip]');
+      infoIcons.forEach(icon => {
+        const tooltipContent = icon.getAttribute('data-tooltip') || 'Información no disponible';
+        const tooltipInstance = tippy(icon as HTMLElement, {
+          content: `<div class="custom-tooltip-content">${tooltipContent}</div>`,
+          allowHTML: true,
+          interactive: true,
+          placement: 'right-end',
+          theme: 'custom-white',
+          maxWidth: 350,
+          arrow: true,
+          animation: false,
+          animateFill: false,
+        });
+        this.tooltipInstances.push(tooltipInstance);
+      });
+    }, 100);
+  };
 
   private toggleShowMore = () => {
     this.showMoreInfo = !this.showMoreInfo;
@@ -159,6 +203,9 @@ export class MiClaroInteractiveInvoice {
             detalle: detailResponse.data.facturas[0].detalle || []
           };
         }
+
+        // Initialize tooltips after detail data is loaded
+        this.initializeTooltips(detailResponse.data.facturas[0]);
       }
     } catch (error) {
       console.error('Error fetching bill details:', error);
@@ -369,6 +416,18 @@ export class MiClaroInteractiveInvoice {
       this.selectedAccount = this.defaultSelectedAccount || this.accountList[0];
       this.fetchInvoiceData(this.selectedAccount);
     }
+  }
+
+  componentDidUpdate() {
+    // Re-initialize tooltips when component updates
+    if (this.expandedInvoiceId) {
+      this.initializeTooltips();
+    }
+  }
+
+  disconnectedCallback() {
+    // Clean up tooltips when component is removed
+    this.cleanupTooltips();
   }
 
   private renderSkeleton() {
@@ -643,7 +702,7 @@ export class MiClaroInteractiveInvoice {
                               return (
                                 <>
                                   {/* Subscriber details row */}
-                                  <div class="subscriber-row">
+                                  <div class={`subscriber-row ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
                                     <div class="subscriber-info">
                                       <span class="subscriber-number">{detail.numero}</span>
                                     </div>
@@ -678,17 +737,20 @@ export class MiClaroInteractiveInvoice {
                                       >
                                         <div class="accordion-header-left">
                                           <span class="accordion-title">{seccion}</span>
-                                          {seccion === 'Cargos Mensuales' && (
-                                            <div class="accordion-info">
-                                              <img src="/assets/icons/info.png" alt="Info" class="info-icon" title="¿Qué incluye este cargo? Este monto corresponde al plan móvil activo durante el ciclo de facturación." />
-                                            </div>
-                                          )}
+                                          <div class="accordion-info">
+                                            <img
+                                              src="/assets/icons/info.png"
+                                              alt="Info"
+                                              class="info-icon"
+                                              data-tooltip={servicio.tooltipContent || this.getTooltipContent(seccion)}
+                                            />
+                                          </div>
                                           {periodo && <span class="accordion-description">{periodo}</span>}
                                         </div>
                                         <div class="accordion-header-right">
                                           <span class="accordion-price">{typeof cargo === 'number' ? this.formatCurrency(cargo) : ''}</span>
                                           <span class={`accordion-arrow ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
-                                            <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="info-icon" />
+                                            <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="arrow-icon" />
                                           </span>
                                         </div>
                                       </div>
@@ -969,17 +1031,20 @@ export class MiClaroInteractiveInvoice {
                                                 >
                                                   <div class="accordion-header-left">
                                                     <span class="accordion-title">{seccion}</span>
-                                                    {seccion === 'Cargos Mensuales' && (
-                                                      <div class="accordion-info">
-                                                        <img src="/assets/icons/info.png" alt="Info" class="info-icon" title="¿Qué incluye este cargo? Este monto corresponde al plan móvil activo durante el ciclo de facturación." />
-                                                      </div>
-                                                    )}
+                                                    <div class="accordion-info">
+                                                      <img
+                                                        src="/assets/icons/info.png"
+                                                        alt="Info"
+                                                        class="info-icon"
+                                                        data-tooltip={servicio.tooltipContent || this.getTooltipContent(seccion)}
+                                                      />
+                                                    </div>
                                                     {periodo && <span class="accordion-description">{periodo}</span>}
                                                   </div>
                                                   <div class="accordion-header-right">
                                                     <span class="accordion-price">{typeof cargo === 'number' ? this.formatCurrency(cargo) : ''}</span>
                                                     <span class={`accordion-arrow ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
-                                                      <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="info-icon" />
+                                                      <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="arrow-icon" />
                                                     </span>
                                                   </div>
                                                 </div>

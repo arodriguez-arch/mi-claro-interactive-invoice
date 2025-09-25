@@ -261,7 +261,7 @@
   --color-text-gray: #6A6C6C;
   --color-status-pending-bg: #FFF3E5;
   --color-status-pending-fg: #FF8300;
-  --color-border: #F4F4F4;
+  --color-border: #D9D9D9;
   --color-border-light: #BBBBBB;
   --color-accordion-header-bg: #F9F9F9;
 }
@@ -835,6 +835,13 @@
   background: white;
 }
 
+.subscriber-row.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
 .subscriber-info {
   display: flex;
   align-items: center;
@@ -900,6 +907,13 @@
   transition: max-height 0.3s ease-in;
   padding: 1rem;
   margin-bottom: 1rem;
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  margin-top: -1rem;
+  padding-top: 2rem;
 }
 
 .subscriber-detail p {
@@ -1726,4 +1740,55 @@
 
 .pay-pending-button:hover {
   background-color: #C02318;
+}
+
+
+/* Custom Tippy Tooltip Styles */
+.tippy-box[data-theme~='custom-white'] {
+  background-color: #ffffff !important;
+  color: #3C3C3C !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  font-family: var(--font-primary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+
+.tippy-box[data-theme~='custom-white'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #ffffff;
+}
+
+.tippy-box[data-theme~='custom-white'][data-placement^='bottom'] > .tippy-arrow::after {
+  border-bottom-color: #e0e0e0;
+  border-width: 7px 7px 0;
+  bottom: 8px;
+}
+
+.tippy-box[data-theme~='custom-white'] .tippy-content {
+  padding: 10px 12px;
+}
+
+.tippy-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.tippy-arrow {
+  color: #fff; /* arrow matches background */
+}
+
+.tippy-box[data-theme~='custom-white'] .custom-tooltip-content {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #3C3C3C;
+}
+
+.tippy-box[data-theme~='custom-white'] .custom-tooltip-content strong {
+  font-weight: 600;
+  color: #2C2C2C;
+  display: block;
+  margin-bottom: 4px;
 }
