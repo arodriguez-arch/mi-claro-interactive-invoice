@@ -13,8 +13,6 @@ export namespace Components {
           * @default ['805437569', '712331792']
          */
         "accountList": string[];
-        "balanceVencido"?: number;
-        "billDueDate"?: string;
         "customerName"?: string;
         /**
           * @default ''
@@ -67,8 +65,6 @@ declare namespace LocalJSX {
           * @default ['805437569', '712331792']
          */
         "accountList"?: string[];
-        "balanceVencido"?: number;
-        "billDueDate"?: string;
         "customerName"?: string;
         /**
           * @default ''

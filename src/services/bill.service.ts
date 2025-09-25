@@ -10,6 +10,12 @@ export interface BillApiResponse {
   billDueDate: string;
   totalDueAmt: number;
   billStatus: number;
+  prevBalanceAmt?: number;
+  pymReceivedAmt?: number;
+  currChargeAmt?: number;
+  invAmtPastDue?: number;
+  adjAppliedAmt?: number;
+  payNowAmt?: number;
 }
 
 interface BillServiceResponse {

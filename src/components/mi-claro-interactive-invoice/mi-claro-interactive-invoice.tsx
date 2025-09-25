@@ -7,6 +7,7 @@ interface Invoice {
   id: string;
   title: string;
   date: string;
+  dueDate: string;
   amount: string;
   status: string;
 }
@@ -69,9 +70,7 @@ export class MiClaroInteractiveInvoice {
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
   @Prop() customerName?: string;
-  @Prop() billDueDate?: string;
   @Prop() totalAPagar?: number;
-  @Prop() balanceVencido?: number;
   @Prop() vencimientoDate?: string;
 
   @Event() goToSupport: EventEmitter<void>;
@@ -104,6 +103,7 @@ export class MiClaroInteractiveInvoice {
   private initializeTooltips = (detailData?: any) => {
     setTimeout(() => {
       this.cleanupTooltips();
+      console.log(detailData)
 
       const infoIcons = this.el.shadowRoot.querySelectorAll('.info-icon[data-tooltip]');
       infoIcons.forEach(icon => {
@@ -295,8 +295,9 @@ export class MiClaroInteractiveInvoice {
   // Removed fetchBillsData - now using API directly
 
   private formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day); // month is 0-indexed in Date constructor
+    return date.toLocaleDateString('en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
@@ -331,7 +332,7 @@ export class MiClaroInteractiveInvoice {
         if (this.pendingBill) {
           this.currentBill = {
             fechaFactura: this.pendingBill.productionDate,
-            fechaVencimiento: this.billDueDate || this.pendingBill.billDueDate,
+            fechaVencimiento: this.pendingBill.billDueDate,
             balanceAnterior: 0, // Not provided by API
             pagosRecibidos: 0, // Not provided by API
             ajustes: 0,
@@ -356,7 +357,8 @@ export class MiClaroInteractiveInvoice {
           this.invoices = [{
             id: `bill-0`,
             title: this.customerName || `Cuenta ${this.pendingBill.ban}`,
-            date: this.billDueDate ? this.formatDate(this.billDueDate) : this.formatDate(this.pendingBill.productionDate),
+            date: this.formatDate(this.pendingBill.productionDate),
+            dueDate: this.formatDate(this.pendingBill.billDueDate),
             amount: this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.formatCurrency(this.pendingBill.totalDueAmt),
             status: this.pendingBill.billStatus === 0 ? 'Pendiente' : 'Pagado'
           }];
@@ -365,7 +367,7 @@ export class MiClaroInteractiveInvoice {
           this.invoiceData = {
             accountNumber: accountNumber,
             customerName: this.customerName || `Cliente ${accountNumber}`, // Use prop if available
-            dueDate: this.billDueDate ? this.formatDate(this.billDueDate) : this.formatDate(this.pendingBill.billDueDate),
+            dueDate: this.formatDate(this.pendingBill.billDueDate),
             totalAmount: this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.formatCurrency(this.pendingBill.totalDueAmt),
             invoices: this.invoices,
             planDetails: {
@@ -529,9 +531,26 @@ export class MiClaroInteractiveInvoice {
 
               <div class={`expandable-content ${this.showMoreInfo ? 'expanded' : ''}`}>
                 <div class="expandable-inner">
+                  {/* New Bill Summary Fields */}
+                  <div class="bill-summary-section">
+                    <div class="bill-summary-item">
+                      <span class="bill-summary-label">Previous Balance</span>
+                      <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.prevBalanceAmt || 0)}</span>
+                    </div>
+                    <div class="bill-summary-item">
+                      <span class="bill-summary-label">Received Payments - Thank You!</span>
+                      <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.pymReceivedAmt || 0)}</span>
+                    </div>
+                    <div class="bill-summary-item">
+                      <span class="bill-summary-label">Adjustments</span>
+                      <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.adjAppliedAmt || 0)}</span>
+                    </div>
+                  </div>
+                  <div class="separator"></div>
+
                   <div class="due-section">
                     <p class="due-label">Balance vencido</p>
-                    <p class="due-amount">{this.balanceVencido ? this.formatCurrency(this.balanceVencido) : '$0'}</p>
+                    <p class="due-amount">{this.formatCurrency(this.pendingBill?.payNowAmt ?? 0)}</p>
                     <p class="due-description">Vencimiento: {this.vencimientoDate ? this.formatDate(this.vencimientoDate) : ''}</p>
                   </div>
                   <div class="separator"></div>
@@ -653,10 +672,10 @@ export class MiClaroInteractiveInvoice {
                   {this.invoices.length > 0 ? (
                     <>
                       <div class="table-header">
-                        <div class="header-cell">Título de factura</div>
                         <div class="header-cell">Fecha</div>
                         <div class="header-cell">Monto</div>
                         <div class="header-cell">Estado</div>
+                        <div class="header-cell">Vencimiento</div>
                         <div class="header-cell"></div>
                         <div class="header-cell"></div>
                       </div>
@@ -665,7 +684,7 @@ export class MiClaroInteractiveInvoice {
                     return (
                       <div key={invoice.id} class={`table-row-container ${this.expandedInvoiceId === invoice.id ? 'expanded' : ''}`}>
                         <div class="table-row">
-                          <div class="table-cell cell-bold" data-name={invoice.title} data-date={invoice.date}>{invoice.title}</div>
+                          {/*<div class="table-cell cell-bold" data-name={invoice.title} data-date={invoice.date}>{invoice.title}</div>*/}
                           <div class="table-cell">{invoice.date}</div>
                           <div class="table-cell cell-amount">{invoice.amount}</div>
                           <div class="table-cell">
@@ -673,6 +692,8 @@ export class MiClaroInteractiveInvoice {
                               {invoice.status}
                             </span>
                           </div>
+                          <div class="table-cell">{invoice.dueDate}</div>
+
                           <div class="table-cell">
                             <button class="pay-button" onClick={() => alert('Pagar factura!')}>Pagar factura</button>
                           </div>
