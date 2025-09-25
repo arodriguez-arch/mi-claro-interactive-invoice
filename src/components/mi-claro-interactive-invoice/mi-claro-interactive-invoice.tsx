@@ -534,15 +534,15 @@ export class MiClaroInteractiveInvoice {
                   {/* New Bill Summary Fields */}
                   <div class="bill-summary-section">
                     <div class="bill-summary-item">
-                      <span class="bill-summary-label">Previous Balance</span>
+                      <span class="bill-summary-label">Balance anterior</span>
                       <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.prevBalanceAmt || 0)}</span>
                     </div>
                     <div class="bill-summary-item">
-                      <span class="bill-summary-label">Received Payments - Thank You!</span>
+                      <span class="bill-summary-label">Pagos recibidos - Gracias!</span>
                       <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.pymReceivedAmt || 0)}</span>
                     </div>
                     <div class="bill-summary-item">
-                      <span class="bill-summary-label">Adjustments</span>
+                      <span class="bill-summary-label">Ajustes</span>
                       <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.adjAppliedAmt || 0)}</span>
                     </div>
                   </div>
