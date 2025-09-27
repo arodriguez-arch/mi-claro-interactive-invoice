@@ -352,6 +352,66 @@
   color: var(--color-text-gray);
 }
 
+/* Balance Vencido Section */
+.balance-section {
+  margin: 1rem 0;
+}
+
+.balance-label {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--color-text-gray);
+  margin: 0 0 0.5rem 0;
+}
+
+.balance-amount {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 40px;
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.due-date {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--color-text-gray);
+  margin: 0;
+}
+
+/* Service Charges Section */
+.charges-section {
+  margin: 1rem 0;
+}
+
+.charges-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.charges-label {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--color-text-gray);
+}
+
+.charges-amount {
+  font-family: var(--font-secondary);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 21px;
+  color: var(--color-text);
+}
+
 .table-cell.cell-bold {
   font-family: var(--font-secondary);
   font-weight: 700;
@@ -479,6 +539,10 @@
   color: #333;
   font-weight: 500;
   font-family: var(--font-primary);
+}
+
+.bill-summary-amount.credit {
+  color: var(--color-green, #2ECC40);
 }
 
 /* First Column Container */
