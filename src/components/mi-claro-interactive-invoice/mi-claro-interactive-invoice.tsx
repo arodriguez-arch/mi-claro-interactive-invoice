@@ -50,6 +50,7 @@ export class MiClaroInteractiveInvoice {
   @State() expandedSubscriberId: string | null = null;
   @State() expandedAccordionItem: string | null = null;
   @State() expandedSummarySection: { [key: string]: boolean } = {};
+  @State() activeFloatingPill: { title: string; amount: string; sectionId: string } | null = null;
   @State() isLoading: boolean = true;
   @State() selectedAccount: string = '';
   @State() invoiceData: any = null;
@@ -247,10 +248,47 @@ export class MiClaroInteractiveInvoice {
   };
 
   private toggleSummarySection = (sectionId: string) => {
+    const isExpanding = !this.expandedSummarySection[sectionId];
+
     this.expandedSummarySection = {
       ...this.expandedSummarySection,
-      [sectionId]: !this.expandedSummarySection[sectionId]
+      [sectionId]: isExpanding
     };
+
+    // Update floating pill for mobile
+    if (isExpanding) {
+      this.updateFloatingPill(sectionId);
+    } else {
+      this.activeFloatingPill = null;
+    }
+  };
+
+  private updateFloatingPill = (sectionId: string) => {
+    let title = '';
+    let amount = '';
+
+    if (sectionId.includes('payments')) {
+      title = 'Pagos recibidos';
+      amount = this.formatCurrency(this.pendingBill?.pymReceivedAmt || 0) + 'CR';
+    } else if (sectionId.includes('adjustments')) {
+      const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
+      const billDetail = this.billDetails[cacheKey];
+      title = 'Ajustes';
+      amount = this.formatCurrency(Math.abs(billDetail?.resumenAjustes?.totalNeto || 0)) + 'CR';
+    } else if (sectionId.includes('subscribers')) {
+      title = 'Cargos por suscriptores';
+      amount = this.formatCurrency(this.currentBill?.totalActual || 0);
+    }
+
+    this.activeFloatingPill = { title, amount, sectionId };
+  };
+
+  private scrollToSection = (sectionId: string) => {
+    // Find the section element and scroll to it
+    const sectionElement = this.el.shadowRoot?.querySelector(`[data-section-id="${sectionId}"]`);
+    if (sectionElement) {
+      sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   private handleGoToSupport = () => {
@@ -540,6 +578,17 @@ export class MiClaroInteractiveInvoice {
 
     return (
       <div class="invoice-container">
+        {/* Floating Pill Indicator - Mobile Only */}
+        {this.activeFloatingPill && (
+          <div
+            class="floating-pill"
+            onClick={() => this.scrollToSection(this.activeFloatingPill.sectionId)}
+          >
+            <span class="floating-pill-title">{this.activeFloatingPill.title}</span>
+            <span class="floating-pill-amount">{this.activeFloatingPill.amount}</span>
+          </div>
+        )}
+
         <div class="invoice-grid">
           {/* First Column Container */}
           <div class="first-column">
@@ -761,7 +810,7 @@ export class MiClaroInteractiveInvoice {
                               <div class="bill-summary-sections">
                                 {/* Payment Details Section */}
                                 {this.pendingBill && this.pendingBill.pymReceivedAmt > 0 && (
-                                  <div class="summary-section">
+                                  <div class="summary-section" data-section-id={`${invoice.id}-payments`}>
                                     <div
                                       class="summary-header"
                                       onClick={() => this.toggleSummarySection(`${invoice.id}-payments`)}
@@ -804,7 +853,7 @@ export class MiClaroInteractiveInvoice {
                                   const cacheKey = `${this.pendingBill.ban}-${this.pendingBill.cycleRunYear}-${this.pendingBill.cycleRunMonth}-${this.pendingBill.cycleCode}`;
                                   const billDetail = this.billDetails[cacheKey];
                                   return billDetail?.resumenAjustes?.totalNeto && billDetail.resumenAjustes.totalNeto !== 0 ? (
-                                    <div class="summary-section">
+                                    <div class="summary-section" data-section-id={`${invoice.id}-adjustments`}>
                                       <div
                                         class="summary-header"
                                         onClick={() => this.toggleSummarySection(`${invoice.id}-adjustments`)}
@@ -841,7 +890,7 @@ export class MiClaroInteractiveInvoice {
                                 })()}
 
                                 {/* Subscriber Charges Section */}
-                                <div class="summary-section">
+                                <div class="summary-section" data-section-id={`${invoice.id}-subscribers`}>
                                   <div
                                     class="summary-header"
                                     onClick={() => this.toggleSummarySection(`${invoice.id}-subscribers`)}
