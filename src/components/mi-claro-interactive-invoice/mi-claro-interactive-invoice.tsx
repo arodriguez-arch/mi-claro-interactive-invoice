@@ -66,8 +66,8 @@ export class MiClaroInteractiveInvoice {
   @State() loadingBillDetail: { [key: string]: boolean } = {};
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
-  // @Prop() accountList: string[] = [];
-  @Prop() accountList: string[] = ['805437569', '712331792', '799704751', '764689178'];
+  @Prop() accountList: string[] = [];
+  // @Prop() accountList: string[] = ['805437569', '712331792', '799704751', '764689178'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -100,21 +100,21 @@ export class MiClaroInteractiveInvoice {
     return `<strong>${sectionName}</strong><br/>Información sobre este cargo en tu factura.`;
   };
 
-  private getSummaryTooltipContent = (sectionType: 'payments' | 'adjustments' | 'subscribers', customText?: string): string => {
-    // Use custom text from API if available
-    if (customText) {
-      return customText;
-    }
-
-    // Default tooltips for each section
-    const defaultTooltips = {
-      payments: '<strong>Pagos recibidos</strong><br/>Historial de pagos realizados en tu cuenta durante el período de facturación actual.',
-      adjustments: '<strong>Ajustes</strong><br/>Créditos y ajustes aplicados a tu cuenta que modifican el balance total.',
-      subscribers: '<strong>Cargos por suscriptores</strong><br/>Detalle de cargos aplicados a cada línea telefónica asociada a tu cuenta.'
-    };
-
-    return defaultTooltips[sectionType] || 'Información no disponible';
-  };
+  // private getSummaryTooltipContent = (sectionType: 'payments' | 'adjustments' | 'subscribers', customText?: string): string => {
+  //   // Use custom text from API if available
+  //   if (customText) {
+  //     return customText;
+  //   }
+  //
+  //   // Default tooltips for each section
+  //   const defaultTooltips = {
+  //     payments: '<strong>Pagos recibidos</strong><br/>Historial de pagos realizados en tu cuenta durante el período de facturación actual.',
+  //     adjustments: '<strong>Ajustes</strong><br/>Créditos y ajustes aplicados a tu cuenta que modifican el balance total.',
+  //     subscribers: '<strong>Cargos por suscriptores</strong><br/>Detalle de cargos aplicados a cada línea telefónica asociada a tu cuenta.'
+  //   };
+  //
+  //   return defaultTooltips[sectionType] || 'Información no disponible';
+  // };
 
   private initializeTooltips = (detailData?: any) => {
     setTimeout(() => {
