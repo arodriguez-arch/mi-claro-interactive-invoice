@@ -84,6 +84,33 @@ export interface BillDetailResponse {
   errors: any;
 }
 
+export interface BillForecastResponse {
+  data: {
+    ban: number;
+    historyCount: number;
+    prevBill: number;
+    lastBill: number;
+    nextBillEstimate: number;
+    lowerBand: number;
+    upperBand: number;
+    lastBillPoint: number | null;
+    prevBillPoint: number | null;
+    mean: number;
+    stdDev: number;
+    trendPerMonth: number;
+    seasonalityApplied: boolean;
+    monthFactors: {
+      [key: string]: number;
+    };
+    method: string;
+    notes: string;
+  };
+  isSuccess: boolean;
+  message: string;
+  errorCode: number;
+  errors: any;
+}
+
 const ENVIRONMENT_CONFIG: Record<Environment, string> = {
   prod: 'https://miclaro.claropr.com/api',
   dss: 'https://dssmiclaro.claropr.com/api',
@@ -162,6 +189,41 @@ export class BillService {
       return data;
     } catch (error) {
       console.error('Error fetching bill detail:', error);
+      throw error;
+    }
+  }
+
+  async getBillForecast(
+    accountNumber: string,
+    nextCycleRunMonth: number
+  ): Promise<BillForecastResponse> {
+    try {
+      const url = `${this.baseUrl}/bill/GetBillForecast`;
+      console.log('Fetching bill forecast from:', url);
+      const response = await fetch(
+        url,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'accept': '*/*',
+          },
+          body: JSON.stringify({
+            token: this.token,
+            account: accountNumber,
+            nextCycleRunMonth: nextCycleRunMonth
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch bill forecast: ${response.status} ${response.statusText}`);
+      }
+
+      const data: BillForecastResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching bill forecast:', error);
       throw error;
     }
   }

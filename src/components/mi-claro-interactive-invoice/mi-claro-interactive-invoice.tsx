@@ -1,5 +1,5 @@
 import { Component, State, h, Prop, Event, EventEmitter, Element } from '@stencil/core';
-import { BillService, Environment, BillApiResponse } from '../../services/bill.service';
+import { BillService, Environment, BillApiResponse, BillForecastResponse } from '../../services/bill.service';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
@@ -66,6 +66,7 @@ export class MiClaroInteractiveInvoice {
   @State() loadingBillDetail: { [key: string]: boolean } = {};
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
+  @State() billForecast: BillForecastResponse | null = null;
   @Prop() accountList: string[] = [];
   // @Prop() accountList: string[] = ['805437569', '712331792', '799704751', '764689178'];
   @Prop() environment!: Environment;
@@ -317,18 +318,47 @@ export class MiClaroInteractiveInvoice {
   };
 
   private calculateChartData = (bills: BillData[]): any[] => {
-    if (!bills || bills.length === 0) return [];
+    if (!this.billForecast || !this.pendingBill) {
+      // Fallback to original behavior if no forecast data
+      if (!bills || bills.length === 0) return [];
+      const months = ['Abril', 'Mayo', 'Siguiente Factura'];
+      const amounts = bills.slice(-3).map(bill => bill.totalActual);
+      const maxAmount = Math.max(...amounts);
 
-    const months = ['Abril', 'Mayo', 'Siguiente Factura'];
-    const amounts = bills.slice(-3).map(bill => bill.totalActual);
+      return months.map((month, index) => ({
+        month,
+        amount: amounts[index] || 0,
+        height: amounts[index] ? Math.max((amounts[index] / maxAmount) * 100, 20) : 0,
+        isPending: index === 0,
+        isCurrent: index === 1,
+        isEstimated: index === 2
+      }));
+    }
+
+    // Use forecast data for chart
+    const forecastData = this.billForecast.data;
+    const currentMonth = this.getMonthFromDate(this.pendingBill.productionDate);
+
+    // Calculate previous month
+    const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+
+    const amounts = [forecastData.prevBill, forecastData.lastBill, forecastData.nextBillEstimate];
+    const months = [
+      this.getMonthName(prevMonth),
+      this.getMonthName(currentMonth),
+      this.getMonthName(nextMonth)
+    ];
+
     const maxAmount = Math.max(...amounts);
 
     return months.map((month, index) => ({
       month,
       amount: amounts[index] || 0,
       height: amounts[index] ? Math.max((amounts[index] / maxAmount) * 100, 20) : 0,
-      isPending: index < bills.length - 1,
-      isCurrent: index === bills.length - 1
+      isPending: index === 0, // Previous bill
+      isCurrent: index === 1,  // Current bill
+      isEstimated: index === 2 // Next bill estimate
     }));
   };
 
@@ -351,8 +381,21 @@ export class MiClaroInteractiveInvoice {
     this.historyBills = [];
     this.loadingBillDetail = {};
     this.loadingHistoryDetail = {};
+    this.billForecast = null;
     // Activate loader and fetch new data
     this.fetchInvoiceData(selectedAccount);
+  };
+
+  private fetchBillForecast = async (accountNumber: string, nextCycleRunMonth: number): Promise<void> => {
+    try {
+      const forecastResponse = await this.billService.getBillForecast(accountNumber, nextCycleRunMonth);
+      if (forecastResponse && forecastResponse.isSuccess) {
+        this.billForecast = forecastResponse;
+      }
+    } catch (error) {
+      console.error('Error fetching bill forecast:', error);
+      this.billForecast = null;
+    }
   };
 
   // Removed fetchBillsData - now using API directly
@@ -372,6 +415,19 @@ export class MiClaroInteractiveInvoice {
       return '$0.00';
     }
     return `$${amount.toFixed(2)}`;
+  };
+
+  private getMonthName = (monthNumber: number): string => {
+    const months = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return months[monthNumber - 1] || 'Mes desconocido';
+  };
+
+  private getMonthFromDate = (dateString: string): number => {
+    const date = new Date(dateString);
+    return date.getMonth() + 1; // getMonth() returns 0-11, we want 1-12
   };
 
   // Removed mapBillToInvoice - no longer needed with API data
@@ -443,7 +499,12 @@ export class MiClaroInteractiveInvoice {
             ajustes: 0
           };
 
-          // Calculate chart data with API bills
+          // Fetch bill forecast for next month
+          const currentMonth = this.getMonthFromDate(this.pendingBill.productionDate);
+          const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+          await this.fetchBillForecast(accountNumber, nextMonth);
+
+          // Calculate chart data with API bills and forecast data
           const chartBills = billsResponse.data.slice(0, 3).map(bill => ({
             totalActual: bill.totalDueAmt
           }));
@@ -651,7 +712,7 @@ export class MiClaroInteractiveInvoice {
                         <div key={index} class="chart-bar-container">
                           <div class="chart-bar-wrapper">
                             <div
-                              class={`chart-bar ${item.isPending ? 'pending' : item.isCurrent ? 'current' : 'estimated'}`}
+                              class={`chart-bar ${item.isEstimated ? 'estimated' : item.isCurrent ? 'current' : 'pending'}`}
                               style={{ height: `${item.height}%` }}
                             ></div>
                           </div>
@@ -665,11 +726,15 @@ export class MiClaroInteractiveInvoice {
                     <div class="chart-legend">
                       <div class="legend-item">
                         <div class="legend-color pending"></div>
-                        <span class="legend-text">Pagos pendientes actuales</span>
+                        <span class="legend-text">Factura anterior</span>
                       </div>
                       <div class="legend-item">
                         <div class="legend-color current"></div>
-                        <span class="legend-text">Gastos mensuales estimados</span>
+                        <span class="legend-text">Factura actual</span>
+                      </div>
+                      <div class="legend-item">
+                        <div class="legend-color estimated"></div>
+                        <span class="legend-text">Estimado próxima factura</span>
                       </div>
                     </div>
                   </div>

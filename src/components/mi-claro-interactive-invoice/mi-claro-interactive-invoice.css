@@ -1977,7 +1977,8 @@
 }
 
 .chart-bar.current {
-  background-color: #FF8300;
+  /*background-color: #FF8300;*/
+  background-color: #BBBBBB;
 }
 
 .chart-bar.estimated {
@@ -2026,6 +2027,11 @@
 }
 
 .legend-color.current {
+  /*background-color: #FF8300;*/
+  background-color: #BBBBBB;
+}
+
+.legend-color.estimated {
   background-color: #FF8300;
 }
 
