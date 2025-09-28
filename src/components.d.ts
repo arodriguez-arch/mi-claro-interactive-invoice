@@ -10,7 +10,7 @@ export { Environment } from "./services/bill.service";
 export namespace Components {
     interface MiClaroInteractiveInvoice {
         /**
-          * @default ['805437569', '712331792']
+          * @default ['805437569', '712331792', '799704751', '764689178']
          */
         "accountList": string[];
         "customerName"?: string;
@@ -62,7 +62,7 @@ declare global {
 declare namespace LocalJSX {
     interface MiClaroInteractiveInvoice {
         /**
-          * @default ['805437569', '712331792']
+          * @default ['805437569', '712331792', '799704751', '764689178']
          */
         "accountList"?: string[];
         "customerName"?: string;

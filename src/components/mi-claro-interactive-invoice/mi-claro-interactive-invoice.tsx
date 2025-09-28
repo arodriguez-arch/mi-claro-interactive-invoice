@@ -49,6 +49,7 @@ export class MiClaroInteractiveInvoice {
   @State() expandedInvoiceId: string | null = null;
   @State() expandedSubscriberId: string | null = null;
   @State() expandedAccordionItem: string | null = null;
+  @State() expandedSummarySection: { [key: string]: boolean } = {};
   @State() isLoading: boolean = true;
   @State() selectedAccount: string = '';
   @State() invoiceData: any = null;
@@ -65,7 +66,7 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   // @Prop() accountList: string[] = [];
-  @Prop() accountList: string[] = ['805437569', '712331792'];
+  @Prop() accountList: string[] = ['805437569', '712331792', '799704751', '764689178'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -98,6 +99,22 @@ export class MiClaroInteractiveInvoice {
     return `<strong>${sectionName}</strong><br/>Información sobre este cargo en tu factura.`;
   };
 
+  private getSummaryTooltipContent = (sectionType: 'payments' | 'adjustments' | 'subscribers', customText?: string): string => {
+    // Use custom text from API if available
+    if (customText) {
+      return customText;
+    }
+
+    // Default tooltips for each section
+    const defaultTooltips = {
+      payments: '<strong>Pagos recibidos</strong><br/>Historial de pagos realizados en tu cuenta durante el período de facturación actual.',
+      adjustments: '<strong>Ajustes</strong><br/>Créditos y ajustes aplicados a tu cuenta que modifican el balance total.',
+      subscribers: '<strong>Cargos por suscriptores</strong><br/>Detalle de cargos aplicados a cada línea telefónica asociada a tu cuenta.'
+    };
+
+    return defaultTooltips[sectionType] || 'Información no disponible';
+  };
+
   private initializeTooltips = (detailData?: any) => {
     setTimeout(() => {
       this.cleanupTooltips();
@@ -106,11 +123,14 @@ export class MiClaroInteractiveInvoice {
       const infoIcons = this.el.shadowRoot.querySelectorAll('.info-icon[data-tooltip]');
       infoIcons.forEach(icon => {
         const tooltipContent = icon.getAttribute('data-tooltip') || 'Información no disponible';
+        // Check if it's a summary tooltip (has class summary-info)
+        const isSummaryTooltip = icon.classList.contains('summary-info');
+
         const tooltipInstance = tippy(icon as HTMLElement, {
           content: `<div class="custom-tooltip-content">${tooltipContent}</div>`,
           allowHTML: true,
           interactive: true,
-          placement: 'right-end',
+          placement: isSummaryTooltip ? 'top' : 'right-end',
           theme: 'custom-white',
           maxWidth: 350,
           arrow: true,
@@ -182,7 +202,7 @@ export class MiClaroInteractiveInvoice {
         bill.cycleCode
       );
 
-      if (detailResponse.isSuccess && detailResponse.data && detailResponse.data.facturas.length > 0) {
+      if (detailResponse.data && detailResponse.data.facturas.length > 0) {
         // Cache the bill details
         this.billDetails[cacheKey] = detailResponse.data.facturas[0];
 
@@ -224,6 +244,13 @@ export class MiClaroInteractiveInvoice {
 
   private toggleAccordionItem = (itemId: string) => {
     this.expandedAccordionItem = this.expandedAccordionItem === itemId ? null : itemId;
+  };
+
+  private toggleSummarySection = (sectionId: string) => {
+    this.expandedSummarySection = {
+      ...this.expandedSummarySection,
+      [sectionId]: !this.expandedSummarySection[sectionId]
+    };
   };
 
   private handleGoToSupport = () => {
@@ -535,11 +562,11 @@ export class MiClaroInteractiveInvoice {
                       <span class="bill-summary-label">Balance anterior</span>
                       <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.prevBalanceAmt || 336.58)}</span>
                     </div>
-                    <div class="bill-summary-item">
+                    <div class={`bill-summary-item ${this.expandedSummarySection['bill-0-payments'] ? 'highlighted' : ''}`}>
                       <span class="bill-summary-label">Pagos recibidos</span>
                       <span class="bill-summary-amount credit">{this.formatCurrency(this.pendingBill?.pymReceivedAmt || 158.67)}CR</span>
                     </div>
-                    <div class="bill-summary-item">
+                    <div class={`bill-summary-item ${this.expandedSummarySection['bill-0-adjustments'] ? 'highlighted' : ''}`}>
                       <span class="bill-summary-label">Ajustes</span>
                       <span class="bill-summary-amount credit">{this.formatCurrency(this.pendingBill?.adjAppliedAmt || 68.55)}CR</span>
                     </div>
@@ -556,7 +583,7 @@ export class MiClaroInteractiveInvoice {
 
                   {/* Service Charges Section */}
                   <div class="charges-section">
-                    <div class="charges-item">
+                    <div class={`charges-item ${this.expandedSummarySection['bill-0-subscribers'] ? 'highlighted' : ''}`}>
                       <span class="charges-label">Cargos por servicios móviles</span>
                       <span class="charges-amount">{this.formatCurrency(218.38)}</span>
                     </div>
@@ -729,11 +756,118 @@ export class MiClaroInteractiveInvoice {
                                 <p class="loading-text">Cargando detalles de factura...</p>
                               </div>
                             )}
-                            {/* Map through all phone numbers in this specific bill */}
-                            {!this.loadingBillDetail[invoice.id] && this.currentBill && this.currentBill.detalle && this.currentBill.detalle.map((detail, detailIndex) => {
+                            {/* Summary sections */}
+                            {!this.loadingBillDetail[invoice.id] && this.currentBill && (
+                              <div class="bill-summary-sections">
+                                {/* Payment Details Section */}
+                                {this.pendingBill && this.pendingBill.pymReceivedAmt > 0 && (
+                                  <div class="summary-section">
+                                    <div
+                                      class="summary-header"
+                                      onClick={() => this.toggleSummarySection(`${invoice.id}-payments`)}
+                                    >
+                                      <div class="summary-title-container">
+                                        <span class="summary-title">Detalle de pagos recibidos</span>
+                                        <img
+                                          src="/assets/icons/info.png"
+                                          alt="Info"
+                                          class="info-icon summary-info"
+                                          data-tooltip="&lt;strong&gt;Pagos recibidos&lt;/strong&gt;&lt;br/&gt;Historial de pagos realizados en tu cuenta durante el período de facturación actual."
+                                        />
+                                      </div>
+                                      <div class="summary-amount-container">
+                                        <span class="summary-amount">{this.formatCurrency(this.pendingBill.pymReceivedAmt)}CR</span>
+                                        <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-payments`] ? 'expanded' : ''}`}>
+                                          <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div class={`summary-content ${this.expandedSummarySection[`${invoice.id}-payments`] ? 'expanded' : ''}`}>
+                                      {/* Get the bill details from cache */}
+                                      {(() => {
+                                        const cacheKey = `${this.pendingBill.ban}-${this.pendingBill.cycleRunYear}-${this.pendingBill.cycleRunMonth}-${this.pendingBill.cycleCode}`;
+                                        const billDetail = this.billDetails[cacheKey];
+                                        return billDetail?.metodosPago?.map((pago, index) => (
+                                          <div key={index} class="summary-item payment-item">
+                                            <span class="summary-item-label">{pago.metodo}</span>
+                                            <span class="summary-item-date">{this.formatDate(pago.fecha)}</span>
+                                            <span class="summary-item-amount">{this.formatCurrency(pago.monto)}CR</span>
+                                          </div>
+                                        ));
+                                      })()}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Adjustments Section */}
+                                {(() => {
+                                  const cacheKey = `${this.pendingBill.ban}-${this.pendingBill.cycleRunYear}-${this.pendingBill.cycleRunMonth}-${this.pendingBill.cycleCode}`;
+                                  const billDetail = this.billDetails[cacheKey];
+                                  return billDetail?.resumenAjustes?.totalNeto && billDetail.resumenAjustes.totalNeto !== 0 ? (
+                                    <div class="summary-section">
+                                      <div
+                                        class="summary-header"
+                                        onClick={() => this.toggleSummarySection(`${invoice.id}-adjustments`)}
+                                      >
+                                        <div class="summary-title-container">
+                                          <span class="summary-title">Detalle de ajustes</span>
+                                          <img
+                                            src="/assets/icons/info.png"
+                                            alt="Info"
+                                            class="info-icon summary-info"
+                                            data-tooltip="&lt;strong&gt;Ajustes&lt;/strong&gt;&lt;br/&gt;Créditos y ajustes aplicados a tu cuenta que modifican el balance total."
+                                          />
+                                        </div>
+                                        <div class="summary-amount-container">
+                                          <span class="summary-amount">{this.formatCurrency(Math.abs(billDetail.resumenAjustes.totalNeto))}CR</span>
+                                          <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-adjustments`] ? 'expanded' : ''}`}>
+                                            <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div class={`summary-content ${this.expandedSummarySection[`${invoice.id}-adjustments`] ? 'expanded' : ''}`}>
+                                        {billDetail.resumenAjustes.items?.map((ajuste, index) => (
+                                          <div key={index} class="summary-item adjustment-item">
+                                            <span class="summary-item-label">{ajuste.descripcion || 'PRICE PLAN CHANGE'}</span>
+                                            <span class="summary-item-amount-right">
+                                              <span style={{ marginRight: '1rem', color: '#666' }}>{this.formatDate(billDetail.fechaFactura || this.pendingBill.productionDate)}</span>
+                                              <span style={{ fontWeight: '600' }}>{this.formatCurrency(Math.abs(ajuste.total))}CR</span>
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ) : null;
+                                })()}
+
+                                {/* Subscriber Charges Section */}
+                                <div class="summary-section">
+                                  <div
+                                    class="summary-header"
+                                    onClick={() => this.toggleSummarySection(`${invoice.id}-subscribers`)}
+                                  >
+                                    <div class="summary-title-container">
+                                      <span class="summary-title">Detalle de cargos por suscriptores</span>
+                                      <img
+                                        src="/assets/icons/info.png"
+                                        alt="Info"
+                                        class="info-icon summary-info"
+                                        data-tooltip="&lt;strong&gt;Cargos por suscriptores&lt;/strong&gt;&lt;br/&gt;Detalle de cargos aplicados a cada línea telefónica asociada a tu cuenta."
+                                      />
+                                    </div>
+                                    <div class="summary-amount-container">
+                                      <span class="summary-amount">{this.formatCurrency(this.currentBill.totalActual || 0)}</span>
+                                      <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-subscribers`] ? 'expanded' : ''}`}>
+                                        <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div class={`summary-content subscriber-content ${this.expandedSummarySection[`${invoice.id}-subscribers`] ? 'expanded' : ''}`}>
+                                    {/* Map through all phone numbers in this specific bill */}
+                                    {this.currentBill && this.currentBill.detalle && this.currentBill.detalle.map((detail, detailIndex) => {
                               const subscriberId = `${invoice.id}-sub-${detailIndex}`;
                               return (
-                                <>
+                                <div class="subscribers-detail-wrapper">
                                   {/* Subscriber details row */}
                                   <div class={`subscriber-row ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
                                     <div class="subscriber-info">
@@ -798,26 +932,49 @@ export class MiClaroInteractiveInvoice {
                                           )}
 
                                           {/* Display equipment details */}
-                                          {servicio.detalleEquipos && servicio.detalleEquipos.items && servicio.detalleEquipos.items.map((equipo, equipoIndex) => (
-                                            <div key={equipoIndex}>
-                                              <div class="charge-row">
-                                                <span class="charge-label">{equipo.descripcion}</span>
-                                                <span class="charge-amount">{this.formatCurrency(equipo.cargo)}</span>
-                                              </div>
-                                              {equipo.detalleCargos && equipo.detalleCargos.descuento !== 0 && (
-                                                <div class="charge-sublist">
-                                                  <div class="charge-subrow">
-                                                    <span class="charge-sublabel">Precio regular</span>
-                                                    <span class="charge-subamount">{this.formatCurrency(equipo.detalleCargos.cargo)}</span>
+                                          {servicio.detalleEquipos && servicio.detalleEquipos.items && servicio.detalleEquipos.items.map((equipo, equipoIndex) => {
+                                            // Determine the icon based on equipment type
+                                            let equipmentIcon = '/assets/icons/mobile.png';
+                                            if (equipo.tipoEquipo) {
+                                              const tipo = equipo.tipoEquipo.toLowerCase();
+                                              if (tipo === 'accessory') {
+                                                equipmentIcon = '/assets/icons/accessory.png';
+                                              } else if (tipo === 'tablets' || tipo === 'tablet') {
+                                                equipmentIcon = '/assets/icons/tablets.png';
+                                              } else if (tipo === 'mobile') {
+                                                equipmentIcon = '/assets/icons/mobile.png';
+                                              }
+                                            }
+
+                                            return (
+                                              <div key={equipoIndex}>
+                                                <div class="charge-row equipment-row">
+                                                  <div class="equipment-info">
+                                                    <img src={equipmentIcon} alt={equipo.tipoEquipo} class="equipment-type-icon" />
+                                                    <div class="equipment-details">
+                                                      <span class="charge-label">{equipo.descripcion}</span>
+                                                      {equipo.equipmentInstallmentMessage && (
+                                                        <span class="equipment-installment-message">{equipo.equipmentInstallmentMessage}</span>
+                                                      )}
+                                                    </div>
                                                   </div>
-                                                  <div class="charge-subrow">
-                                                    <span class="charge-sublabel">Descuento</span>
-                                                    <span class="charge-subamount">-{this.formatCurrency(Math.abs(equipo.detalleCargos.descuento))}</span>
-                                                  </div>
+                                                  <span class="charge-amount">{this.formatCurrency(equipo.cargo)}</span>
                                                 </div>
-                                              )}
-                                            </div>
-                                          ))}
+                                                {equipo.detalleCargos && equipo.detalleCargos.descuento !== 0 && (
+                                                  <div class="charge-sublist">
+                                                    <div class="charge-subrow">
+                                                      <span class="charge-sublabel">Precio regular</span>
+                                                      <span class="charge-subamount">{this.formatCurrency(equipo.detalleCargos.cargo)}</span>
+                                                    </div>
+                                                    <div class="charge-subrow">
+                                                      <span class="charge-sublabel">Descuento</span>
+                                                      <span class="charge-subamount">-{this.formatCurrency(Math.abs(equipo.detalleCargos.descuento))}</span>
+                                                    </div>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            );
+                                          })}
 
                                           {/* Display tax details */}
                                           {servicio.detalleTaxes && servicio.detalleTaxes.map((tax, taxIndex) => (
@@ -939,9 +1096,13 @@ export class MiClaroInteractiveInvoice {
                                       })}
                                     </div>
                                   </div>
-                                </>
+                                </div>
                               );
                             })}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
 
                             {/* Actions row */}
                             <div class="invoice-actions">
