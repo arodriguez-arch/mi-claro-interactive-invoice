@@ -76,8 +76,8 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
-  // @Prop() accountList: string[] = [];
-  @Prop() accountList: string[] = ['769001587'];
+  @Prop() accountList: string[] = [];
+  // @Prop() accountList: string[] = ['769001587'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
