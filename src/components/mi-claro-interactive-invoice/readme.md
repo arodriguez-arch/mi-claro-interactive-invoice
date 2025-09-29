@@ -30,15 +30,15 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Properties
 
-| Property                   | Attribute                  | Description | Type                                           | Default     |
-| -------------------------- | -------------------------- | ----------- | ---------------------------------------------- | ----------- |
-| `accountList`              | `account-list`             |             | `string[]`                                     | `[]`        |
-| `customerName`             | `customer-name`            |             | `string`                                       | `undefined` |
-| `defaultSelectedAccount`   | `default-selected-account` |             | `string`                                       | `''`        |
-| `environment` _(required)_ | `environment`              |             | `"dev" \| "dss" \| "local" \| "prod" \| "uat"` | `undefined` |
-| `token`                    | `token`                    |             | `string`                                       | `''`        |
-| `totalAPagar`              | `total-a-pagar`            |             | `number`                                       | `undefined` |
-| `vencimientoDate`          | `vencimiento-date`         |             | `string`                                       | `undefined` |
+| Property                   | Attribute                  | Description | Type                                                      | Default                                                |
+| -------------------------- | -------------------------- | ----------- | --------------------------------------------------------- | ------------------------------------------------------ |
+| `accountList`              | `account-list`             |             | `string[]`                                                | `['805437569', '712331792', '799704751', '764689178']` |
+| `customerName`             | `customer-name`            |             | `string`                                                  | `undefined`                                            |
+| `defaultSelectedAccount`   | `default-selected-account` |             | `string`                                                  | `''`                                                   |
+| `environment` _(required)_ | `environment`              |             | `"dev" \| "dss" \| "local" \| "prod" \| "uat" \| "uat40"` | `undefined`                                            |
+| `token`                    | `token`                    |             | `string`                                                  | `''`                                                   |
+| `totalAPagar`              | `total-a-pagar`            |             | `number`                                                  | `undefined`                                            |
+| `vencimientoDate`          | `vencimiento-date`         |             | `string`                                                  | `undefined`                                            |
 
 
 ## Events

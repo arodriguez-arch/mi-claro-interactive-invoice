@@ -1,4 +1,4 @@
-export type Environment = 'prod' | 'dss' | 'dev' | 'uat' | 'local';
+export type Environment = 'prod' | 'dss' | 'dev' | 'uat' | 'uat40' | 'local';
 
 export interface BillApiResponse {
   billSeqNo: number;
@@ -116,6 +116,7 @@ const ENVIRONMENT_CONFIG: Record<Environment, string> = {
   dss: 'https://dssmiclaro.claropr.com/api',
   dev: 'https://dev-miclaro.claropr.com/api',
   uat: 'https://uat-miclaro.claropr.com/api',
+  uat40: 'https://uat-miclaro40.claropr.com/api',
   local: 'http://localhost:55651/api'
 };
 
