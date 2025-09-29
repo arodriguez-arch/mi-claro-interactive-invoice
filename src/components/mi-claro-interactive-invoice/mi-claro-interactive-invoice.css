@@ -1219,6 +1219,17 @@
   line-height: 1.3;
 }
 
+.tipo-linea {
+  margin: 0 !important;
+  fontFamily: var(--font-secondary);
+  fontWeight: '700';
+  fontStyle: 'normal';
+  fontSize: '16px';
+  lineHeight: '16px';
+  letterSpacing: '0px';
+  color: var(--color-text-gray)
+}
+
 .charge-label {
   font-family: var(--font-secondary);
   font-weight: 400;

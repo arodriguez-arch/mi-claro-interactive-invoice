@@ -76,8 +76,8 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
-  @Prop() accountList: string[] = [];
-  // @Prop() accountList: string[] = ['845687214', '841047267', '846040180', '846552327', '846038880'];
+  // @Prop() accountList: string[] = [];
+  @Prop() accountList: string[] = ['769001587'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -728,10 +728,19 @@ export class MiClaroInteractiveInvoice {
                     <h3 class="charges-title">Cargos por servicios</h3>
                     {this.currentBill?.cargosPorTipo && this.currentBill.cargosPorTipo.length > 0 ? (
                       this.currentBill.cargosPorTipo.map((cargo, index) => {
-                        // Check if any detail has tipoLinea matching this cargo tipo for highlighting
-                        const isHighlighted = this.currentBill?.detalle?.some(
-                          detail => detail.tipoLinea === cargo.tipo && this.expandedSummarySection[`bill-0-subscribers`]
-                        );
+                        // Only highlight if the expanded subscriber's tipoLinea matches this cargo tipo
+                        const isHighlighted = this.expandedSubscriberId &&
+                          this.expandedSummarySection[`bill-0-subscribers`] &&
+                          (() => {
+                            // Extract the detail index from expandedSubscriberId (format: "bill-0-sub-X")
+                            const match = this.expandedSubscriberId.match(/bill-0-sub-(\d+)/);
+                            if (match) {
+                              const detailIndex = parseInt(match[1]);
+                              const detail = this.currentBill?.detalle?.[detailIndex];
+                              return detail?.tipoLinea === cargo.tipo;
+                            }
+                            return false;
+                          })();
                         return (
                           <div key={index} class={`charges-item ${isHighlighted ? 'highlighted' : ''}`}>
                             <span class="charges-label">
@@ -1092,7 +1101,7 @@ export class MiClaroInteractiveInvoice {
                                         <div class="charges-detail-list">
                                           {
                                             seccion === 'Cargos Mensuales' &&
-                                            <span>{detail.tipoLinea}</span>
+                                            <h5 class="tipo-linea">{detail.tipoLinea}</h5>
                                           }
 
                                           {/* Display plan details */}
