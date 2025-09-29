@@ -280,12 +280,12 @@ export class MiClaroInteractiveInvoice {
 
     if (sectionId.includes('payments')) {
       title = 'Pagos recibidos';
-      amount = this.formatCurrency(this.pendingBill?.pymReceivedAmt || 0) + 'CR';
+      amount = this.formatCurrency(this.pendingBill?.pymReceivedAmt || 0);
     } else if (sectionId.includes('adjustments')) {
       const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
       const billDetail = this.billDetails[cacheKey];
       title = 'Ajustes';
-      amount = this.formatCurrency(Math.abs(billDetail?.resumenAjustes?.totalNeto || 0)) + 'CR';
+      amount = this.formatCurrency(billDetail?.resumenAjustes?.totalNeto || 0);
     } else if (sectionId.includes('subscribers')) {
       title = 'Cargos por suscriptores';
       amount = this.formatCurrency(this.currentBill?.totalActual || 0);
@@ -442,6 +442,12 @@ export class MiClaroInteractiveInvoice {
     if (amount === undefined || amount === null || isNaN(amount)) {
       return '$0.00';
     }
+
+    // check if amount is negative please
+    if (amount < 0) {
+      return `$${Math.abs(amount).toFixed(2)} CR`;
+    }
+
     return `$${amount.toFixed(2)}`;
   };
 
@@ -724,47 +730,68 @@ export class MiClaroInteractiveInvoice {
                   <div class="separator"></div>
 
                   {/* Service Charges Section */}
-                  <div class="charges-section">
-                    <h3 class="charges-title">Cargos por servicios</h3>
-                    {this.currentBill?.cargosPorTipo && this.currentBill.cargosPorTipo.length > 0 ? (
-                      this.currentBill.cargosPorTipo.map((cargo, index) => {
-                        // Only highlight if the expanded subscriber's tipoLinea matches this cargo tipo
-                        const isHighlighted = this.expandedSubscriberId &&
-                          this.expandedSummarySection[`bill-0-subscribers`] &&
-                          (() => {
-                            // Extract the detail index from expandedSubscriberId (format: "bill-0-sub-X")
-                            const match = this.expandedSubscriberId.match(/bill-0-sub-(\d+)/);
-                            if (match) {
-                              const detailIndex = parseInt(match[1]);
-                              const detail = this.currentBill?.detalle?.[detailIndex];
-                              return detail?.tipoLinea === cargo.tipo;
-                            }
-                            return false;
-                          })();
-                        return (
-                          <div key={index} class={`charges-item ${isHighlighted ? 'highlighted' : ''}`}>
-                            <span class="charges-label">
-                              {cargo.tipo}
-                              {/*({cargo.cantidadLineas} {cargo.cantidadLineas === 1 ? 'línea' : 'líneas'})*/}
-                            </span>
-                            <span class="charges-amount">{this.formatCurrency(cargo.totalNeto)}</span>
+                  {(() => {
+                    // const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
+                    // const billDetail = this.billDetails[cacheKey];
+                    const isLoadingDetail = this.loadingBillDetail['bill-0'];
+                    const hasCargosPorTipo = this.currentBill?.cargosPorTipo && this.currentBill.cargosPorTipo.length > 0;
+                    const hasCargosDeCuenta = this.currentBill?.cargosDeCuenta !== null && this.currentBill?.cargosDeCuenta !== undefined;
+
+                    // Show section if loading detail OR if there's any data
+                    if (isLoadingDetail || hasCargosPorTipo || hasCargosDeCuenta) {
+                      return (
+                        <>
+                          <div class="charges-section">
+                            <h3 class="charges-title">Cargos por servicios</h3>
+                            {/* cargosPorTipo section */}
+                            {isLoadingDetail ? (
+                              <>
+                                <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
+                                <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
+                              </>
+                            ) : hasCargosPorTipo ? (
+                              this.currentBill.cargosPorTipo.map((cargo, index) => {
+                                // Only highlight if the expanded subscriber's tipoLinea matches this cargo tipo
+                                const isHighlighted = this.expandedSubscriberId &&
+                                  this.expandedSummarySection[`bill-0-subscribers`] &&
+                                  (() => {
+                                    // Extract the detail index from expandedSubscriberId (format: "bill-0-sub-X")
+                                    const match = this.expandedSubscriberId.match(/bill-0-sub-(\d+)/);
+                                    if (match) {
+                                      const detailIndex = parseInt(match[1]);
+                                      const detail = this.currentBill?.detalle?.[detailIndex];
+                                      return detail?.tipoLinea === cargo.tipo;
+                                    }
+                                    return false;
+                                  })();
+                                return (
+                                  <div key={index} class={`charges-item ${isHighlighted ? 'highlighted' : ''}`}>
+                                    <span class="charges-label">
+                                      {cargo.tipo}
+                                      {/*({cargo.cantidadLineas} {cargo.cantidadLineas === 1 ? 'línea' : 'líneas'})*/}
+                                    </span>
+                                    <span class="charges-amount">{this.formatCurrency(cargo.totalNeto)}</span>
+                                  </div>
+                                );
+                              })
+                            ) : null}
+
+                            {/* cargosDeCuenta section */}
+                            {isLoadingDetail ? (
+                              <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
+                            ) : (
+                              <div class="charges-item">
+                                <span class="charges-label">Cargos de cuenta / créditos</span>
+                                <span class="charges-amount">{this.formatCurrency(hasCargosDeCuenta ? this.currentBill.cargosDeCuenta : 0)}</span>
+                              </div>
+                            )}
                           </div>
-                        );
-                      })
-                    ) : (
-                      <div class="charges-item">
-                        <span class="charges-label">No hay cargos disponibles</span>
-                        <span class="charges-amount">{this.formatCurrency(0)}</span>
-                      </div>
-                    )}
-                    {this.currentBill?.cargosDeCuenta !== null && this.currentBill?.cargosDeCuenta !== undefined && (
-                      <div class="charges-item">
-                        <span class="charges-label">Cargos de cuenta / créditos</span>
-                        <span class="charges-amount">{this.formatCurrency(this.currentBill.cargosDeCuenta)}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div class="separator"></div>
+                          <div class="separator"></div>
+                        </>
+                      );
+                    }
+                    return null;
+                  })()}
 
                   {/* Chart Section */}
                   <div class="chart-section">
@@ -952,7 +979,7 @@ export class MiClaroInteractiveInvoice {
                                         />
                                       </div>
                                       <div class="summary-amount-container">
-                                        <span class="summary-amount">{this.formatCurrency(this.pendingBill.pymReceivedAmt)}CR</span>
+                                        <span class="summary-amount">{this.formatCurrency(this.pendingBill.pymReceivedAmt)}</span>
                                         <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-payments`] ? 'expanded' : ''}`}>
                                           <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                         </span>
@@ -967,7 +994,7 @@ export class MiClaroInteractiveInvoice {
                                           <div key={index} class="summary-item payment-item">
                                             <span class="summary-item-label">{pago.metodo}</span>
                                             <span class="summary-item-date">{this.formatDate(pago.fecha)}</span>
-                                            <span class="summary-item-amount">{this.formatCurrency(pago.monto)}CR</span>
+                                            <span class="summary-item-amount">{this.formatCurrency(pago.monto)}</span>
                                           </div>
                                         ));
                                       })()}
@@ -995,7 +1022,7 @@ export class MiClaroInteractiveInvoice {
                                           />
                                         </div>
                                         <div class="summary-amount-container">
-                                          <span class="summary-amount">{this.formatCurrency(Math.abs(billDetail.resumenAjustes.totalNeto))}CR</span>
+                                          <span class="summary-amount">{this.formatCurrency(billDetail.resumenAjustes.totalNeto)}</span>
                                           <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-adjustments`] ? 'expanded' : ''}`}>
                                             <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                           </span>
@@ -1007,7 +1034,7 @@ export class MiClaroInteractiveInvoice {
                                             <span class="summary-item-label">{ajuste.descripcion || 'PRICE PLAN CHANGE'}</span>
                                             <span class="summary-item-amount-right">
                                               <span style={{ marginRight: '1rem', color: '#666' }}>{this.formatDate(billDetail.fechaFactura || this.pendingBill.productionDate)}</span>
-                                              <span style={{ fontWeight: '600' }}>{this.formatCurrency(Math.abs(ajuste.total))}CR</span>
+                                              <span style={{ fontWeight: '600' }}>{this.formatCurrency(ajuste.total)}</span>
                                             </span>
                                           </div>
                                         ))}
@@ -1149,7 +1176,7 @@ export class MiClaroInteractiveInvoice {
                                                     </div>
                                                     <div class="charge-subrow">
                                                       <span class="charge-sublabel">Descuento</span>
-                                                      <span class="charge-subamount">-{this.formatCurrency(Math.abs(equipo.detalleCargos.descuento))}</span>
+                                                      <span class="charge-subamount">-{this.formatCurrency(equipo.detalleCargos.descuento)}</span>
                                                     </div>
                                                   </div>
                                                 )}
@@ -1252,7 +1279,7 @@ export class MiClaroInteractiveInvoice {
                                                   </div>
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Descuento</span>
-                                                    <span class="charge-subamount">-{this.formatCurrency(Math.abs(servicio.detalleEquipos.detalleCargos.descuento))}</span>
+                                                    <span class="charge-subamount">-{this.formatCurrency(servicio.detalleEquipos.detalleCargos.descuento)}</span>
                                                   </div>
                                                 </div>
                                               )}
