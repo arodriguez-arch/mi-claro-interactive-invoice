@@ -37,6 +37,7 @@ export interface BillDetailResponse {
       detalle: Array<{
         numero: string;
         total: number;
+        tipoLinea: string;
         detalleServicios: Array<{
           seccion: string;
           cargo: number;
