@@ -516,7 +516,7 @@
 }
 
 .expandable-content.expanded {
-  max-height: 700px;
+  max-height: 850px;
   transition: max-height 0.3s ease-in;
 }
 

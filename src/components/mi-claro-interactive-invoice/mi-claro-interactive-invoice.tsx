@@ -725,7 +725,9 @@ export class MiClaroInteractiveInvoice {
                   <div class="balance-section">
                     <p class="balance-label">Balance vencido</p>
                     <p class="balance-amount">{this.formatCurrency(this.pendingBill?.payNowAmt)}</p>
-                    <p class="due-date">Vencimiento: {this.formatDate(this.pendingBill?.billDueDate)}</p>
+                    {this.pendingBill?.payNowAmt > 0 && (
+                      <p class="due-date">Vencimiento: {this.formatDate(this.pendingBill?.payNowDueDate)}</p>
+                    )}
                   </div>
                   <div class="separator"></div>
 
@@ -1146,7 +1148,7 @@ export class MiClaroInteractiveInvoice {
                                             if (equipo.tipoEquipo) {
                                               const tipo = equipo.tipoEquipo.toLowerCase();
                                               if (tipo === 'accessory') {
-                                                equipmentIcon = '/assets/icons/accessory.png';
+                                                equipmentIcon = '/assets/icons/accesorios.svg';
                                               } else if (tipo === 'tablets' || tipo === 'tablet') {
                                                 equipmentIcon = '/assets/icons/tablets.png';
                                               } else if (tipo === 'mobile') {

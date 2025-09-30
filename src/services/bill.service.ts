@@ -16,6 +16,7 @@ export interface BillApiResponse {
   invAmtPastDue?: number;
   adjAppliedAmt?: number;
   payNowAmt?: number;
+  payNowDueDate?: string;
 }
 
 interface BillServiceResponse {

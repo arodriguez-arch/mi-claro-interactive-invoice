@@ -1,6 +1,6 @@
 {
   "name": "@e4gs/mi-claro-interactive-invoice",
-  "version": "0.3.19",
+  "version": "0.3.21",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@stencil/angular-output-target": "^1.1.1",
-    "@stencil/core": "^4.27.1",
+    "@stencil/core": "^4.37.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.5",
     "jest": "^29.7.0",
