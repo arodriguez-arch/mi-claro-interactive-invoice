@@ -1035,7 +1035,7 @@ export class MiClaroInteractiveInvoice {
                                           <div key={index} class="summary-item adjustment-item">
                                             <span class="summary-item-label">{ajuste.descripcion || 'PRICE PLAN CHANGE'}</span>
                                             <span class="summary-item-amount-right">
-                                              <span style={{ marginRight: '1rem', color: '#666' }}>{this.formatDate(billDetail.fechaFactura || this.pendingBill.productionDate)}</span>
+                                              {/*<span style={{ marginRight: '1rem', color: '#666' }}>{this.formatDate(billDetail.fechaFactura || this.pendingBill.productionDate)}</span>*/}
                                               <span style={{ fontWeight: '600' }}>{this.formatCurrency(ajuste.total)}</span>
                                             </span>
                                           </div>
