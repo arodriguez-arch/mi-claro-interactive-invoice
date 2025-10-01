@@ -965,7 +965,7 @@ export class MiClaroInteractiveInvoice {
                             {!this.loadingBillDetail[invoice.id] && this.currentBill && (
                               <div class="bill-summary-sections">
                                 {/* Payment Details Section */}
-                                {this.pendingBill && this.pendingBill.pymReceivedAmt > 0 && (
+                                {this.currentBill && this.currentBill.pagosRecibidos > 0 && (
                                   <div class="summary-section" data-section-id={`${invoice.id}-payments`}>
                                     <div
                                       class="summary-header"
@@ -981,7 +981,7 @@ export class MiClaroInteractiveInvoice {
                                         />
                                       </div>
                                       <div class="summary-amount-container">
-                                        <span class="summary-amount">{this.formatCurrency(this.pendingBill.pymReceivedAmt)}</span>
+                                        <span class="summary-amount">{this.formatCurrency(this.currentBill.pagosRecibidos)}</span>
                                         <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-payments`] ? 'expanded' : ''}`}>
                                           <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                         </span>

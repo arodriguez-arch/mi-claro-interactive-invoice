@@ -2156,6 +2156,12 @@
   transition: background-color 0.3s ease;
 }
 
+@media scren and (max-width: 1042px) {
+  .pay-pending-button {
+    font-size: 14px;
+  }
+}
+
 .pay-pending-button:hover {
   background-color: #C02318;
 }
