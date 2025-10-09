@@ -26,10 +26,18 @@ interface BillData {
   pagosRecibidos: number;
   ajustes: number;
   totalActual: number
-  cargosDeCuenta?: number;
+  cargosDeCuenta?: number | { seccion: string; cargo: number; detalleCargoCuenta: any[] } | null;
   detalle: BillDetail[];
   cargosPorTipo: CargosPorTipo[];
   metodosPago: any[];
+  ajustesPorSuscriptor?: Array<{
+    subscriberNo: string;
+    total: number;
+    items: Array<{
+      descripcion: string;
+      monto: number;
+    }>;
+  }>;
 }
 
 interface CargosPorTipo {
@@ -76,8 +84,8 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
-  @Prop() accountList: string[] = [];
-  // @Prop() accountList: string[] = ['769001587'];
+  // @Prop() accountList: string[] = [];
+  @Prop() accountList: string[] = ['769001587', '805437569', '799704751', '805437569'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -781,12 +789,22 @@ export class MiClaroInteractiveInvoice {
                             {/* cargosDeCuenta section */}
                             {isLoadingDetail ? (
                               <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
-                            ) : (
-                              <div class="charges-item">
-                                <span class="charges-label">Cargos de cuenta / créditos</span>
-                                <span class="charges-amount">{this.formatCurrency(hasCargosDeCuenta ? this.currentBill.cargosDeCuenta : 0)}</span>
-                              </div>
-                            )}
+                            ) : (() => {
+                              if (!hasCargosDeCuenta || !this.currentBill) return null;
+                              const cargosDeCuenta = this.currentBill.cargosDeCuenta;
+                              if (!cargosDeCuenta) return null;
+
+                              const isObject = typeof cargosDeCuenta === 'object' && cargosDeCuenta !== null;
+                              const label = isObject && 'seccion' in cargosDeCuenta ? (cargosDeCuenta as any).seccion : 'Cargos de cuenta / créditos';
+                              const amount = isObject && 'cargo' in cargosDeCuenta ? (cargosDeCuenta as any).cargo : (typeof cargosDeCuenta === 'number' ? cargosDeCuenta : 0);
+
+                              return (
+                                <div class="charges-item">
+                                  <span class="charges-label">{label}</span>
+                                  <span class="charges-amount">{this.formatCurrency(amount)}</span>
+                                </div>
+                              );
+                            })()}
                           </div>
                           <div class="separator"></div>
                         </>
@@ -1045,6 +1063,77 @@ export class MiClaroInteractiveInvoice {
                                   ) : null;
                                 })()}
 
+                                {/* Adjustments by Subscriber Section */}
+                                {(() => {
+                                  const cacheKey = `${this.pendingBill.ban}-${this.pendingBill.cycleRunYear}-${this.pendingBill.cycleRunMonth}-${this.pendingBill.cycleCode}`;
+                                  const billDetail = this.billDetails[cacheKey];
+                                  const ajustesPorSuscriptor = billDetail?.ajustesPorSuscriptor;
+
+                                  if (!ajustesPorSuscriptor || ajustesPorSuscriptor.length === 0) return null;
+
+                                  const totalAjustes = ajustesPorSuscriptor.reduce((sum, ajuste) => sum + ajuste.total, 0);
+
+                                  return (
+                                    <div class="summary-section" data-section-id={`${invoice.id}-subscriber-adjustments`}>
+                                      <div
+                                        class="summary-header"
+                                        onClick={() => this.toggleSummarySection(`${invoice.id}-subscriber-adjustments`)}
+                                      >
+                                        <div class="summary-title-container">
+                                          <span class="summary-title">Ajustes por suscriptor</span>
+                                          <img
+                                            src="/assets/icons/info.png"
+                                            alt="Info"
+                                            class="info-icon summary-info"
+                                            data-tooltip="&lt;strong&gt;Ajustes por suscriptor&lt;/strong&gt;&lt;br/&gt;Ajustes aplicados a cada línea telefónica individual."
+                                          />
+                                        </div>
+                                        <div class="summary-amount-container">
+                                          <span class="summary-amount">{this.formatCurrency(totalAjustes)}</span>
+                                          <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-subscriber-adjustments`] ? 'expanded' : ''}`}>
+                                            <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div class={`summary-content subscriber-content ${this.expandedSummarySection[`${invoice.id}-subscriber-adjustments`] ? 'expanded' : ''}`}>
+                                        {ajustesPorSuscriptor.map((subscriber, subscriberIndex) => {
+                                          const subscriberId = `${invoice.id}-adjustment-sub-${subscriberIndex}`;
+                                          return (
+                                            <div key={subscriberIndex} class="subscribers-detail-wrapper">
+                                              <div class={`subscriber-row ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                                <div class="subscriber-info">
+                                                  <span class="subscriber-number">{subscriber.subscriberNo}</span>
+                                                </div>
+                                                <div class="subscriber-amount">
+                                                  <span class="amount-value">{this.formatCurrency(subscriber.total)}</span>
+                                                  <button
+                                                    class="expand-subscriber"
+                                                    onClick={() => this.toggleSubscriberDetail(subscriberId)}
+                                                  >
+                                                    <span class={`expand-icon ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                                      <img src="/assets/icons/expand-plus.png" alt="Expandir suscriptor" />
+                                                    </span>
+                                                  </button>
+                                                </div>
+                                              </div>
+                                              <div class={`subscriber-detail ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                                <div class="adjustment-items-list">
+                                                  {subscriber.items.map((item, itemIndex) => (
+                                                    <div key={itemIndex} class="adjustment-item-row">
+                                                      <span class="adjustment-item-label">{item.descripcion}</span>
+                                                      <span class="adjustment-item-amount">{this.formatCurrency(item.monto)}</span>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+
                                 {/* Subscriber Charges Section */}
                                 <div class="summary-section" data-section-id={`${invoice.id}-subscribers`}>
                                   <div
@@ -1135,9 +1224,23 @@ export class MiClaroInteractiveInvoice {
 
                                           {/* Display plan details */}
                                           {servicio.detallePlan && (
-                                            <div class="charge-row">
-                                              <span class="charge-label">{servicio.detallePlan.descripcion}</span>
-                                              <span class="charge-amount">{this.formatCurrency(servicio.detallePlan.cargo)}</span>
+                                            <div>
+                                              <div class="charge-row">
+                                                <span class="charge-label">{servicio.detallePlan.descripcion}</span>
+                                                <span class="charge-amount">{this.formatCurrency(servicio.detallePlan.cargo)}</span>
+                                              </div>
+                                              {servicio.detallePlan.detalleCargos && servicio.detallePlan.detalleCargos.descuento !== 0 && (
+                                                <div class="charge-sublist">
+                                                  <div class="charge-subrow">
+                                                    <span class="charge-sublabel">Precio regular</span>
+                                                    <span class="charge-subamount">{this.formatCurrency(servicio.detallePlan.detalleCargos.cargo)}</span>
+                                                  </div>
+                                                  <div class="charge-subrow">
+                                                    <span class="charge-sublabel">Descuento</span>
+                                                    <span class="charge-subamount">-{this.formatCurrency(servicio.detallePlan.detalleCargos.descuento)}</span>
+                                                  </div>
+                                                </div>
+                                              )}
                                             </div>
                                           )}
 
@@ -1196,9 +1299,23 @@ export class MiClaroInteractiveInvoice {
 
                                           {/* Display item details */}
                                           {servicio.detalleItem && servicio.detalleItem.map((item, itemIndex) => (
-                                            <div key={itemIndex} class="charge-row">
-                                              <span class="charge-label">{item.descripcion}</span>
-                                              <span class="charge-amount">{this.formatCurrency(item.cargo)}</span>
+                                            <div key={itemIndex}>
+                                              <div class="charge-row">
+                                                <span class="charge-label">{item.descripcion}</span>
+                                                <span class="charge-amount">{this.formatCurrency(item.cargo)}</span>
+                                              </div>
+                                              {item.detalleCargos && item.detalleCargos.descuento !== 0 && (
+                                                <div class="charge-sublist">
+                                                  <div class="charge-subrow">
+                                                    <span class="charge-sublabel">Precio regular</span>
+                                                    <span class="charge-subamount">{this.formatCurrency(item.detalleCargos.cargo)}</span>
+                                                  </div>
+                                                  <div class="charge-subrow">
+                                                    <span class="charge-sublabel">Descuento</span>
+                                                    <span class="charge-subamount">-{this.formatCurrency(item.detalleCargos.descuento)}</span>
+                                                  </div>
+                                                </div>
+                                              )}
                                             </div>
                                           ))}
 
