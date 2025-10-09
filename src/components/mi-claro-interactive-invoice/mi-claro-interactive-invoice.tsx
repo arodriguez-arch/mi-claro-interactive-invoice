@@ -1511,13 +1511,193 @@ export class MiClaroInteractiveInvoice {
                                     <p class="loading-text">Cargando detalles de factura...</p>
                                   </div>
                                 )}
-                                {/* Map through all phone numbers in this specific bill */}
-                                {!this.loadingHistoryDetail[billId] && this.previousBills[index] && this.previousBills[index].detalle && this.previousBills[index].detalle.map((detail, detailIndex) => {
-                                  const subscriberId = `${billId}-sub-${detailIndex}`;
-                                  return (
-                                    <>
-                                      {/* Subscriber details row */}
-                                      <div class="subscriber-row">
+                                {/* Summary sections */}
+                                {!this.loadingHistoryDetail[billId] && this.previousBills[index] && (
+                                  <div class="bill-summary-sections">
+                                    {/* Payment Details Section */}
+                                    {this.previousBills[index] && this.previousBills[index].pagosRecibidos > 0 && (
+                                      <div class="summary-section" data-section-id={`${billId}-payments`}>
+                                        <div
+                                          class="summary-header"
+                                          onClick={() => this.toggleSummarySection(`${billId}-payments`)}
+                                        >
+                                          <div class="summary-title-container">
+                                            <span class="summary-title">Detalle de pagos recibidos</span>
+                                            <img
+                                              src="/assets/icons/info.png"
+                                              alt="Info"
+                                              class="info-icon summary-info"
+                                              data-tooltip="&lt;strong&gt;Pagos recibidos&lt;/strong&gt;&lt;br/&gt;Historial de pagos realizados en tu cuenta durante el período de facturación actual."
+                                            />
+                                          </div>
+                                          <div class="summary-amount-container">
+                                            <span class="summary-amount">{this.formatCurrency(this.previousBills[index].pagosRecibidos)}</span>
+                                            <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-payments`] ? 'expanded' : ''}`}>
+                                              <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <div class={`summary-content ${this.expandedSummarySection[`${billId}-payments`] ? 'expanded' : ''}`}>
+                                          {/* Get the bill details from cache */}
+                                          {(() => {
+                                            const historyBill = this.historyBills[index];
+                                            const cacheKey = `${historyBill.ban}-${historyBill.cycleRunYear}-${historyBill.cycleRunMonth}-${historyBill.cycleCode}`;
+                                            const billDetail = this.billDetails[cacheKey];
+                                            return billDetail?.metodosPago?.map((pago, pagoIndex) => (
+                                              <div key={pagoIndex} class="summary-item payment-item">
+                                                <span class="summary-item-label">{pago.metodo}</span>
+                                                <span class="summary-item-date">{this.formatDate(pago.fecha)}</span>
+                                                <span class="summary-item-amount">{this.formatCurrency(pago.monto)}</span>
+                                              </div>
+                                            ));
+                                          })()}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Adjustments Section */}
+                                    {(() => {
+                                      const historyBill = this.historyBills[index];
+                                      const cacheKey = `${historyBill.ban}-${historyBill.cycleRunYear}-${historyBill.cycleRunMonth}-${historyBill.cycleCode}`;
+                                      const billDetail = this.billDetails[cacheKey];
+                                      return billDetail?.resumenAjustes?.totalNeto && billDetail.resumenAjustes.totalNeto !== 0 ? (
+                                        <div class="summary-section" data-section-id={`${billId}-adjustments`}>
+                                          <div
+                                            class="summary-header"
+                                            onClick={() => this.toggleSummarySection(`${billId}-adjustments`)}
+                                          >
+                                            <div class="summary-title-container">
+                                              <span class="summary-title">Detalle de ajustes</span>
+                                              <img
+                                                src="/assets/icons/info.png"
+                                                alt="Info"
+                                                class="info-icon summary-info"
+                                                data-tooltip="&lt;strong&gt;Ajustes&lt;/strong&gt;&lt;br/&gt;Créditos y ajustes aplicados a tu cuenta que modifican el balance total."
+                                              />
+                                            </div>
+                                            <div class="summary-amount-container">
+                                              <span class="summary-amount">{this.formatCurrency(billDetail.resumenAjustes.totalNeto)}</span>
+                                              <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-adjustments`] ? 'expanded' : ''}`}>
+                                                <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div class={`summary-content ${this.expandedSummarySection[`${billId}-adjustments`] ? 'expanded' : ''}`}>
+                                            {billDetail.resumenAjustes.items?.map((ajuste, ajusteIndex) => (
+                                              <div key={ajusteIndex} class="summary-item adjustment-item">
+                                                <span class="summary-item-label">{ajuste.descripcion || 'PRICE PLAN CHANGE'}</span>
+                                                <span class="summary-item-amount-right">
+                                                  <span style={{ fontWeight: '600' }}>{this.formatCurrency(ajuste.total)}</span>
+                                                </span>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      ) : null;
+                                    })()}
+
+                                    {/* Adjustments by Subscriber Section */}
+                                    {(() => {
+                                      const historyBill = this.historyBills[index];
+                                      const cacheKey = `${historyBill.ban}-${historyBill.cycleRunYear}-${historyBill.cycleRunMonth}-${historyBill.cycleCode}`;
+                                      const billDetail = this.billDetails[cacheKey];
+                                      const ajustesPorSuscriptor = billDetail?.ajustesPorSuscriptor;
+
+                                      if (!ajustesPorSuscriptor || ajustesPorSuscriptor.length === 0) return null;
+
+                                      const totalAjustes = ajustesPorSuscriptor.reduce((sum, ajuste) => sum + ajuste.total, 0);
+
+                                      return (
+                                        <div class="summary-section" data-section-id={`${billId}-subscriber-adjustments`}>
+                                          <div
+                                            class="summary-header"
+                                            onClick={() => this.toggleSummarySection(`${billId}-subscriber-adjustments`)}
+                                          >
+                                            <div class="summary-title-container">
+                                              <span class="summary-title">Ajustes por suscriptor</span>
+                                              <img
+                                                src="/assets/icons/info.png"
+                                                alt="Info"
+                                                class="info-icon summary-info"
+                                                data-tooltip="&lt;strong&gt;Ajustes por suscriptor&lt;/strong&gt;&lt;br/&gt;Ajustes aplicados a cada línea telefónica individual."
+                                              />
+                                            </div>
+                                            <div class="summary-amount-container">
+                                              <span class="summary-amount">{this.formatCurrency(totalAjustes)}</span>
+                                              <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-subscriber-adjustments`] ? 'expanded' : ''}`}>
+                                                <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div class={`summary-content subscriber-content ${this.expandedSummarySection[`${billId}-subscriber-adjustments`] ? 'expanded' : ''}`}>
+                                            {ajustesPorSuscriptor.map((subscriber, subscriberIndex) => {
+                                              const subscriberId = `${billId}-adjustment-sub-${subscriberIndex}`;
+                                              return (
+                                                <div key={subscriberIndex} class="subscribers-detail-wrapper">
+                                                  <div class={`subscriber-row ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                                    <div class="subscriber-info">
+                                                      <span class="subscriber-number">{subscriber.subscriberNo}</span>
+                                                    </div>
+                                                    <div class="subscriber-amount">
+                                                      <span class="amount-value">{this.formatCurrency(subscriber.total)}</span>
+                                                      <button
+                                                        class="expand-subscriber"
+                                                        onClick={() => this.toggleSubscriberDetail(subscriberId)}
+                                                      >
+                                                        <span class={`expand-icon ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                                          <img src="/assets/icons/expand-plus.png" alt="Expandir suscriptor" />
+                                                        </span>
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                  <div class={`subscriber-detail ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
+                                                    <div class="adjustment-items-list">
+                                                      {subscriber.items.map((item, itemIndex) => (
+                                                        <div key={itemIndex} class="adjustment-item-row">
+                                                          <span class="adjustment-item-label">{item.descripcion}</span>
+                                                          <span class="adjustment-item-amount">{this.formatCurrency(item.monto)}</span>
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      );
+                                    })()}
+
+                                    {/* Subscriber Charges Section */}
+                                    <div class="summary-section" data-section-id={`${billId}-subscribers`}>
+                                      <div
+                                        class="summary-header"
+                                        onClick={() => this.toggleSummarySection(`${billId}-subscribers`)}
+                                      >
+                                        <div class="summary-title-container">
+                                          <span class="summary-title">Detalle de cargos por suscriptores</span>
+                                          <img
+                                            src="/assets/icons/info.png"
+                                            alt="Info"
+                                            class="info-icon summary-info"
+                                            data-tooltip="&lt;strong&gt;Cargos por suscriptores&lt;/strong&gt;&lt;br/&gt;Detalle de cargos aplicados a cada línea telefónica asociada a tu cuenta."
+                                          />
+                                        </div>
+                                        <div class="summary-amount-container">
+                                          <span class="summary-amount">{this.formatCurrency(this.previousBills[index].totalActual || 0)}</span>
+                                          <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-subscribers`] ? 'expanded' : ''}`}>
+                                            <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div class={`summary-content subscriber-content ${this.expandedSummarySection[`${billId}-subscribers`] ? 'expanded' : ''}`}>
+                                        {/* Map through all phone numbers in this specific bill */}
+                                        {this.previousBills[index] && this.previousBills[index].detalle && this.previousBills[index].detalle.map((detail, detailIndex) => {
+                                          const subscriberId = `${billId}-sub-${detailIndex}`;
+                                          return (
+                                            <div class="subscribers-detail-wrapper">
+                                              {/* Subscriber details row */}
+                                              <div class={`subscriber-row ${this.expandedSubscriberId === subscriberId ? 'expanded' : ''}`}>
                                         <div class="subscriber-info">
                                           <span class="subscriber-number">{detail.numero}</span>
                                         </div>
@@ -1571,14 +1751,205 @@ export class MiClaroInteractiveInvoice {
                                                 </div>
                                                 <div class={`accordion-content ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
                                                   <div class="charges-detail-list">
-                                                    {/* Same detail content as current invoice */}
-                                                    {servicio.descripcion && (
-                                                      <div class="charge-row">
-                                                        <span class="charge-label">{servicio.descripcion}</span>
-                                                        <span class="charge-amount">{typeof servicio.cargo === 'number' ? this.formatCurrency(servicio.cargo) : ''}</span>
+                                                    {
+                                                      seccion === 'Cargos Mensuales' &&
+                                                      <h5 class="tipo-linea">{detail.tipoLinea}</h5>
+                                                    }
+
+                                                    {/* Display plan details */}
+                                                    {servicio.detallePlan && (
+                                                      <div>
+                                                        <div class="charge-row">
+                                                          <span class="charge-label">{servicio.detallePlan.descripcion}</span>
+                                                          <span class="charge-amount">{this.formatCurrency(servicio.detallePlan.cargo)}</span>
+                                                        </div>
+                                                        {servicio.detallePlan.detalleCargos && servicio.detallePlan.detalleCargos.descuento !== 0 && (
+                                                          <div class="charge-sublist">
+                                                            <div class="charge-subrow">
+                                                              <span class="charge-sublabel">Precio regular</span>
+                                                              <span class="charge-subamount">{this.formatCurrency(servicio.detallePlan.detalleCargos.cargo)}</span>
+                                                            </div>
+                                                            <div class="charge-subrow">
+                                                              <span class="charge-sublabel">Descuento</span>
+                                                              <span class="charge-subamount">-{this.formatCurrency(servicio.detallePlan.detalleCargos.descuento)}</span>
+                                                            </div>
+                                                          </div>
+                                                        )}
                                                       </div>
                                                     )}
-                                                    {/* ... rest of the detail content similar to current invoice ... */}
+
+                                                    {/* Display equipment details */}
+                                                    {servicio.detalleEquipos && servicio.detalleEquipos.items && servicio.detalleEquipos.items.map((equipo, equipoIndex) => {
+                                                      // Determine the icon based on equipment type
+                                                      let equipmentIcon = '/assets/icons/mobile.png';
+                                                      if (equipo.tipoEquipo) {
+                                                        const tipo = equipo.tipoEquipo.toLowerCase();
+                                                        if (tipo === 'accessory') {
+                                                          equipmentIcon = '/assets/icons/accesorios.svg';
+                                                        } else if (tipo === 'tablets' || tipo === 'tablet') {
+                                                          equipmentIcon = '/assets/icons/tablets.png';
+                                                        } else if (tipo === 'mobile') {
+                                                          equipmentIcon = '/assets/icons/mobile.png';
+                                                        }
+                                                      }
+
+                                                      return (
+                                                        <div key={equipoIndex}>
+                                                          <div class="charge-row equipment-row">
+                                                            <div class="equipment-info">
+                                                              <img src={equipmentIcon} alt={equipo.tipoEquipo} class="equipment-type-icon" />
+                                                              <div class="equipment-details">
+                                                                <span class="charge-label">{equipo.descripcion}</span>
+                                                                {equipo.equipmentInstallmentMessage && (
+                                                                  <span class="equipment-installment-message">{equipo.equipmentInstallmentMessage}</span>
+                                                                )}
+                                                              </div>
+                                                            </div>
+                                                            <span class="charge-amount">{this.formatCurrency(equipo.cargo)}</span>
+                                                          </div>
+                                                          {equipo.detalleCargos && equipo.detalleCargos.descuento !== 0 && (
+                                                            <div class="charge-sublist">
+                                                              <div class="charge-subrow">
+                                                                <span class="charge-sublabel">Precio regular</span>
+                                                                <span class="charge-subamount">{this.formatCurrency(equipo.detalleCargos.cargo)}</span>
+                                                              </div>
+                                                              <div class="charge-subrow">
+                                                                <span class="charge-sublabel">Descuento</span>
+                                                                <span class="charge-subamount">-{this.formatCurrency(equipo.detalleCargos.descuento)}</span>
+                                                              </div>
+                                                            </div>
+                                                          )}
+                                                        </div>
+                                                      );
+                                                    })}
+
+                                                    {/* Display tax details */}
+                                                    {servicio.detalleTaxes && servicio.detalleTaxes.map((tax, taxIndex) => (
+                                                      <div key={taxIndex} class="charge-row">
+                                                        <span class="charge-label">{tax.descripcion}</span>
+                                                        <span class="charge-amount">{this.formatCurrency(tax.cargo)}</span>
+                                                      </div>
+                                                    ))}
+
+                                                    {/* Display item details */}
+                                                    {servicio.detalleItem && servicio.detalleItem.map((item, itemIndex) => (
+                                                      <div key={itemIndex}>
+                                                        <div class="charge-row">
+                                                          <span class="charge-label">{item.descripcion}</span>
+                                                          <span class="charge-amount">{this.formatCurrency(item.cargo)}</span>
+                                                        </div>
+                                                        {item.detalleCargos && item.detalleCargos.descuento !== 0 && (
+                                                          <div class="charge-sublist">
+                                                            <div class="charge-subrow">
+                                                              <span class="charge-sublabel">Precio regular</span>
+                                                              <span class="charge-subamount">{this.formatCurrency(item.detalleCargos.cargo)}</span>
+                                                            </div>
+                                                            <div class="charge-subrow">
+                                                              <span class="charge-sublabel">Descuento</span>
+                                                              <span class="charge-subamount">-{this.formatCurrency(item.detalleCargos.descuento)}</span>
+                                                            </div>
+                                                          </div>
+                                                        )}
+                                                      </div>
+                                                    ))}
+
+                                                    {/* Keep old consumption details for fallback */}
+                                                    {servicio.detalleConsumo && (
+                                                      <>
+                                                        {servicio.detalleConsumo.llamadas && (
+                                                          <>
+                                                            <div class="charge-row">
+                                                              <span class="charge-label">Llamadas</span>
+                                                              <span class="charge-amount">$0.00</span>
+                                                            </div>
+                                                            <div class="charge-sublist">
+                                                              {servicio.detalleConsumo.llamadas.locales && (
+                                                                <div class="charge-subrow">
+                                                                  <span class="charge-sublabel">Locales: {servicio.detalleConsumo.llamadas.locales.unidades} llamadas - {servicio.detalleConsumo.llamadas.locales.minutos} minutos</span>
+                                                                  <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.llamadas.locales.cargo)}</span>
+                                                                </div>
+                                                              )}
+                                                              {servicio.detalleConsumo.llamadas.largaDistancia && servicio.detalleConsumo.llamadas.largaDistancia.unidades > 0 && (
+                                                                <div class="charge-subrow">
+                                                                  <span class="charge-sublabel">Larga distancia: {servicio.detalleConsumo.llamadas.largaDistancia.unidades} llamadas - {servicio.detalleConsumo.llamadas.largaDistancia.minutos} minutos</span>
+                                                                  <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.llamadas.largaDistancia.cargo)}</span>
+                                                                </div>
+                                                              )}
+                                                            </div>
+                                                          </>
+                                                        )}
+
+                                                        {/* Messages section */}
+                                                        {servicio.detalleConsumo.mensajes && (
+                                                          <>
+                                                            <div class="charge-divider"></div>
+                                                            <div class="charge-row">
+                                                              <span class="charge-label">Mensajes</span>
+                                                              <span class="charge-amount">$0.00</span>
+                                                            </div>
+                                                            <div class="charge-sublist">
+                                                              {servicio.detalleConsumo.mensajes.texto && servicio.detalleConsumo.mensajes.texto.unidades > 0 && (
+                                                                <div class="charge-subrow">
+                                                                  <span class="charge-sublabel">Mensajes de texto: {servicio.detalleConsumo.mensajes.texto.unidades}</span>
+                                                                  <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.mensajes.texto.cargo)}</span>
+                                                                </div>
+                                                              )}
+                                                            </div>
+                                                          </>
+                                                        )}
+
+                                                        {/* Data section */}
+                                                        {servicio.detalleConsumo.dataVolume && servicio.detalleConsumo.dataVolume.data && (
+                                                          <>
+                                                            <div class="charge-divider"></div>
+                                                            <div class="charge-row">
+                                                              <span class="charge-label">Datos</span>
+                                                              <span class="charge-amount">$0.00</span>
+                                                            </div>
+                                                            <div class="charge-sublist">
+                                                              <div class="charge-subrow">
+                                                                <span class="charge-sublabel">Volumen de datos: {(servicio.detalleConsumo.dataVolume.data.unidades / 1024 / 1024).toFixed(2)} MB</span>
+                                                                <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.dataVolume.data.cargo)}</span>
+                                                              </div>
+                                                            </div>
+                                                          </>
+                                                        )}
+                                                      </>
+                                                    )}
+
+                                                    {/* Equipment details */}
+                                                    {servicio.detalleEquipos && servicio.detalleEquipos.descripcion && (
+                                                      <>
+                                                        <div class="charge-row">
+                                                          <span class="charge-label">{servicio.detalleEquipos.descripcion}</span>
+                                                          <span class="charge-amount">{this.formatCurrency(servicio.detalleEquipos.cargo)}</span>
+                                                        </div>
+                                                        {servicio.detalleEquipos.detalleCargos && servicio.detalleEquipos.detalleCargos.descuento && servicio.detalleEquipos.detalleCargos.descuento !== 0 && (
+                                                          <div class="charge-sublist">
+                                                            <div class="charge-subrow">
+                                                              <span class="charge-sublabel">Precio regular</span>
+                                                              <span class="charge-subamount">{this.formatCurrency(servicio.detalleEquipos.detalleCargos.cargo)}</span>
+                                                            </div>
+                                                            <div class="charge-subrow">
+                                                              <span class="charge-sublabel">Descuento</span>
+                                                              <span class="charge-subamount">-{this.formatCurrency(servicio.detalleEquipos.detalleCargos.descuento)}</span>
+                                                            </div>
+                                                          </div>
+                                                        )}
+                                                      </>
+                                                    )}
+
+                                                    {/* Tax details */}
+                                                    {servicio.detalle && (
+                                                      <div class="charge-sublist">
+                                                        {Object.entries(servicio.detalle).map(([key, value]) => (
+                                                          <div class="charge-subrow" key={key}>
+                                                            <span class="charge-sublabel">{key}</span>
+                                                            <span class="charge-subamount">{this.formatCurrency(value as number)}</span>
+                                                          </div>
+                                                        ))}
+                                                      </div>
+                                                    )}
                                                   </div>
                                                 </div>
                                               </div>
@@ -1586,9 +1957,13 @@ export class MiClaroInteractiveInvoice {
                                           })}
                                         </div>
                                       </div>
-                                    </>
-                                  );
-                                })}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
 
                                 {/* Actions row */}
                                 <div class="invoice-actions">
