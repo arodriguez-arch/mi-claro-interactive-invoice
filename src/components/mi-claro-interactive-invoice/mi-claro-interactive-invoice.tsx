@@ -38,6 +38,10 @@ interface BillData {
       monto: number;
     }>;
   }>;
+  ban?: number;
+  cycleRunYear?: number;
+  cycleRunMonth?: number;
+  cycleCode?: number;
 }
 
 interface CargosPorTipo {
@@ -231,6 +235,7 @@ export class MiClaroInteractiveInvoice {
           const updatedBills = [...this.previousBills];
           updatedBills[billIndex] = {
             ...updatedBills[billIndex],
+            ...detailResponse.data.facturas[0],
             detalle: detailResponse.data.facturas[0].detalle || []
           };
           this.previousBills = updatedBills;
@@ -508,14 +513,18 @@ export class MiClaroInteractiveInvoice {
           this.previousBills = this.historyBills.map(bill => ({
             fechaFactura: bill.productionDate,
             fechaVencimiento: bill.billDueDate,
-            balanceAnterior: 0,
-            pagosRecibidos: bill.billStatus === 0 ? 0 : bill.totalDueAmt, // Status 0 = pending
-            ajustes: 0,
+            balanceAnterior: bill.prevBalanceAmt || 0,
+            pagosRecibidos: bill.pymReceivedAmt || 0,
+            ajustes: bill.adjAppliedAmt || 0,
             totalActual: bill.totalDueAmt,
             detalle: [],
             metodosPago: [],
             cargosDeCuenta: null,
-            cargosPorTipo: []
+            cargosPorTipo: [],
+            ban: bill.ban,
+            cycleRunYear: bill.cycleRunYear,
+            cycleRunMonth: bill.cycleRunMonth,
+            cycleCode: bill.cycleCode
           }));
 
           // Create invoices for display - only show the first bill in "Mi factura" tab
@@ -1540,8 +1549,8 @@ export class MiClaroInteractiveInvoice {
                                         <div class={`summary-content ${this.expandedSummarySection[`${billId}-payments`] ? 'expanded' : ''}`}>
                                           {/* Get the bill details from cache */}
                                           {(() => {
-                                            const historyBill = this.historyBills[index];
-                                            const cacheKey = `${historyBill.ban}-${historyBill.cycleRunYear}-${historyBill.cycleRunMonth}-${historyBill.cycleCode}`;
+                                            const previousBill = this.previousBills[index];
+                                            const cacheKey = `${previousBill.ban}-${previousBill.cycleRunYear}-${previousBill.cycleRunMonth}-${previousBill.cycleCode}`;
                                             const billDetail = this.billDetails[cacheKey];
                                             return billDetail?.metodosPago?.map((pago, pagoIndex) => (
                                               <div key={pagoIndex} class="summary-item payment-item">
@@ -1557,8 +1566,8 @@ export class MiClaroInteractiveInvoice {
 
                                     {/* Adjustments Section */}
                                     {(() => {
-                                      const historyBill = this.historyBills[index];
-                                      const cacheKey = `${historyBill.ban}-${historyBill.cycleRunYear}-${historyBill.cycleRunMonth}-${historyBill.cycleCode}`;
+                                      const previousBill = this.previousBills[index];
+                                      const cacheKey = `${previousBill.ban}-${previousBill.cycleRunYear}-${previousBill.cycleRunMonth}-${previousBill.cycleCode}`;
                                       const billDetail = this.billDetails[cacheKey];
                                       return billDetail?.resumenAjustes?.totalNeto && billDetail.resumenAjustes.totalNeto !== 0 ? (
                                         <div class="summary-section" data-section-id={`${billId}-adjustments`}>
@@ -1598,8 +1607,8 @@ export class MiClaroInteractiveInvoice {
 
                                     {/* Adjustments by Subscriber Section */}
                                     {(() => {
-                                      const historyBill = this.historyBills[index];
-                                      const cacheKey = `${historyBill.ban}-${historyBill.cycleRunYear}-${historyBill.cycleRunMonth}-${historyBill.cycleCode}`;
+                                      const previousBill = this.previousBills[index];
+                                      const cacheKey = `${previousBill.ban}-${previousBill.cycleRunYear}-${previousBill.cycleRunMonth}-${previousBill.cycleCode}`;
                                       const billDetail = this.billDetails[cacheKey];
                                       const ajustesPorSuscriptor = billDetail?.ajustesPorSuscriptor;
 

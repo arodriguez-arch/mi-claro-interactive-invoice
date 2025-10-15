@@ -917,7 +917,7 @@
 }
 
 .invoice-detail.expanded {
-  max-height: 1000px;
+  max-height: 3000px;
   transition: max-height 0.3s ease-in;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -1670,7 +1670,7 @@
 
   /* Adjust invoice detail for mobile */
   .invoice-detail.expanded {
-    max-height: 2000px;
+    max-height: 4000px;
   }
 
   .detail-inner {
