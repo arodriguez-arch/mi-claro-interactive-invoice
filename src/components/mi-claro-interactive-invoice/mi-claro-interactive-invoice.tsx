@@ -3,59 +3,17 @@ import { BillService, Environment, BillApiResponse, BillForecastResponse } from 
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
-interface Invoice {
-  id: string;
-  title: string;
-  date: string;
-  dueDate: string;
-  amount: string;
-  status: string;
-}
+// Import types
+import { Invoice, BillData, AccountData } from './types/invoice-types';
 
-interface BillDetail {
-  numero: string;
-  total: number;
-  tipoLinea: string;
-  detalleServicios: any[];
-}
+// Import utility functions
+import { formatDate, formatCurrency, getMonthFromDate } from './utils/format-utils';
+import { calculateChartData } from './utils/chart-utils';
 
-interface BillData {
-  fechaFactura: string;
-  fechaVencimiento: string;
-  balanceAnterior: number;
-  pagosRecibidos: number;
-  ajustes: number;
-  totalActual: number;
-  cargosCorrientes?: number;
-  cargosDeCuenta?: number | { seccion: string; cargo: number; detalleCargoCuenta: any[] } | null;
-  detalle: BillDetail[];
-  cargosPorTipo: CargosPorTipo[];
-  metodosPago: any[];
-  ajustesPorSuscriptor?: Array<{
-    subscriberNo: string;
-    total: number;
-    items: Array<{
-      descripcion: string;
-      monto: number;
-    }>;
-  }>;
-  ban?: number;
-  cycleRunYear?: number;
-  cycleRunMonth?: number;
-  cycleCode?: number;
-}
-
-interface CargosPorTipo {
-  cantidadLineas?: number;
-  tipo: string;
-  totalNeto: number;
-}
-
-interface AccountData {
-  cuenta: string;
-  cliente: string;
-  facturas: BillData[];
-}
+// Import functional components
+import { FloatingPill } from './components/FloatingPill';
+import { InvoiceSummaryCard } from './components/InvoiceSummaryCard';
+import { SupportCard } from './components/SupportCard';
 
 @Component({
   tag: 'mi-claro-interactive-invoice',
@@ -302,15 +260,15 @@ export class MiClaroInteractiveInvoice {
 
     if (sectionId.includes('payments')) {
       title = 'Pagos recibidos';
-      amount = this.formatCurrency(this.pendingBill?.pymReceivedAmt || 0);
+      amount = formatCurrency(this.pendingBill?.pymReceivedAmt || 0);
     } else if (sectionId.includes('adjustments')) {
       const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
       const billDetail = this.billDetails[cacheKey];
       title = 'Ajustes';
-      amount = this.formatCurrency(billDetail?.resumenAjustes?.totalNeto || 0);
+      amount = formatCurrency(billDetail?.resumenAjustes?.totalNeto || 0);
     } else if (sectionId.includes('subscribers')) {
       title = 'Cargos por suscriptores';
-      amount = this.formatCurrency(this.currentBill?.totalActual || 0);
+      amount = formatCurrency(this.currentBill?.totalActual || 0);
     }
 
     this.activeFloatingPill = { title, amount, sectionId };
@@ -347,51 +305,6 @@ export class MiClaroInteractiveInvoice {
 
   private handleDownloadBills = () => {
     this.downloadBills.emit();
-  };
-
-  private calculateChartData = (bills: BillData[]): any[] => {
-    if (!this.billForecast || !this.pendingBill) {
-      // Fallback to original behavior if no forecast data
-      if (!bills || bills.length === 0) return [];
-      const months = ['Abril', 'Mayo', 'Siguiente Factura'];
-      const amounts = bills.slice(-3).map(bill => bill.totalActual);
-      const maxAmount = Math.max(...amounts);
-
-      return months.map((month, index) => ({
-        month,
-        amount: amounts[index] || 0,
-        height: amounts[index] ? Math.max((amounts[index] / maxAmount) * 100, 20) : 0,
-        isPending: index === 0,
-        isCurrent: index === 1,
-        isEstimated: index === 2
-      }));
-    }
-
-    // Use forecast data for chart
-    const forecastData = this.billForecast.data;
-    const currentMonth = this.getMonthFromDate(this.pendingBill.productionDate);
-
-    // Calculate previous month
-    const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
-
-    const amounts = [forecastData.prevBill, forecastData.lastBill, forecastData.nextBillEstimate];
-    const months = [
-      this.getMonthName(prevMonth),
-      this.getMonthName(currentMonth),
-      this.getMonthName(nextMonth)
-    ];
-
-    const maxAmount = Math.max(...amounts);
-
-    return months.map((month, index) => ({
-      month,
-      amount: amounts[index] || 0,
-      height: amounts[index] ? Math.max((amounts[index] / maxAmount) * 100, 20) : 0,
-      isPending: index === 0, // Previous bill
-      isCurrent: index === 1,  // Current bill
-      isEstimated: index === 2 // Next bill estimate
-    }));
   };
 
   private handleAccountChange = (event: Event) => {
@@ -449,42 +362,6 @@ export class MiClaroInteractiveInvoice {
 
   // Removed fetchBillsData - now using API directly
 
-  private formatDate = (dateString: string): string => {
-    if (!dateString) return 'Fecha invalida.'
-    const [year, month, day] = dateString.split('-').map(Number);
-    const date = new Date(year, month - 1, day); // month is 0-indexed in Date constructor
-    return date.toLocaleDateString('en-US', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-
-  private formatCurrency = (amount: number | undefined | null): string => {
-    if (amount === undefined || amount === null || isNaN(amount)) {
-      return '$0.00';
-    }
-
-    // check if amount is negative please
-    if (amount < 0) {
-      return `$${Math.abs(amount).toFixed(2)} CR`;
-    }
-
-    return `$${amount.toFixed(2)}`;
-  };
-
-  private getMonthName = (monthNumber: number): string => {
-    const months = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    return months[monthNumber - 1] || 'Mes desconocido';
-  };
-
-  private getMonthFromDate = (dateString: string): number => {
-    const date = new Date(dateString);
-    return date.getMonth() + 1; // getMonth() returns 0-11, we want 1-12
-  };
 
   // Removed mapBillToInvoice - no longer needed with API data
 
@@ -540,9 +417,9 @@ export class MiClaroInteractiveInvoice {
           this.invoices = [{
             id: `bill-0`,
             title: this.customerName || `Cuenta ${this.pendingBill.ban}`,
-            date: this.formatDate(this.pendingBill.productionDate),
-            dueDate: this.formatDate(this.pendingBill.billDueDate),
-            amount: this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.formatCurrency(this.pendingBill.totalDueAmt),
+            date: formatDate(this.pendingBill.productionDate),
+            dueDate: formatDate(this.pendingBill.billDueDate),
+            amount: this.totalAPagar ? formatCurrency(this.totalAPagar) : formatCurrency(this.pendingBill.totalDueAmt),
             status: this.pendingBill.billStatus === 0 ? 'Pendiente' : 'Pagado'
           }];
 
@@ -550,12 +427,12 @@ export class MiClaroInteractiveInvoice {
           this.invoiceData = {
             accountNumber: accountNumber,
             customerName: this.customerName || `Cliente ${accountNumber}`, // Use prop if available
-            dueDate: this.formatDate(this.pendingBill.billDueDate),
-            totalAmount: this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.formatCurrency(this.pendingBill.totalDueAmt),
+            dueDate: formatDate(this.pendingBill.billDueDate),
+            totalAmount: this.totalAPagar ? formatCurrency(this.totalAPagar) : formatCurrency(this.pendingBill.totalDueAmt),
             invoices: this.invoices,
             planDetails: {
               name: 'Plan Móvil',
-              period: `${this.formatDate(this.pendingBill.productionDate)} - ${this.formatDate(this.pendingBill.billDueDate)}`,
+              period: `${formatDate(this.pendingBill.productionDate)} - ${formatDate(this.pendingBill.billDueDate)}`,
               paymentMethod: 'No especificado'
             },
             balanceAnterior: 0,
@@ -564,7 +441,7 @@ export class MiClaroInteractiveInvoice {
           };
 
           // Fetch bill forecast for next month
-          const currentMonth = this.getMonthFromDate(this.pendingBill.productionDate);
+          const currentMonth = getMonthFromDate(this.pendingBill.productionDate);
           const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
           await this.fetchBillForecast(accountNumber, nextMonth);
 
@@ -572,7 +449,7 @@ export class MiClaroInteractiveInvoice {
           const chartBills = billsResponse.data.slice(0, 3).map(bill => ({
             totalActual: bill.totalDueAmt
           }));
-          this.chartData = this.calculateChartData(chartBills as any);
+          this.chartData = calculateChartData(chartBills as any, this.billForecast, this.pendingBill);
         }
       } else {
         // No data from API
@@ -705,207 +582,36 @@ export class MiClaroInteractiveInvoice {
       <div class="invoice-container">
         {/* Floating Pill Indicator - Mobile Only */}
         {this.activeFloatingPill && (
-          <div
-            class="floating-pill"
-            onClick={() => this.scrollToSection(this.activeFloatingPill.sectionId)}
-          >
-            <span class="floating-pill-title">{this.activeFloatingPill.title}</span>
-            <span class="floating-pill-amount">{this.activeFloatingPill.amount}</span>
-          </div>
+          <FloatingPill
+            data={this.activeFloatingPill}
+            onScroll={this.scrollToSection}
+          />
         )}
 
         <div class="invoice-grid">
           {/* First Column Container */}
           <div class="first-column">
             {/* Payment Summary Card */}
-            <div class="card payment-summary">
-              <h2 class="card-title">¡Hola, {this.customerName || this.invoiceData?.customerName}!</h2>
-              <p class="summary-text">Este es el resumen de tu factura actual.</p>
-              <div class="separator"></div>
-              <div class="total-section">
-                <p class="total-label">Total a pagar</p>
-                <p class="total-amount">{this.totalAPagar ? this.formatCurrency(this.totalAPagar) : this.invoiceData?.totalAmount || '$0'}</p>
-              </div>
-              <div class="separator"></div>
+            <InvoiceSummaryCard
+              customerName={this.customerName || this.invoiceData?.customerName}
+              totalAmount={this.totalAPagar ? formatCurrency(this.totalAPagar) : this.invoiceData?.totalAmount || '$0'}
+              showMoreInfo={this.showMoreInfo}
+              pendingBill={this.pendingBill}
+              currentBill={this.currentBill}
+              chartData={this.chartData}
+              autoPayEnabled={this.autoPayEnabled}
+              expandedSummarySection={this.expandedSummarySection}
+              expandedSubscriberId={this.expandedSubscriberId}
+              isLoadingDetail={this.loadingBillDetail['bill-0']}
+              formatCurrency={formatCurrency}
+              formatDate={formatDate}
+              onToggleShowMore={this.toggleShowMore}
+              onToggleAutoPay={this.toggleAutoPay}
+              onPayPendingBills={this.handlePayPendingBills}
+            />
 
-              <div class={`expandable-content ${this.showMoreInfo ? 'expanded' : ''}`}>
-                <div class="expandable-inner">
-                  {/* Bill Summary Fields */}
-                  <div class="bill-summary-section">
-                    <div class="bill-summary-item">
-                      <span class="bill-summary-label">Balance anterior</span>
-                      <span class="bill-summary-amount">{this.formatCurrency(this.pendingBill?.prevBalanceAmt)}</span>
-                    </div>
-                    <div class={`bill-summary-item ${this.expandedSummarySection['bill-0-payments'] ? 'highlighted' : ''}`}>
-                      <span class="bill-summary-label">Pagos recibidos</span>
-                      <span class="bill-summary-amount credit">{this.formatCurrency(this.pendingBill?.pymReceivedAmt)}</span>
-                    </div>
-                    <div class={`bill-summary-item ${this.expandedSummarySection['bill-0-adjustments'] ? 'highlighted' : ''}`}>
-                      <span class="bill-summary-label">Ajustes</span>
-                      <span class="bill-summary-amount credit">{this.formatCurrency(this.pendingBill?.adjAppliedAmt)}</span>
-                    </div>
-                  </div>
-                  <div class="separator"></div>
-
-                  {/* Balance Vencido Section */}
-                  <div class="balance-section">
-                    <p class="balance-label">Balance vencido</p>
-                    <p class="balance-amount">{this.formatCurrency(this.pendingBill?.payNowAmt)}</p>
-                    {this.pendingBill?.payNowAmt > 0 && (
-                      <p class="due-date">Vencimiento: {this.formatDate(this.pendingBill?.payNowDueDate)}</p>
-                    )}
-                  </div>
-                  <div class="separator"></div>
-
-                  {/* Service Charges Section */}
-                  {(() => {
-                    // const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
-                    // const billDetail = this.billDetails[cacheKey];
-                    const isLoadingDetail = this.loadingBillDetail['bill-0'];
-                    const hasCargosPorTipo = this.currentBill?.cargosPorTipo && this.currentBill.cargosPorTipo.length > 0;
-                    const hasCargosDeCuenta = this.currentBill?.cargosDeCuenta !== null && this.currentBill?.cargosDeCuenta !== undefined;
-
-                    // Show section if loading detail OR if there's any data
-                    if (isLoadingDetail || hasCargosPorTipo || hasCargosDeCuenta) {
-                      return (
-                        <>
-                          <div class="charges-section">
-                            <h3 class="charges-title">Cargos por servicios</h3>
-                            {/* cargosPorTipo section */}
-                            {isLoadingDetail ? (
-                              <>
-                                <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
-                                <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
-                              </>
-                            ) : hasCargosPorTipo ? (
-                              this.currentBill.cargosPorTipo.map((cargo, index) => {
-                                // Only highlight if the expanded subscriber's tipoLinea matches this cargo tipo
-                                const isHighlighted = this.expandedSubscriberId &&
-                                  this.expandedSummarySection[`bill-0-subscribers`] &&
-                                  (() => {
-                                    // Extract the detail index from expandedSubscriberId (format: "bill-0-sub-X")
-                                    const match = this.expandedSubscriberId.match(/bill-0-sub-(\d+)/);
-                                    if (match) {
-                                      const detailIndex = parseInt(match[1]);
-                                      const detail = this.currentBill?.detalle?.[detailIndex];
-                                      return detail?.tipoLinea === cargo.tipo;
-                                    }
-                                    return false;
-                                  })();
-                                return (
-                                  <div key={index} class={`charges-item ${isHighlighted ? 'highlighted' : ''}`}>
-                                    <span class="charges-label">
-                                      {cargo.tipo}
-                                      {/*({cargo.cantidadLineas} {cargo.cantidadLineas === 1 ? 'línea' : 'líneas'})*/}
-                                    </span>
-                                    <span class="charges-amount">{this.formatCurrency(cargo.totalNeto)}</span>
-                                  </div>
-                                );
-                              })
-                            ) : null}
-
-                            {/* cargosDeCuenta section */}
-                            {isLoadingDetail ? (
-                              <div class="skeleton skeleton-text" style={{ width: '100%', height: '24px', marginBottom: '8px' }}></div>
-                            ) : (() => {
-                              if (!hasCargosDeCuenta || !this.currentBill) return null;
-                              const cargosDeCuenta = this.currentBill.cargosDeCuenta;
-                              if (!cargosDeCuenta) return null;
-
-                              const isObject = typeof cargosDeCuenta === 'object' && cargosDeCuenta !== null;
-                              const label = isObject && 'seccion' in cargosDeCuenta ? (cargosDeCuenta as any).seccion : 'Cargos de cuenta / créditos';
-                              const amount = isObject && 'cargo' in cargosDeCuenta ? (cargosDeCuenta as any).cargo : (typeof cargosDeCuenta === 'number' ? cargosDeCuenta : 0);
-
-                              return (
-                                <div class="charges-item">
-                                  <span class="charges-label">{label}</span>
-                                  <span class="charges-amount">{this.formatCurrency(amount)}</span>
-                                </div>
-                              );
-                            })()}
-                          </div>
-                          <div class="separator"></div>
-                        </>
-                      );
-                    }
-                    return null;
-                  })()}
-
-                  {/* Chart Section */}
-                  <div class="chart-section">
-                    <h3 class="chart-title">Gastos estimados</h3>
-                    <div class="chart-container">
-                      {this.chartData.map((item, index) => (
-                        <div key={index} class="chart-bar-container">
-                          <div class="chart-bar-wrapper">
-                            <div
-                              class={`chart-bar ${item.isEstimated ? 'estimated' : item.isCurrent ? 'current' : 'pending'}`}
-                              style={{ height: `${item.height}%` }}
-                            ></div>
-                          </div>
-                          <div class="chart-amount">{this.formatCurrency(item.amount)}</div>
-                          <div class="chart-label">{item.month}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Chart Legend */}
-                    <div class="chart-legend">
-                      <div class="legend-item">
-                        <div class="legend-color pending"></div>
-                        <span class="legend-text">Factura anterior</span>
-                      </div>
-                      <div class="legend-item">
-                        <div class="legend-color current"></div>
-                        <span class="legend-text">Factura actual</span>
-                      </div>
-                      <div class="legend-item">
-                        <div class="legend-color estimated"></div>
-                        <span class="legend-text">Estimado próxima factura</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="separator"></div>
-
-                  {/* Auto Pay Section */}
-                  <div class="autopay-section">
-                    <p class="autopay-question">¿Quieres reducir gastos mensuales?</p>
-                    <p class="autopay-description">
-                      <span class="autopay-action">Activa el pago automático</span> y recibe $3 de descuento mensual en tus facturas mensuales.
-                    </p>
-
-                    <div class="autopay-toggle-container">
-                      <span class="toggle-label">Automatizar pago</span>
-                      <div
-                        class={`toggle-switch ${this.autoPayEnabled ? 'enabled' : ''}`}
-                        onClick={this.toggleAutoPay}
-                      >
-                        <div class="toggle-slider"></div>
-                      </div>
-                    </div>
-
-                    <button class="pay-pending-button" onClick={this.handlePayPendingBills}>
-                      Pagar facturas pendientes
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-
-           <div class="toggle-button-container">
-             <button class="toggle-button" onClick={this.toggleShowMore}>
-               {this.showMoreInfo ? 'Ver menos' : 'Ver más'}
-               <span class={`arrow ${this.showMoreInfo ? 'up' : 'down'}`}>▼</span>
-             </button>
-           </div>
-            </div>
-
-            {/* Promotional Card */}
-            <div class="support-card">
-              <div class="promo-border-accent"></div>
-              <img src="/assets/icons/24-hour.png" alt="Soporte" class="support-image" />
-              <button class="support-button" onClick={this.handleGoToSupport}>Ir a soporte</button>
-            </div>
+            {/* Support Card */}
+            <SupportCard onGoToSupport={this.handleGoToSupport} />
           </div>
 
           {/* Second Column Container */}
@@ -1017,7 +723,7 @@ export class MiClaroInteractiveInvoice {
                                         />
                                       </div>
                                       <div class="summary-amount-container">
-                                        <span class="summary-amount">{this.formatCurrency(this.currentBill.pagosRecibidos)}</span>
+                                        <span class="summary-amount">{formatCurrency(this.currentBill.pagosRecibidos)}</span>
                                         <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-payments`] ? 'expanded' : ''}`}>
                                           <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                         </span>
@@ -1031,8 +737,8 @@ export class MiClaroInteractiveInvoice {
                                         return billDetail?.metodosPago?.map((pago, index) => (
                                           <div key={index} class="summary-item payment-item">
                                             <span class="summary-item-label">{pago.metodo}</span>
-                                            <span class="summary-item-date">{this.formatDate(pago.fecha)}</span>
-                                            <span class="summary-item-amount">{this.formatCurrency(pago.monto)}</span>
+                                            <span class="summary-item-date">{formatDate(pago.fecha)}</span>
+                                            <span class="summary-item-amount">{formatCurrency(pago.monto)}</span>
                                           </div>
                                         ));
                                       })()}
@@ -1060,7 +766,7 @@ export class MiClaroInteractiveInvoice {
                                           />
                                         </div>
                                         <div class="summary-amount-container">
-                                          <span class="summary-amount">{this.formatCurrency(billDetail.resumenAjustes.totalNeto)}</span>
+                                          <span class="summary-amount">{formatCurrency(billDetail.resumenAjustes.totalNeto)}</span>
                                           <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-adjustments`] ? 'expanded' : ''}`}>
                                             <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                           </span>
@@ -1071,8 +777,8 @@ export class MiClaroInteractiveInvoice {
                                           <div key={index} class="summary-item adjustment-item">
                                             <span class="summary-item-label">{ajuste.descripcion || 'PRICE PLAN CHANGE'}</span>
                                             <span class="summary-item-amount-right">
-                                              {/*<span style={{ marginRight: '1rem', color: '#666' }}>{this.formatDate(billDetail.fechaFactura || this.pendingBill.productionDate)}</span>*/}
-                                              <span style={{ fontWeight: '600' }}>{this.formatCurrency(ajuste.total)}</span>
+                                              {/*<span style={{ marginRight: '1rem', color: '#666' }}>{formatDate(billDetail.fechaFactura || this.pendingBill.productionDate)}</span>*/}
+                                              <span style={{ fontWeight: '600' }}>{formatCurrency(ajuste.total)}</span>
                                             </span>
                                           </div>
                                         ))}
@@ -1107,7 +813,7 @@ export class MiClaroInteractiveInvoice {
                                           />
                                         </div>
                                         <div class="summary-amount-container">
-                                          <span class="summary-amount">{this.formatCurrency(totalAjustes)}</span>
+                                          <span class="summary-amount">{formatCurrency(totalAjustes)}</span>
                                           <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-subscriber-adjustments`] ? 'expanded' : ''}`}>
                                             <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                           </span>
@@ -1123,7 +829,7 @@ export class MiClaroInteractiveInvoice {
                                                   <span class="subscriber-number">{subscriber.subscriberNo}</span>
                                                 </div>
                                                 <div class="subscriber-amount">
-                                                  <span class="amount-value">{this.formatCurrency(subscriber.total)}</span>
+                                                  <span class="amount-value">{formatCurrency(subscriber.total)}</span>
                                                   <button
                                                     class="expand-subscriber"
                                                     onClick={() => this.toggleSubscriberDetail(subscriberId)}
@@ -1139,7 +845,7 @@ export class MiClaroInteractiveInvoice {
                                                   {subscriber.items.map((item, itemIndex) => (
                                                     <div key={itemIndex} class="adjustment-item-row">
                                                       <span class="adjustment-item-label">{item.descripcion}</span>
-                                                      <span class="adjustment-item-amount">{this.formatCurrency(item.monto)}</span>
+                                                      <span class="adjustment-item-amount">{formatCurrency(item.monto)}</span>
                                                     </div>
                                                   ))}
                                                 </div>
@@ -1168,7 +874,7 @@ export class MiClaroInteractiveInvoice {
                                       />
                                     </div>
                                     <div class="summary-amount-container">
-                                      <span class="summary-amount">{this.formatCurrency(this.currentBill.cargosCorrientes || 0)}</span>
+                                      <span class="summary-amount">{formatCurrency(this.currentBill.cargosCorrientes || 0)}</span>
                                       <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-subscribers`] ? 'expanded' : ''}`}>
                                         <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                       </span>
@@ -1186,7 +892,7 @@ export class MiClaroInteractiveInvoice {
                                       <span class="subscriber-number">{detail.numero}</span>
                                     </div>
                                     <div class="subscriber-amount">
-                                      <span class="amount-value">{this.formatCurrency(detail.total)}</span>
+                                      <span class="amount-value">{formatCurrency(detail.total)}</span>
                                       <button
                                         class="expand-subscriber"
                                         onClick={() => this.toggleSubscriberDetail(subscriberId)}
@@ -1227,7 +933,7 @@ export class MiClaroInteractiveInvoice {
                                           {periodo && <span class="accordion-description">{periodo}</span>}
                                         </div>
                                         <div class="accordion-header-right">
-                                          <span class="accordion-price">{typeof cargo === 'number' ? this.formatCurrency(cargo) : ''}</span>
+                                          <span class="accordion-price">{typeof cargo === 'number' ? formatCurrency(cargo) : ''}</span>
                                           <span class={`accordion-arrow ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
                                             <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="arrow-icon" />
                                           </span>
@@ -1245,17 +951,17 @@ export class MiClaroInteractiveInvoice {
                                             <div>
                                               <div class="charge-row">
                                                 <span class="charge-label">{servicio.detallePlan.descripcion}</span>
-                                                <span class="charge-amount">{this.formatCurrency(servicio.detallePlan.cargo)}</span>
+                                                <span class="charge-amount">{formatCurrency(servicio.detallePlan.cargo)}</span>
                                               </div>
                                               {servicio.detallePlan.detalleCargos && servicio.detallePlan.detalleCargos.descuento !== 0 && (
                                                 <div class="charge-sublist">
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Precio regular</span>
-                                                    <span class="charge-subamount">{this.formatCurrency(servicio.detallePlan.detalleCargos.cargo)}</span>
+                                                    <span class="charge-subamount">{formatCurrency(servicio.detallePlan.detalleCargos.cargo)}</span>
                                                   </div>
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Descuento</span>
-                                                    <span class="charge-subamount">-{this.formatCurrency(servicio.detallePlan.detalleCargos.descuento)}</span>
+                                                    <span class="charge-subamount">-{formatCurrency(servicio.detallePlan.detalleCargos.descuento)}</span>
                                                   </div>
                                                 </div>
                                               )}
@@ -1289,17 +995,17 @@ export class MiClaroInteractiveInvoice {
                                                       )}
                                                     </div>
                                                   </div>
-                                                  <span class="charge-amount">{this.formatCurrency(equipo.cargo)}</span>
+                                                  <span class="charge-amount">{formatCurrency(equipo.cargo)}</span>
                                                 </div>
                                                 {equipo.detalleCargos && equipo.detalleCargos.descuento !== 0 && (
                                                   <div class="charge-sublist">
                                                     <div class="charge-subrow">
                                                       <span class="charge-sublabel">Precio regular</span>
-                                                      <span class="charge-subamount">{this.formatCurrency(equipo.detalleCargos.cargo)}</span>
+                                                      <span class="charge-subamount">{formatCurrency(equipo.detalleCargos.cargo)}</span>
                                                     </div>
                                                     <div class="charge-subrow">
                                                       <span class="charge-sublabel">Descuento</span>
-                                                      <span class="charge-subamount">-{this.formatCurrency(equipo.detalleCargos.descuento)}</span>
+                                                      <span class="charge-subamount">-{formatCurrency(equipo.detalleCargos.descuento)}</span>
                                                     </div>
                                                   </div>
                                                 )}
@@ -1311,7 +1017,7 @@ export class MiClaroInteractiveInvoice {
                                           {servicio.detalleTaxes && servicio.detalleTaxes.map((tax, taxIndex) => (
                                             <div key={taxIndex} class="charge-row">
                                               <span class="charge-label">{tax.descripcion}</span>
-                                              <span class="charge-amount">{this.formatCurrency(tax.cargo)}</span>
+                                              <span class="charge-amount">{formatCurrency(tax.cargo)}</span>
                                             </div>
                                           ))}
 
@@ -1320,17 +1026,17 @@ export class MiClaroInteractiveInvoice {
                                             <div key={itemIndex}>
                                               <div class="charge-row">
                                                 <span class="charge-label">{item.descripcion}</span>
-                                                <span class="charge-amount">{this.formatCurrency(item.cargo)}</span>
+                                                <span class="charge-amount">{formatCurrency(item.cargo)}</span>
                                               </div>
                                               {item.detalleCargos && item.detalleCargos.descuento !== 0 && (
                                                 <div class="charge-sublist">
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Precio regular</span>
-                                                    <span class="charge-subamount">{this.formatCurrency(item.detalleCargos.cargo)}</span>
+                                                    <span class="charge-subamount">{formatCurrency(item.detalleCargos.cargo)}</span>
                                                   </div>
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Descuento</span>
-                                                    <span class="charge-subamount">-{this.formatCurrency(item.detalleCargos.descuento)}</span>
+                                                    <span class="charge-subamount">-{formatCurrency(item.detalleCargos.descuento)}</span>
                                                   </div>
                                                 </div>
                                               )}
@@ -1350,13 +1056,13 @@ export class MiClaroInteractiveInvoice {
                                                     {servicio.detalleConsumo.llamadas.locales && (
                                                       <div class="charge-subrow">
                                                         <span class="charge-sublabel">Locales: {servicio.detalleConsumo.llamadas.locales.unidades} llamadas - {servicio.detalleConsumo.llamadas.locales.minutos} minutos</span>
-                                                        <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.llamadas.locales.cargo)}</span>
+                                                        <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.llamadas.locales.cargo)}</span>
                                                       </div>
                                                     )}
                                                     {servicio.detalleConsumo.llamadas.largaDistancia && servicio.detalleConsumo.llamadas.largaDistancia.unidades > 0 && (
                                                       <div class="charge-subrow">
                                                         <span class="charge-sublabel">Larga distancia: {servicio.detalleConsumo.llamadas.largaDistancia.unidades} llamadas - {servicio.detalleConsumo.llamadas.largaDistancia.minutos} minutos</span>
-                                                        <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.llamadas.largaDistancia.cargo)}</span>
+                                                        <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.llamadas.largaDistancia.cargo)}</span>
                                                       </div>
                                                     )}
                                                   </div>
@@ -1375,7 +1081,7 @@ export class MiClaroInteractiveInvoice {
                                                     {servicio.detalleConsumo.mensajes.texto && servicio.detalleConsumo.mensajes.texto.unidades > 0 && (
                                                       <div class="charge-subrow">
                                                         <span class="charge-sublabel">Mensajes de texto: {servicio.detalleConsumo.mensajes.texto.unidades}</span>
-                                                        <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.mensajes.texto.cargo)}</span>
+                                                        <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.mensajes.texto.cargo)}</span>
                                                       </div>
                                                     )}
                                                   </div>
@@ -1393,7 +1099,7 @@ export class MiClaroInteractiveInvoice {
                                                   <div class="charge-sublist">
                                                     <div class="charge-subrow">
                                                       <span class="charge-sublabel">Volumen de datos: {(servicio.detalleConsumo.dataVolume.data.unidades / 1024 / 1024).toFixed(2)} MB</span>
-                                                      <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.dataVolume.data.cargo)}</span>
+                                                      <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.dataVolume.data.cargo)}</span>
                                                     </div>
                                                   </div>
                                                 </>
@@ -1406,17 +1112,17 @@ export class MiClaroInteractiveInvoice {
                                             <>
                                               <div class="charge-row">
                                                 <span class="charge-label">{servicio.detalleEquipos.descripcion}</span>
-                                                <span class="charge-amount">{this.formatCurrency(servicio.detalleEquipos.cargo)}</span>
+                                                <span class="charge-amount">{formatCurrency(servicio.detalleEquipos.cargo)}</span>
                                               </div>
                                               {servicio.detalleEquipos.detalleCargos && servicio.detalleEquipos.detalleCargos.descuento && servicio.detalleEquipos.detalleCargos.descuento !== 0 && (
                                                 <div class="charge-sublist">
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Precio regular</span>
-                                                    <span class="charge-subamount">{this.formatCurrency(servicio.detalleEquipos.detalleCargos.cargo)}</span>
+                                                    <span class="charge-subamount">{formatCurrency(servicio.detalleEquipos.detalleCargos.cargo)}</span>
                                                   </div>
                                                   <div class="charge-subrow">
                                                     <span class="charge-sublabel">Descuento</span>
-                                                    <span class="charge-subamount">-{this.formatCurrency(servicio.detalleEquipos.detalleCargos.descuento)}</span>
+                                                    <span class="charge-subamount">-{formatCurrency(servicio.detalleEquipos.detalleCargos.descuento)}</span>
                                                   </div>
                                                 </div>
                                               )}
@@ -1429,7 +1135,7 @@ export class MiClaroInteractiveInvoice {
                                               {Object.entries(servicio.detalle).map(([key, value]) => (
                                                 <div class="charge-subrow" key={key}>
                                                   <span class="charge-sublabel">{key}</span>
-                                                  <span class="charge-subamount">{this.formatCurrency(value as number)}</span>
+                                                  <span class="charge-subamount">{formatCurrency(value as number)}</span>
                                                 </div>
                                               ))}
                                             </div>
@@ -1496,9 +1202,9 @@ export class MiClaroInteractiveInvoice {
                         return (
                           <div key={billId} class={`table-row-container ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>
                             <div class="table-row">
-                              <div class="table-cell cell-bold" data-name={customerName} data-date={this.formatDate(bill.fechaFactura)}>{customerName}</div>
-                              <div class="table-cell">{this.formatDate(bill.fechaFactura)}</div>
-                              <div class="table-cell cell-amount">{this.formatCurrency(bill.totalActual)}</div>
+                              <div class="table-cell cell-bold" data-name={customerName} data-date={formatDate(bill.fechaFactura)}>{customerName}</div>
+                              <div class="table-cell">{formatDate(bill.fechaFactura)}</div>
+                              <div class="table-cell cell-amount">{formatCurrency(bill.totalActual)}</div>
                               <div class="table-cell">
                                 <span class={`status ${isPaid ? 'pagada' : 'vencida'}`}>
                                   {isPaid ? 'Pagada' : 'Vencida'}
@@ -1549,7 +1255,7 @@ export class MiClaroInteractiveInvoice {
                                             />
                                           </div>
                                           <div class="summary-amount-container">
-                                            <span class="summary-amount">{this.formatCurrency(this.previousBills[index].pagosRecibidos)}</span>
+                                            <span class="summary-amount">{formatCurrency(this.previousBills[index].pagosRecibidos)}</span>
                                             <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-payments`] ? 'expanded' : ''}`}>
                                               <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                             </span>
@@ -1564,8 +1270,8 @@ export class MiClaroInteractiveInvoice {
                                             return billDetail?.metodosPago?.map((pago, pagoIndex) => (
                                               <div key={pagoIndex} class="summary-item payment-item">
                                                 <span class="summary-item-label">{pago.metodo}</span>
-                                                <span class="summary-item-date">{this.formatDate(pago.fecha)}</span>
-                                                <span class="summary-item-amount">{this.formatCurrency(pago.monto)}</span>
+                                                <span class="summary-item-date">{formatDate(pago.fecha)}</span>
+                                                <span class="summary-item-amount">{formatCurrency(pago.monto)}</span>
                                               </div>
                                             ));
                                           })()}
@@ -1594,7 +1300,7 @@ export class MiClaroInteractiveInvoice {
                                               />
                                             </div>
                                             <div class="summary-amount-container">
-                                              <span class="summary-amount">{this.formatCurrency(billDetail.resumenAjustes.totalNeto)}</span>
+                                              <span class="summary-amount">{formatCurrency(billDetail.resumenAjustes.totalNeto)}</span>
                                               <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-adjustments`] ? 'expanded' : ''}`}>
                                                 <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                               </span>
@@ -1605,7 +1311,7 @@ export class MiClaroInteractiveInvoice {
                                               <div key={ajusteIndex} class="summary-item adjustment-item">
                                                 <span class="summary-item-label">{ajuste.descripcion || 'PRICE PLAN CHANGE'}</span>
                                                 <span class="summary-item-amount-right">
-                                                  <span style={{ fontWeight: '600' }}>{this.formatCurrency(ajuste.total)}</span>
+                                                  <span style={{ fontWeight: '600' }}>{formatCurrency(ajuste.total)}</span>
                                                 </span>
                                               </div>
                                             ))}
@@ -1641,7 +1347,7 @@ export class MiClaroInteractiveInvoice {
                                               />
                                             </div>
                                             <div class="summary-amount-container">
-                                              <span class="summary-amount">{this.formatCurrency(totalAjustes)}</span>
+                                              <span class="summary-amount">{formatCurrency(totalAjustes)}</span>
                                               <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-subscriber-adjustments`] ? 'expanded' : ''}`}>
                                                 <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                               </span>
@@ -1657,7 +1363,7 @@ export class MiClaroInteractiveInvoice {
                                                       <span class="subscriber-number">{subscriber.subscriberNo}</span>
                                                     </div>
                                                     <div class="subscriber-amount">
-                                                      <span class="amount-value">{this.formatCurrency(subscriber.total)}</span>
+                                                      <span class="amount-value">{formatCurrency(subscriber.total)}</span>
                                                       <button
                                                         class="expand-subscriber"
                                                         onClick={() => this.toggleSubscriberDetail(subscriberId)}
@@ -1673,7 +1379,7 @@ export class MiClaroInteractiveInvoice {
                                                       {subscriber.items.map((item, itemIndex) => (
                                                         <div key={itemIndex} class="adjustment-item-row">
                                                           <span class="adjustment-item-label">{item.descripcion}</span>
-                                                          <span class="adjustment-item-amount">{this.formatCurrency(item.monto)}</span>
+                                                          <span class="adjustment-item-amount">{formatCurrency(item.monto)}</span>
                                                         </div>
                                                       ))}
                                                     </div>
@@ -1702,7 +1408,7 @@ export class MiClaroInteractiveInvoice {
                                           />
                                         </div>
                                         <div class="summary-amount-container">
-                                          <span class="summary-amount">{this.formatCurrency(this.previousBills[index].cargosCorrientes || 0)}</span>
+                                          <span class="summary-amount">{formatCurrency(this.previousBills[index].cargosCorrientes || 0)}</span>
                                           <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-subscribers`] ? 'expanded' : ''}`}>
                                             <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                           </span>
@@ -1720,7 +1426,7 @@ export class MiClaroInteractiveInvoice {
                                           <span class="subscriber-number">{detail.numero}</span>
                                         </div>
                                         <div class="subscriber-amount">
-                                          <span class="amount-value">{this.formatCurrency(detail.total)}</span>
+                                          <span class="amount-value">{formatCurrency(detail.total)}</span>
                                           <button
                                             class="expand-subscriber"
                                             onClick={() => this.toggleSubscriberDetail(subscriberId)}
@@ -1761,7 +1467,7 @@ export class MiClaroInteractiveInvoice {
                                                     {periodo && <span class="accordion-description">{periodo}</span>}
                                                   </div>
                                                   <div class="accordion-header-right">
-                                                    <span class="accordion-price">{typeof cargo === 'number' ? this.formatCurrency(cargo) : ''}</span>
+                                                    <span class="accordion-price">{typeof cargo === 'number' ? formatCurrency(cargo) : ''}</span>
                                                     <span class={`accordion-arrow ${this.expandedAccordionItem === accordionId ? 'expanded' : ''}`}>
                                                       <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="arrow-icon" />
                                                     </span>
@@ -1779,17 +1485,17 @@ export class MiClaroInteractiveInvoice {
                                                       <div>
                                                         <div class="charge-row">
                                                           <span class="charge-label">{servicio.detallePlan.descripcion}</span>
-                                                          <span class="charge-amount">{this.formatCurrency(servicio.detallePlan.cargo)}</span>
+                                                          <span class="charge-amount">{formatCurrency(servicio.detallePlan.cargo)}</span>
                                                         </div>
                                                         {servicio.detallePlan.detalleCargos && servicio.detallePlan.detalleCargos.descuento !== 0 && (
                                                           <div class="charge-sublist">
                                                             <div class="charge-subrow">
                                                               <span class="charge-sublabel">Precio regular</span>
-                                                              <span class="charge-subamount">{this.formatCurrency(servicio.detallePlan.detalleCargos.cargo)}</span>
+                                                              <span class="charge-subamount">{formatCurrency(servicio.detallePlan.detalleCargos.cargo)}</span>
                                                             </div>
                                                             <div class="charge-subrow">
                                                               <span class="charge-sublabel">Descuento</span>
-                                                              <span class="charge-subamount">-{this.formatCurrency(servicio.detallePlan.detalleCargos.descuento)}</span>
+                                                              <span class="charge-subamount">-{formatCurrency(servicio.detallePlan.detalleCargos.descuento)}</span>
                                                             </div>
                                                           </div>
                                                         )}
@@ -1823,17 +1529,17 @@ export class MiClaroInteractiveInvoice {
                                                                 )}
                                                               </div>
                                                             </div>
-                                                            <span class="charge-amount">{this.formatCurrency(equipo.cargo)}</span>
+                                                            <span class="charge-amount">{formatCurrency(equipo.cargo)}</span>
                                                           </div>
                                                           {equipo.detalleCargos && equipo.detalleCargos.descuento !== 0 && (
                                                             <div class="charge-sublist">
                                                               <div class="charge-subrow">
                                                                 <span class="charge-sublabel">Precio regular</span>
-                                                                <span class="charge-subamount">{this.formatCurrency(equipo.detalleCargos.cargo)}</span>
+                                                                <span class="charge-subamount">{formatCurrency(equipo.detalleCargos.cargo)}</span>
                                                               </div>
                                                               <div class="charge-subrow">
                                                                 <span class="charge-sublabel">Descuento</span>
-                                                                <span class="charge-subamount">-{this.formatCurrency(equipo.detalleCargos.descuento)}</span>
+                                                                <span class="charge-subamount">-{formatCurrency(equipo.detalleCargos.descuento)}</span>
                                                               </div>
                                                             </div>
                                                           )}
@@ -1845,7 +1551,7 @@ export class MiClaroInteractiveInvoice {
                                                     {servicio.detalleTaxes && servicio.detalleTaxes.map((tax, taxIndex) => (
                                                       <div key={taxIndex} class="charge-row">
                                                         <span class="charge-label">{tax.descripcion}</span>
-                                                        <span class="charge-amount">{this.formatCurrency(tax.cargo)}</span>
+                                                        <span class="charge-amount">{formatCurrency(tax.cargo)}</span>
                                                       </div>
                                                     ))}
 
@@ -1854,17 +1560,17 @@ export class MiClaroInteractiveInvoice {
                                                       <div key={itemIndex}>
                                                         <div class="charge-row">
                                                           <span class="charge-label">{item.descripcion}</span>
-                                                          <span class="charge-amount">{this.formatCurrency(item.cargo)}</span>
+                                                          <span class="charge-amount">{formatCurrency(item.cargo)}</span>
                                                         </div>
                                                         {item.detalleCargos && item.detalleCargos.descuento !== 0 && (
                                                           <div class="charge-sublist">
                                                             <div class="charge-subrow">
                                                               <span class="charge-sublabel">Precio regular</span>
-                                                              <span class="charge-subamount">{this.formatCurrency(item.detalleCargos.cargo)}</span>
+                                                              <span class="charge-subamount">{formatCurrency(item.detalleCargos.cargo)}</span>
                                                             </div>
                                                             <div class="charge-subrow">
                                                               <span class="charge-sublabel">Descuento</span>
-                                                              <span class="charge-subamount">-{this.formatCurrency(item.detalleCargos.descuento)}</span>
+                                                              <span class="charge-subamount">-{formatCurrency(item.detalleCargos.descuento)}</span>
                                                             </div>
                                                           </div>
                                                         )}
@@ -1884,13 +1590,13 @@ export class MiClaroInteractiveInvoice {
                                                               {servicio.detalleConsumo.llamadas.locales && (
                                                                 <div class="charge-subrow">
                                                                   <span class="charge-sublabel">Locales: {servicio.detalleConsumo.llamadas.locales.unidades} llamadas - {servicio.detalleConsumo.llamadas.locales.minutos} minutos</span>
-                                                                  <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.llamadas.locales.cargo)}</span>
+                                                                  <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.llamadas.locales.cargo)}</span>
                                                                 </div>
                                                               )}
                                                               {servicio.detalleConsumo.llamadas.largaDistancia && servicio.detalleConsumo.llamadas.largaDistancia.unidades > 0 && (
                                                                 <div class="charge-subrow">
                                                                   <span class="charge-sublabel">Larga distancia: {servicio.detalleConsumo.llamadas.largaDistancia.unidades} llamadas - {servicio.detalleConsumo.llamadas.largaDistancia.minutos} minutos</span>
-                                                                  <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.llamadas.largaDistancia.cargo)}</span>
+                                                                  <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.llamadas.largaDistancia.cargo)}</span>
                                                                 </div>
                                                               )}
                                                             </div>
@@ -1909,7 +1615,7 @@ export class MiClaroInteractiveInvoice {
                                                               {servicio.detalleConsumo.mensajes.texto && servicio.detalleConsumo.mensajes.texto.unidades > 0 && (
                                                                 <div class="charge-subrow">
                                                                   <span class="charge-sublabel">Mensajes de texto: {servicio.detalleConsumo.mensajes.texto.unidades}</span>
-                                                                  <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.mensajes.texto.cargo)}</span>
+                                                                  <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.mensajes.texto.cargo)}</span>
                                                                 </div>
                                                               )}
                                                             </div>
@@ -1927,7 +1633,7 @@ export class MiClaroInteractiveInvoice {
                                                             <div class="charge-sublist">
                                                               <div class="charge-subrow">
                                                                 <span class="charge-sublabel">Volumen de datos: {(servicio.detalleConsumo.dataVolume.data.unidades / 1024 / 1024).toFixed(2)} MB</span>
-                                                                <span class="charge-subamount">{this.formatCurrency(servicio.detalleConsumo.dataVolume.data.cargo)}</span>
+                                                                <span class="charge-subamount">{formatCurrency(servicio.detalleConsumo.dataVolume.data.cargo)}</span>
                                                               </div>
                                                             </div>
                                                           </>
@@ -1940,17 +1646,17 @@ export class MiClaroInteractiveInvoice {
                                                       <>
                                                         <div class="charge-row">
                                                           <span class="charge-label">{servicio.detalleEquipos.descripcion}</span>
-                                                          <span class="charge-amount">{this.formatCurrency(servicio.detalleEquipos.cargo)}</span>
+                                                          <span class="charge-amount">{formatCurrency(servicio.detalleEquipos.cargo)}</span>
                                                         </div>
                                                         {servicio.detalleEquipos.detalleCargos && servicio.detalleEquipos.detalleCargos.descuento && servicio.detalleEquipos.detalleCargos.descuento !== 0 && (
                                                           <div class="charge-sublist">
                                                             <div class="charge-subrow">
                                                               <span class="charge-sublabel">Precio regular</span>
-                                                              <span class="charge-subamount">{this.formatCurrency(servicio.detalleEquipos.detalleCargos.cargo)}</span>
+                                                              <span class="charge-subamount">{formatCurrency(servicio.detalleEquipos.detalleCargos.cargo)}</span>
                                                             </div>
                                                             <div class="charge-subrow">
                                                               <span class="charge-sublabel">Descuento</span>
-                                                              <span class="charge-subamount">-{this.formatCurrency(servicio.detalleEquipos.detalleCargos.descuento)}</span>
+                                                              <span class="charge-subamount">-{formatCurrency(servicio.detalleEquipos.detalleCargos.descuento)}</span>
                                                             </div>
                                                           </div>
                                                         )}
@@ -1963,7 +1669,7 @@ export class MiClaroInteractiveInvoice {
                                                         {Object.entries(servicio.detalle).map(([key, value]) => (
                                                           <div class="charge-subrow" key={key}>
                                                             <span class="charge-sublabel">{key}</span>
-                                                            <span class="charge-subamount">{this.formatCurrency(value as number)}</span>
+                                                            <span class="charge-subamount">{formatCurrency(value as number)}</span>
                                                           </div>
                                                         ))}
                                                       </div>
