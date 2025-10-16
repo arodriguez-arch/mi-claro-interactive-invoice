@@ -25,7 +25,8 @@ interface BillData {
   balanceAnterior: number;
   pagosRecibidos: number;
   ajustes: number;
-  totalActual: number
+  totalActual: number;
+  cargosCorrientes?: number;
   cargosDeCuenta?: number | { seccion: string; cargo: number; detalleCargoCuenta: any[] } | null;
   detalle: BillDetail[];
   cargosPorTipo: CargosPorTipo[];
@@ -238,9 +239,13 @@ export class MiClaroInteractiveInvoice {
             ...updatedBills[billIndex],
             ...detailResponse.data.facturas[0],
             detalle: detailResponse.data.facturas[0].detalle || [],
-            // Preserve original dates to prevent them from being overwritten
+            // Preserve original key fields to prevent them from being overwritten by detail response
             fechaFactura: originalBill.fechaFactura,
-            fechaVencimiento: originalBill.fechaVencimiento
+            fechaVencimiento: originalBill.fechaVencimiento,
+            balanceAnterior: originalBill.balanceAnterior,
+            pagosRecibidos: originalBill.pagosRecibidos,
+            ajustes: originalBill.ajustes,
+            totalActual: originalBill.totalActual
           };
           this.previousBills = updatedBills;
         } else {
@@ -1163,7 +1168,7 @@ export class MiClaroInteractiveInvoice {
                                       />
                                     </div>
                                     <div class="summary-amount-container">
-                                      <span class="summary-amount">{this.formatCurrency(this.currentBill.totalActual || 0)}</span>
+                                      <span class="summary-amount">{this.formatCurrency(this.currentBill.cargosCorrientes || 0)}</span>
                                       <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-subscribers`] ? 'expanded' : ''}`}>
                                         <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                       </span>
@@ -1697,7 +1702,7 @@ export class MiClaroInteractiveInvoice {
                                           />
                                         </div>
                                         <div class="summary-amount-container">
-                                          <span class="summary-amount">{this.formatCurrency(this.previousBills[index].totalActual || 0)}</span>
+                                          <span class="summary-amount">{this.formatCurrency(this.previousBills[index].cargosCorrientes || 0)}</span>
                                           <span class={`summary-arrow ${this.expandedSummarySection[`${billId}-subscribers`] ? 'expanded' : ''}`}>
                                             <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
                                           </span>
