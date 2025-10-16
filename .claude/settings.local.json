@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(mv:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(if [ ! -d \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\components\" ])",
+      "Bash(then mkdir -p \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\components\")",
+      "Bash(fi)",
+      "Bash(if [ ! -d \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\utils\" ])",
+      "Bash(then mkdir -p \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\utils\")",
+      "Bash(if [ ! -d \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\types\" ])",
+      "Bash(then mkdir -p \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\types\")",
+      "Bash(powershell -Command:*)"
     ],
     "deny": []
   }
