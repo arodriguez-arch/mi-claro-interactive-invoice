@@ -233,10 +233,14 @@ export class MiClaroInteractiveInvoice {
         if (isHistoryBill) {
           // Create a new array to trigger re-render in Stencil
           const updatedBills = [...this.previousBills];
+          const originalBill = updatedBills[billIndex];
           updatedBills[billIndex] = {
             ...updatedBills[billIndex],
             ...detailResponse.data.facturas[0],
-            detalle: detailResponse.data.facturas[0].detalle || []
+            detalle: detailResponse.data.facturas[0].detalle || [],
+            // Preserve original dates to prevent them from being overwritten
+            fechaFactura: originalBill.fechaFactura,
+            fechaVencimiento: originalBill.fechaVencimiento
           };
           this.previousBills = updatedBills;
         } else {
