@@ -798,6 +798,7 @@
   line-height: 14px;
   letter-spacing: 0px;
   color: var(--color-text-gray);
+  text-align: center;
 }
 
 .table-row-container {
@@ -824,6 +825,18 @@
   font-size: 18px;
   line-height: 24px;
   letter-spacing: 0;
+}
+
+.history-table-header {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
+}
+
+.history-table-row {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.5fr;
+}
+
+.history-table-row .table-cell:last-child {
+  justify-self: end;
 }
 
 .table-cell {

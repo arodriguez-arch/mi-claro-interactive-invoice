@@ -35,6 +35,7 @@ declare global {
     interface HTMLMiClaroInteractiveInvoiceElementEventMap {
         "goToSupport": void;
         "payPendingBills": void;
+        "payBill": { billId: string; amount?: number };
         "automatePayments": boolean;
         "questionsPressed": void;
         "contactPressed": void;
@@ -76,6 +77,7 @@ declare namespace LocalJSX {
         "onContactPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onDownloadBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onGoToSupport"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        "onPayBill"?: (event: MiClaroInteractiveInvoiceCustomEvent<{ billId: string; amount?: number }>) => void;
         "onPayPendingBills"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onQuestionsPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         /**

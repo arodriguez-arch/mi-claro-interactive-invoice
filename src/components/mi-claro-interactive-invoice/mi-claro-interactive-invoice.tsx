@@ -60,6 +60,7 @@ export class MiClaroInteractiveInvoice {
 
   @Event() goToSupport: EventEmitter<void>;
   @Event() payPendingBills: EventEmitter<void>;
+  @Event() payBill: EventEmitter<{ billId: string; amount?: number }>;
   @Event() automatePayments: EventEmitter<boolean>;
   @Event() questionsPressed: EventEmitter<void>;
   @Event() contactPressed: EventEmitter<void>;
@@ -295,6 +296,10 @@ export class MiClaroInteractiveInvoice {
 
   private handlePayPendingBills = () => {
     this.payPendingBills.emit();
+  };
+
+  private handlePayBill = (billId: string, amount?: number) => {
+    this.payBill.emit({ billId, amount });
   };
 
   private handleQuestionsPressed = () => {
@@ -700,7 +705,7 @@ export class MiClaroInteractiveInvoice {
                           <div class="table-cell">{invoice.dueDate}</div>
 
                           <div class="table-cell">
-                            <button class="pay-button" onClick={() => alert('Pagar factura!')}>Pagar factura</button>
+                            <button class="pay-button" onClick={() => this.handlePayBill(invoice.id)}>Pagar factura</button>
                           </div>
                           <div class="table-cell">
                             <button
@@ -1306,23 +1311,19 @@ export class MiClaroInteractiveInvoice {
                 <div class="invoice-table">
                   {this.previousBills.length > 0 ? (
                     <>
-                      <div class="table-header">
-                        <div class="header-cell">Título de Factura</div>
+                      <div class="table-header history-table-header">
                         <div class="header-cell">Fecha</div>
                         <div class="header-cell">Monto</div>
                         <div class="header-cell">Estado</div>
-                        <div class="header-cell"></div>
+                        <div class="header-cell">Vencimiento</div>
                         <div class="header-cell"></div>
                       </div>
                       {this.previousBills.map((bill, index) => {
                         const billId = `prev-${index}`;
-                        // Use the customer name from invoiceData which comes from the API
-                        const customerName = this.invoiceData?.customerName || `Cliente ${this.selectedAccount}`;
                         const isPaid = bill.pagosRecibidos >= bill.totalActual;
                         return (
                           <div key={billId} class={`table-row-container ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>
-                            <div class="table-row">
-                              <div class="table-cell cell-bold" data-name={customerName} data-date={formatDate(bill.fechaFactura)}>{customerName}</div>
+                            <div class="table-row history-table-row">
                               <div class="table-cell">{formatDate(bill.fechaFactura)}</div>
                               <div class="table-cell cell-amount">{formatCurrency(bill.totalActual)}</div>
                               <div class="table-cell">
@@ -1330,11 +1331,7 @@ export class MiClaroInteractiveInvoice {
                                   {isPaid ? 'Pagada' : 'Vencida'}
                                 </span>
                               </div>
-                              <div class="table-cell">
-                                <button class={`pay-button ${isPaid ? 'disabled' : ''}`} disabled={isPaid} onClick={() => !isPaid && alert('Pagar factura!')}>
-                                  Pagar factura
-                                </button>
-                              </div>
+                              <div class="table-cell">{formatDate(bill.fechaVencimiento)}</div>
                               <div class="table-cell">
                                 <button
                                   class="detail-button"
