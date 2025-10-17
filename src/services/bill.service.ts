@@ -188,7 +188,17 @@ export class BillService {
         throw new Error(`Failed to fetch bill detail: ${response.status} ${response.statusText}`);
       }
 
-      const data: BillDetailResponse = await response.json();
+      let data: BillDetailResponse = await response.json();
+
+      // Inject mock event charges data for testing
+      // TODO: Remove this once API provides real event charges data
+      if (data.data && data.data.facturas && data.data.facturas.length > 0) {
+        const { injectMockEventCharges } = await import('../components/mi-claro-interactive-invoice/utils/mock-data-utils');
+        data.data.facturas = data.data.facturas.map(factura => injectMockEventCharges(factura));
+      }
+
+
+      console.log('data with event charges', data);
       return data;
     } catch (error) {
       console.error('Error fetching bill detail:', error);

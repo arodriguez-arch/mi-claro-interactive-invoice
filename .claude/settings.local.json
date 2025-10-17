@@ -10,7 +10,8 @@
       "Bash(then mkdir -p \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\utils\")",
       "Bash(if [ ! -d \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\types\" ])",
       "Bash(then mkdir -p \"C:\\sources\\e4gs\\libraries\\mi-claro-interactive-invoice\\src\\components\\mi-claro-interactive-invoice\\types\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

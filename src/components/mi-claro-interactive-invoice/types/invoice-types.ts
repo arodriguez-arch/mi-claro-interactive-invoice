@@ -7,11 +7,58 @@ export interface Invoice {
   status: string;
 }
 
+export interface MessageDetail {
+  fecha: string;
+  hora: string;
+  numeroDestino: string;
+  tipo: string; // 'SMS' | 'MMS'
+  cantidad: number;
+  cargo: number;
+}
+
+export interface CallDetail {
+  fecha: string;
+  hora: string;
+  numeroDestino: string;
+  tipo: string; // 'Local' | 'Larga distancia' | 'Internacional'
+  duracion: number; // en segundos
+  cargo: number;
+}
+
+export interface EventCharges {
+  mensajes: {
+    resumen: {
+      cantidad: number;
+      cargo: number;
+      desglose: {
+        sms: number;
+        mms: number;
+      };
+    };
+    detalle: MessageDetail[];
+  };
+  llamadas: {
+    resumen: {
+      cantidad: number;
+      minutos: number;
+      cargo: number;
+      desglose: {
+        locales: number;
+        largaDistancia: number;
+        internacionales: number;
+      };
+    };
+    detalle: CallDetail[];
+  };
+  totalCargosEventos: number;
+}
+
 export interface BillDetail {
   numero: string;
   total: number;
   tipoLinea: string;
   detalleServicios: any[];
+  cargosPorEventos?: EventCharges;
 }
 
 export interface CargosPorTipo {
