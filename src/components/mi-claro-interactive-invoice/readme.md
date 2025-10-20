@@ -43,15 +43,16 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Events
 
-| Event              | Description | Type                   |
-| ------------------ | ----------- | ---------------------- |
-| `accountChanged`   |             | `CustomEvent<string>`  |
-| `automatePayments` |             | `CustomEvent<boolean>` |
-| `contactPressed`   |             | `CustomEvent<void>`    |
-| `downloadBills`    |             | `CustomEvent<void>`    |
-| `goToSupport`      |             | `CustomEvent<void>`    |
-| `payPendingBills`  |             | `CustomEvent<void>`    |
-| `questionsPressed` |             | `CustomEvent<void>`    |
+| Event              | Description | Type                                                |
+| ------------------ | ----------- | --------------------------------------------------- |
+| `accountChanged`   |             | `CustomEvent<string>`                               |
+| `automatePayments` |             | `CustomEvent<boolean>`                              |
+| `contactPressed`   |             | `CustomEvent<void>`                                 |
+| `downloadBills`    |             | `CustomEvent<void>`                                 |
+| `goToSupport`      |             | `CustomEvent<void>`                                 |
+| `payBill`          |             | `CustomEvent<{ billId: string; amount?: number; }>` |
+| `payPendingBills`  |             | `CustomEvent<void>`                                 |
+| `questionsPressed` |             | `CustomEvent<void>`                                 |
 
 
 ----------------------------------------------

@@ -67,6 +67,21 @@ export interface CargosPorTipo {
   totalNeto: number;
 }
 
+export interface DetalleCargoCuentaItem {
+  descripcion: string;
+  cargo: number;
+  detalleCargos: {
+    cargo: number;
+    descuento: number;
+  };
+}
+
+export interface CargosDeCuenta {
+  seccion: string;
+  cargo: number;
+  detalleCargoCuenta: DetalleCargoCuentaItem[];
+}
+
 export interface BillData {
   fechaFactura: string;
   fechaVencimiento: string;
@@ -75,7 +90,7 @@ export interface BillData {
   ajustes: number;
   totalActual: number;
   cargosCorrientes?: number;
-  cargosDeCuenta?: number | { seccion: string; cargo: number; detalleCargoCuenta: any[] } | null;
+  cargosDeCuenta?: CargosDeCuenta | null;
   detalle: BillDetail[];
   cargosPorTipo: CargosPorTipo[];
   metodosPago: any[];

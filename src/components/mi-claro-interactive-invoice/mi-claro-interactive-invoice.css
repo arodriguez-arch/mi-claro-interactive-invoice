@@ -2260,6 +2260,67 @@
   text-align: right;
 }
 
+/* Account Charges Styles */
+.account-charge-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.account-charge-item:last-child {
+  border-bottom: none;
+}
+
+.account-charge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.account-charge-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3C3C3C;
+  flex: 1;
+}
+
+.account-charge-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2C2C2C;
+  text-align: right;
+}
+
+.account-charge-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.breakdown-label {
+  font-size: 13px;
+  font-weight: 400;
+  color: #6A6C6C;
+}
+
+.breakdown-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3C3C3C;
+  text-align: right;
+}
+
 /* Event Charges Accordion Styles */
 .event-charges-accordion {
   border: 1px solid var(--color-border);

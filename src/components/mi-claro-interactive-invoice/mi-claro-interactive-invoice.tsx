@@ -49,8 +49,8 @@ export class MiClaroInteractiveInvoice {
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
   @State() eventModalData: { type: 'mensajes' | 'llamadas'; data: any[] } | null = null;
-  // @Prop() accountList: string[] = [];
-  @Prop() accountList: string[] = ['769001587', '805437569', '799704751', '805437569'];
+  @Prop() accountList: string[] = [];
+  // @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -877,6 +877,64 @@ export class MiClaroInteractiveInvoice {
                                             </div>
                                           );
                                         })}
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+
+                                {/* Account Charges Section */}
+                                {(() => {
+                                  const cargosDeCuenta = this.currentBill?.cargosDeCuenta;
+
+                                  if (!cargosDeCuenta || typeof cargosDeCuenta !== 'object' || !cargosDeCuenta.detalleCargoCuenta || cargosDeCuenta.detalleCargoCuenta.length === 0) {
+                                    return null;
+                                  }
+
+                                  return (
+                                    <div class="summary-section" data-section-id={`${invoice.id}-account-charges`}>
+                                      <div
+                                        class="summary-header"
+                                        onClick={() => this.toggleSummarySection(`${invoice.id}-account-charges`)}
+                                      >
+                                        <div class="summary-title-container">
+                                          <span class="summary-title">{cargosDeCuenta.seccion || 'Detalles de cargos por cuenta'}</span>
+                                          <img
+                                            src="/assets/icons/info.png"
+                                            alt="Info"
+                                            class="info-icon summary-info"
+                                            data-tooltip="&lt;strong&gt;Cargos de cuenta&lt;/strong&gt;&lt;br/&gt;Detalle de cargos aplicados a nivel de cuenta (no asociados a líneas individuales)."
+                                          />
+                                        </div>
+                                        <div class="summary-amount-container">
+                                          <span class="summary-amount">{formatCurrency(cargosDeCuenta.cargo)}</span>
+                                          <span class={`summary-arrow ${this.expandedSummarySection[`${invoice.id}-account-charges`] ? 'expanded' : ''}`}>
+                                            <img src="/assets/icons/chevron-down.png" alt="Arrow" class="arrow-icon" />
+                                          </span>
+                                        </div>
+                                      </div>
+                                      <div class={`summary-content ${this.expandedSummarySection[`${invoice.id}-account-charges`] ? 'expanded' : ''}`}>
+                                        {cargosDeCuenta.detalleCargoCuenta.map((item, index) => (
+                                          <div key={index} class="account-charge-item">
+                                            <div class="account-charge-header">
+                                              <span class="account-charge-label">{item.descripcion}</span>
+                                              <span class="account-charge-amount">{formatCurrency(item.cargo)}</span>
+                                            </div>
+                                            {item.detalleCargos && (
+                                              <div class="account-charge-breakdown">
+                                                <div class="breakdown-item">
+                                                  <span class="breakdown-label">Cargo</span>
+                                                  <span class="breakdown-value">{formatCurrency(item.detalleCargos.cargo)}</span>
+                                                </div>
+                                                {item.detalleCargos.descuento !== 0 && (
+                                                  <div class="breakdown-item">
+                                                    <span class="breakdown-label">Descuento</span>
+                                                    <span class="breakdown-value">{formatCurrency(item.detalleCargos.descuento)}</span>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+                                          </div>
+                                        ))}
                                       </div>
                                     </div>
                                   );
