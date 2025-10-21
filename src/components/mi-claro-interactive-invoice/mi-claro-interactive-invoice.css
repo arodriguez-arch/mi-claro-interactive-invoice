@@ -264,6 +264,12 @@
   --color-border: #D9D9D9;
   --color-border-light: #BBBBBB;
   --color-accordion-header-bg: #F9F9F9;
+
+  /* Responsive Max-Width Constraints (can be overridden by host application) */
+  --detail-inner-max-width-375: 100%;
+  --detail-inner-max-width-320: 100%;
+  --subscriber-detail-max-width-375: 100%;
+  --subscriber-detail-max-width-320: 100%;
 }
 
 * {
@@ -271,9 +277,13 @@
 }
 
 .invoice-container {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
   padding: 1rem;
   position: relative;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  min-width: 0 !important;
 }
 
 .invoice-grid {
@@ -298,6 +308,10 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 /* Payment Summary Card */
@@ -927,9 +941,10 @@
   overflow: hidden;
   transition: max-height 0.3s ease-out;
   /*background-color: #F8F9FA;*/
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 .invoice-detail.expanded {
@@ -947,10 +962,11 @@
   line-height: 24px;
   letter-spacing: 0;
   border-top: 2px solid var(--color-secondary);
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  min-width: 0 !important;
 }
 
 .detail-inner h4 {
@@ -1046,9 +1062,10 @@
   overflow: hidden;
   transition: max-height 0.3s ease-out;
   padding: 0 1rem;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 .subscriber-detail.expanded {
@@ -1089,18 +1106,20 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 .accordion-item {
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  overflow: hidden;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+  overflow: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 .accordion-header {
@@ -1185,6 +1204,10 @@
   overflow: hidden;
   transition: max-height 0.3s ease-out;
   background-color: white;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 .accordion-content.expanded {
@@ -1205,6 +1228,11 @@
 /* Charges Detail List Styles */
 .charges-detail-list {
   padding: 1rem;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  min-width: 0 !important;
 }
 
 .charge-row {
@@ -1334,10 +1362,12 @@
 /* Bill Summary Sections */
 .bill-summary-sections {
   padding: 1rem 0;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-x: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  overflow-y: visible;
+  min-width: 0 !important;
 }
 
 .summary-section {
@@ -1345,10 +1375,11 @@
   border-radius: 8px;
   margin-bottom: 1rem;
   background: #FFFFFF;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  min-width: 0 !important;
 }
 
 .summary-header {
@@ -1850,8 +1881,98 @@
   }
 }
 
-/* Extra small screens (below 375px) - Enhanced responsive support */
-@media (max-width: 374px) {
+/* Small screens (320px-375px) - Optimized width constraints */
+@media (max-width: 375px) {
+  .invoice-container {
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .detail-inner {
+    padding: 1rem 1rem !important;
+    /* At 375px viewport with box-sizing: border-box, padding is included in width */
+    /* Host apps can override --detail-inner-max-width-375 to customize */
+    width: 100% !important;
+    max-width: var(--detail-inner-max-width-375, 100%) !important;
+    margin: 0 auto;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .subscriber-detail.expanded {
+    width: 100% !important;
+    max-width: var(--subscriber-detail-max-width-375, 100%) !important;
+    overflow-x: hidden !important;
+    padding: 1rem !important;
+    margin: 0 auto;
+    box-sizing: border-box !important;
+  }
+
+  /* Remove negative margins that cause overflow on small screens */
+  .charges-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0.5rem !important;
+  }
+
+  .bill-summary-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Fix child elements with excessive padding */
+  .summary-header {
+    padding: 0.75rem 1rem !important;
+  }
+
+  .summary-item {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .adjustment-item {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .adjustment-item-row {
+    padding: 0.5rem 1rem !important;
+  }
+
+  /* Stack accordion header elements vertically */
+  .accordion-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .accordion-header-left {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .accordion-header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .accordion-description {
+    margin-left: 0;
+    font-size: 14px;
+  }
+}
+
+/* Extra small screens (below 320px) - Minimum support */
+@media (max-width: 319px) {
   .invoice-container {
     padding: 0;
     overflow-x: hidden;
@@ -1863,17 +1984,78 @@
   }
 
   .detail-inner {
-    padding: 0.75rem;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
+    padding: 0.75rem 0.75rem !important;
+    /* At 320px viewport with box-sizing: border-box, padding is included in width */
+    /* Host apps can override --detail-inner-max-width-320 to customize */
+    width: 100% !important;
+    max-width: var(--detail-inner-max-width-320, 100%) !important;
+    margin: 0 auto;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
 
   .subscriber-detail.expanded {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
+    width: 100% !important;
+    max-width: var(--subscriber-detail-max-width-320, 100%) !important;
+    overflow-x: hidden !important;
+    padding: 0.75rem !important;
+    margin: 0 auto;
+    box-sizing: border-box !important;
+  }
+
+  /* Remove negative margins that cause overflow on small screens */
+  .charges-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0.375rem !important;
+  }
+
+  .bill-summary-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0.375rem !important;
+  }
+
+  /* Fix child elements with excessive padding */
+  .summary-header {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .summary-item {
+    padding: 0.375rem 0.75rem !important;
+  }
+
+  .adjustment-item {
+    padding: 0.375rem 0.75rem !important;
+  }
+
+  .adjustment-item-row {
+    padding: 0.375rem 0.75rem !important;
+  }
+
+  /* Stack accordion header elements vertically */
+  .accordion-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
     padding: 0.75rem;
+  }
+
+  .accordion-header-left {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .accordion-header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .accordion-description {
+    margin-left: 0;
+    font-size: 13px;
   }
 
   .accordion-item {
@@ -1882,27 +2064,15 @@
     overflow: hidden;
   }
 
-  .accordion-header {
-    padding: 0.75rem;
-    flex-wrap: wrap;
-  }
-
   .accordion-title {
-    font-size: 14px;
-    line-height: 18px;
-    word-break: break-word;
-  }
-
-  .accordion-description {
-    font-size: 14px;
-    line-height: 18px;
-    margin-left: 0.5rem;
+    font-size: 13px;
+    line-height: 17px;
     word-break: break-word;
   }
 
   .accordion-price {
-    font-size: 16px;
-    line-height: 20px;
+    font-size: 14px;
+    line-height: 18px;
   }
 
   .bill-summary-section {
@@ -1918,20 +2088,20 @@
   }
 
   .summary-header {
-    padding: 0.75rem;
+    padding: 0.5rem;
     width: 100%;
   }
 
   .summary-title {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.3;
     word-break: break-word;
     max-width: 100%;
   }
 
   .summary-item {
-    padding: 0.5rem 0.75rem;
-    font-size: 13px;
+    padding: 0.5rem;
+    font-size: 12px;
   }
 
   .payment-item {
@@ -1942,79 +2112,79 @@
   .summary-item-label,
   .summary-item-date,
   .summary-item-amount {
-    font-size: 13px;
+    font-size: 12px;
     text-align: left;
   }
 
   .adjustment-item {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem;
     flex-wrap: wrap;
   }
 
   .adjustment-item-label {
-    font-size: 13px;
+    font-size: 12px;
     word-break: break-word;
     max-width: 100%;
   }
 
   .adjustment-item-amount {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .account-charge-item {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem;
   }
 
   .account-charge-label {
-    font-size: 13px;
+    font-size: 12px;
     word-break: break-word;
   }
 
   .account-charge-amount {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .account-charge-breakdown {
-    padding-left: 1rem;
+    padding-left: 0.75rem;
   }
 
   .breakdown-label,
   .breakdown-value {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .charges-detail-list {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
 
   .charge-row {
-    padding: 0.375rem 0;
+    padding: 0.25rem 0;
   }
 
   .charge-label {
-    font-size: 13px;
+    font-size: 12px;
     word-break: break-word;
   }
 
   .charge-amount {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .equipment-details {
-    max-width: calc(100% - 50px);
+    max-width: calc(100% - 40px);
   }
 
   .equipment-installment-message {
-    font-size: 11px;
+    font-size: 10px;
     word-break: break-word;
   }
 
   .invoice-actions {
-    padding: 0.75rem 0;
+    padding: 0.5rem 0;
   }
 
   .action-link {
-    font-size: 14px;
+    font-size: 13px;
     word-break: break-word;
   }
 
@@ -2025,15 +2195,15 @@
   }
 
   .event-modal-header {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
 
   .event-modal-title {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .event-modal-row {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
 }
 
