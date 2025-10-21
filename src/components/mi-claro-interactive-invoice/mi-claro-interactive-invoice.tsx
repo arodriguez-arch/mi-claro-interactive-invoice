@@ -1355,7 +1355,7 @@ export class MiClaroInteractiveInvoice {
                               <span class="action-separator">|</span>
                               <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleContactPressed(); }}>Contáctanos aquí</a>
                               <span class="action-separator">|</span>
-                              <a href="https://www.claropr.com/personas/app/reclamacion-de-cargos/" class="action-link" target="_blank" rel="noopener noreferrer">Reclamo de cargos</a>
+                              <a href="https://www.claropr.com/personas/app/reclamacion-de-cargos/" class="action-link" target="_blank" rel="noopener noreferrer">Inicia tu reclamo aqui</a>
                             </div>
                             <div class="actions-right">
                               <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleDownloadBills(); }}>Descarga mi factura</a>
