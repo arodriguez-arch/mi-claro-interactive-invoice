@@ -81,8 +81,13 @@ export const ChargesSection: FunctionalComponent<ChargesSectionProps> = ({
       ? (cargosDeCuenta as any).cargo
       : (typeof cargosDeCuenta === 'number' ? cargosDeCuenta : 0);
 
+    // Highlight if the account charges section is expanded
+    const isHighlighted = Object.keys(expandedSummarySection).some(
+      key => key.includes('account-charges') && expandedSummarySection[key]
+    );
+
     return (
-      <div class="charges-item">
+      <div class={`charges-item ${isHighlighted ? 'highlighted' : ''}`}>
         <span class="charges-label">{label}</span>
         <span class="charges-amount">{formatCurrency(amount)}</span>
       </div>

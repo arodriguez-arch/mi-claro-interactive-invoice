@@ -264,11 +264,21 @@ export class MiClaroInteractiveInvoice {
     if (sectionId.includes('payments')) {
       title = 'Pagos recibidos';
       amount = formatCurrency(this.pendingBill?.pymReceivedAmt || 0);
+    } else if (sectionId.includes('subscriber-adjustments')) {
+      const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
+      const billDetail = this.billDetails[cacheKey];
+      const ajustesPorSuscriptor = billDetail?.ajustesPorSuscriptor;
+      const totalAjustes = ajustesPorSuscriptor?.reduce((sum, ajuste) => sum + ajuste.total, 0) || 0;
+      title = 'Ajustes por suscriptor';
+      amount = formatCurrency(totalAjustes);
     } else if (sectionId.includes('adjustments')) {
       const cacheKey = `${this.pendingBill?.ban}-${this.pendingBill?.cycleRunYear}-${this.pendingBill?.cycleRunMonth}-${this.pendingBill?.cycleCode}`;
       const billDetail = this.billDetails[cacheKey];
       title = 'Ajustes';
       amount = formatCurrency(billDetail?.resumenAjustes?.totalNeto || 0);
+    } else if (sectionId.includes('account-charges')) {
+      title = 'Cargos de cuenta';
+      amount = formatCurrency(this.currentBill?.cargosDeCuenta?.cargo || 0);
     } else if (sectionId.includes('subscribers')) {
       title = 'Cargos por suscriptores';
       amount = formatCurrency(this.currentBill?.totalActual || 0);

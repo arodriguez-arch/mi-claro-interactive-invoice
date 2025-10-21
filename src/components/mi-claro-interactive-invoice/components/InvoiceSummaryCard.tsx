@@ -52,7 +52,7 @@ export const InvoiceSummaryCard: FunctionalComponent<InvoiceSummaryCardProps> = 
               <span class="bill-summary-label">Pagos recibidos</span>
               <span class="bill-summary-amount credit">{props.formatCurrency(props.pendingBill?.pymReceivedAmt)}</span>
             </div>
-            <div class={`bill-summary-item ${props.expandedSummarySection['bill-0-adjustments'] ? 'highlighted' : ''}`}>
+            <div class={`bill-summary-item ${props.expandedSummarySection['bill-0-adjustments'] || props.expandedSummarySection['bill-0-subscriber-adjustments'] ? 'highlighted' : ''}`}>
               <span class="bill-summary-label">Ajustes</span>
               <span class="bill-summary-amount credit">{props.formatCurrency(props.pendingBill?.adjAppliedAmt)}</span>
             </div>
