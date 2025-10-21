@@ -49,8 +49,8 @@ export class MiClaroInteractiveInvoice {
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
   @State() eventModalData: { type: 'mensajes' | 'llamadas'; data: any[] } | null = null;
-  @Prop() accountList: string[] = [];
-  // @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569'];
+  // @Prop() accountList: string[] = [];
+  @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569'];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -1344,6 +1344,8 @@ export class MiClaroInteractiveInvoice {
                               <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleQuestionsPressed(); }}>¿Tienes dudas?</a>
                               <span class="action-separator">|</span>
                               <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleContactPressed(); }}>Contáctanos aquí</a>
+                              <span class="action-separator">|</span>
+                              <a href="https://www.claropr.com/personas/app/reclamacion-de-cargos/" class="action-link" target="_blank" rel="noopener noreferrer">Reclamo de cargos</a>
                             </div>
                             <div class="actions-right">
                               <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleDownloadBills(); }}>Descarga mi factura</a>
@@ -1971,6 +1973,8 @@ export class MiClaroInteractiveInvoice {
                                     <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleQuestionsPressed(); }}>¿Tienes dudas?</a>
                                     <span class="action-separator">|</span>
                                     <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleContactPressed(); }}>Contáctanos aquí</a>
+                                    <span class="action-separator">|</span>
+                                    <a href="https://www.claropr.com/personas/app/reclamacion-de-cargos/" class="action-link" target="_blank" rel="noopener noreferrer">Reclamo de cargos</a>
                                   </div>
                                   <div class="actions-right">
                                     <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); this.handleDownloadBills(); }}>Descarga mi factura</a>

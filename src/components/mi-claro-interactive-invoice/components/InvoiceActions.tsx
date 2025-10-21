@@ -4,6 +4,7 @@ interface InvoiceActionsProps {
   onQuestionsPressed: () => void;
   onContactPressed: () => void;
   onDownloadBills: () => void;
+  onChargeClaimPressed: () => void;
 }
 
 /**
@@ -12,7 +13,8 @@ interface InvoiceActionsProps {
 export const InvoiceActions: FunctionalComponent<InvoiceActionsProps> = ({
   onQuestionsPressed,
   onContactPressed,
-  onDownloadBills
+  onDownloadBills,
+  onChargeClaimPressed
 }) => {
   return (
     <div class="invoice-actions">
@@ -23,6 +25,10 @@ export const InvoiceActions: FunctionalComponent<InvoiceActionsProps> = ({
         <span class="action-separator">|</span>
         <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); onContactPressed(); }}>
           Contáctanos aquí
+        </a>
+        <span class="action-separator">|</span>
+        <a href="#" class="action-link" onClick={(e) => { e.preventDefault(); onChargeClaimPressed(); }}>
+          Reclamo de cargos
         </a>
       </div>
       <div class="actions-right">
