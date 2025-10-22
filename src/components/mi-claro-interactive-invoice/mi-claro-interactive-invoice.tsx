@@ -1349,6 +1349,15 @@ export class MiClaroInteractiveInvoice {
                               </div>
                             )}
 
+                            {/* Pay button for mobile - only show for current bill */}
+                            {!this.loadingBillDetail[invoice.id] && (
+                              <div class="mobile-pay-button-container">
+                                <button class="pay-button" onClick={() => this.handlePayBill(invoice.id)}>
+                                  Pagar factura
+                                </button>
+                              </div>
+                            )}
+
                             {/* Actions row */}
                             <div class="invoice-actions">
                             <div class="actions-left">
