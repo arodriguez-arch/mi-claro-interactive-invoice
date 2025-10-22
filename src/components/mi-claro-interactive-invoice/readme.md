@@ -51,7 +51,6 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 | `downloadBills`    |             | `CustomEvent<void>`                                 |
 | `goToSupport`      |             | `CustomEvent<void>`                                 |
 | `payBill`          |             | `CustomEvent<{ billId: string; amount?: number; }>` |
-| `payPendingBills`  |             | `CustomEvent<void>`                                 |
 | `questionsPressed` |             | `CustomEvent<void>`                                 |
 
 

@@ -20,7 +20,6 @@ interface InvoiceSummaryCardProps {
   formatDate: (date: string) => string;
   onToggleShowMore: () => void;
   onToggleAutoPay: () => void;
-  onPayPendingBills: () => void;
 }
 
 /**
@@ -88,7 +87,6 @@ export const InvoiceSummaryCard: FunctionalComponent<InvoiceSummaryCardProps> = 
           <AutoPaySection
             autoPayEnabled={props.autoPayEnabled}
             onToggleAutoPay={props.onToggleAutoPay}
-            onPayPendingBills={props.onPayPendingBills}
           />
         </div>
       </div>

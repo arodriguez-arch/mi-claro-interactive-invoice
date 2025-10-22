@@ -3,7 +3,6 @@ import { h, FunctionalComponent } from '@stencil/core';
 interface AutoPaySectionProps {
   autoPayEnabled: boolean;
   onToggleAutoPay: () => void;
-  onPayPendingBills: () => void;
 }
 
 /**
@@ -11,8 +10,7 @@ interface AutoPaySectionProps {
  */
 export const AutoPaySection: FunctionalComponent<AutoPaySectionProps> = ({
   autoPayEnabled,
-  onToggleAutoPay,
-  onPayPendingBills
+  onToggleAutoPay
 }) => {
   return (
     <div class="autopay-section">
@@ -30,10 +28,6 @@ export const AutoPaySection: FunctionalComponent<AutoPaySectionProps> = ({
           <div class="toggle-slider"></div>
         </div>
       </div>
-
-      <button class="pay-pending-button" onClick={onPayPendingBills}>
-        Pagar facturas pendientes
-      </button>
     </div>
   );
 };

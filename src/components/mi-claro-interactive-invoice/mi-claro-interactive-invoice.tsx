@@ -59,7 +59,6 @@ export class MiClaroInteractiveInvoice {
   @Prop() vencimientoDate?: string;
 
   @Event() goToSupport: EventEmitter<void>;
-  @Event() payPendingBills: EventEmitter<void>;
   @Event() payBill: EventEmitter<{ billId: string; amount?: number }>;
   @Event() automatePayments: EventEmitter<boolean>;
   @Event() questionsPressed: EventEmitter<void>;
@@ -304,11 +303,14 @@ export class MiClaroInteractiveInvoice {
     this.automatePayments.emit(this.autoPayEnabled);
   };
 
-  private handlePayPendingBills = () => {
-    this.payPendingBills.emit();
-  };
-
   private handlePayBill = (billId: string, amount?: number) => {
+    // If amount is not explicitly provided, calculate it based on bill data
+    if (!amount && billId === 'bill-0' && this.pendingBill) {
+      // If Balance vencido (payNowAmt) > 0, use it; otherwise use totalDueAmt
+      amount = this.pendingBill.payNowAmt > 0
+        ? this.pendingBill.payNowAmt
+        : this.pendingBill.totalDueAmt;
+    }
     this.payBill.emit({ billId, amount });
   };
 
@@ -641,7 +643,6 @@ export class MiClaroInteractiveInvoice {
               formatDate={formatDate}
               onToggleShowMore={this.toggleShowMore}
               onToggleAutoPay={this.toggleAutoPay}
-              onPayPendingBills={this.handlePayPendingBills}
             />
 
             {/* Support Card */}
