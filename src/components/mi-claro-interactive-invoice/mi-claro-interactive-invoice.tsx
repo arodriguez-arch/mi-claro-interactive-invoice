@@ -105,10 +105,18 @@ export class MiClaroInteractiveInvoice {
       console.log(detailData)
 
       const infoIcons = this.el.shadowRoot.querySelectorAll('.info-icon[data-tooltip]');
+      // Detect if device is touch-enabled (mobile/tablet)
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
       infoIcons.forEach(icon => {
         const tooltipContent = icon.getAttribute('data-tooltip') || 'Información no disponible';
         // Check if it's a summary tooltip (has class summary-info)
         const isSummaryTooltip = icon.classList.contains('summary-info');
+
+        // Prevent click from bubbling up to parent elements (prevents accordion toggle)
+        icon.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
 
         const tooltipInstance = tippy(icon as HTMLElement, {
           content: `<div class="custom-tooltip-content">${tooltipContent}</div>`,
@@ -120,6 +128,10 @@ export class MiClaroInteractiveInvoice {
           arrow: true,
           animation: false,
           animateFill: false,
+          // Use click trigger on touch devices, hover on desktop
+          trigger: isTouchDevice ? 'click' : 'mouseenter focus',
+          // Hide tooltip when clicking outside on touch devices
+          hideOnClick: isTouchDevice ? true : 'toggle',
         });
         this.tooltipInstances.push(tooltipInstance);
       });
