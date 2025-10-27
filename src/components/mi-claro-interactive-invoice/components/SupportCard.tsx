@@ -10,7 +10,7 @@ interface SupportCardProps {
 export const SupportCard: FunctionalComponent<SupportCardProps> = ({ onGoToSupport }) => {
   return (
     <div class="card support-card">
-      <img src="/assets/images/support-img.png" alt="Support" class="support-image" />
+      <img src="/assets/icons/24-hour.png" alt="Support" class="support-image" />
       <button class="support-button" onClick={onGoToSupport}>
         Ir a soporte
       </button>
