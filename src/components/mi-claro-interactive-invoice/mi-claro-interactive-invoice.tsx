@@ -122,7 +122,7 @@ export class MiClaroInteractiveInvoice {
           content: `<div class="custom-tooltip-content">${tooltipContent}</div>`,
           allowHTML: true,
           interactive: true,
-          placement: isSummaryTooltip ? 'top' : 'right-end',
+          placement: 'top',
           theme: 'custom-white',
           maxWidth: 350,
           arrow: true,
@@ -132,18 +132,6 @@ export class MiClaroInteractiveInvoice {
           trigger: isTouchDevice ? 'click' : 'mouseenter focus',
           // Hide tooltip when clicking outside on touch devices
           hideOnClick: isTouchDevice ? true : 'toggle',
-          // Append to shadow root to prevent clipping by parent containers
-          appendTo: () => this.el.shadowRoot as any,
-          popperOptions: {
-            modifiers: [
-              {
-                name: 'preventOverflow',
-                options: {
-                  boundary: 'viewport',
-                },
-              },
-            ],
-          },
         });
         this.tooltipInstances.push(tooltipInstance);
       });
