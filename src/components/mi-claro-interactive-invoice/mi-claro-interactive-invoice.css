@@ -971,6 +971,7 @@
   max-width: 100% !important;
   box-sizing: border-box !important;
   overflow-x: hidden !important;
+  overflow-y: visible !important;
   min-width: 0 !important;
 }
 
@@ -1064,7 +1065,8 @@
 /* Subscriber Detail */
 .subscriber-detail {
   max-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   transition: max-height 0.3s ease-out;
   padding: 0 1rem;
   width: 100% !important;
