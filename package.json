@@ -1,6 +1,6 @@
 {
   "name": "@e4gs/mi-claro-interactive-invoice",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
