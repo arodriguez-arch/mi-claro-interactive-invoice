@@ -122,7 +122,7 @@ export class MiClaroInteractiveInvoice {
           content: `<div class="custom-tooltip-content">${tooltipContent}</div>`,
           allowHTML: true,
           interactive: true,
-          placement: 'top',
+          placement: isSummaryTooltip ? 'top' : 'top',
           theme: 'custom-white',
           maxWidth: 350,
           arrow: true,
