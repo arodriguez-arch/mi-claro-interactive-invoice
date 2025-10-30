@@ -94,6 +94,7 @@ export class MiClaroInteractiveInvoice {
         font-size: 13px;
         line-height: 1.4;
         z-index: 10001 !important;
+        max-width: 350px !important; /* Default max-width for desktop */
       }
 
       .tippy-box[data-theme~='custom-white'][data-placement^='top'] > .tippy-arrow::before {
@@ -128,6 +129,13 @@ export class MiClaroInteractiveInvoice {
         color: #2C2C2C;
         display: block;
         margin-bottom: 4px;
+      }
+
+      /* Responsive max-width for mobile devices */
+      @media (max-width: 600px) {
+        .tippy-box[data-theme~='custom-white'] {
+          max-width: 300px !important;
+        }
       }
     `;
     document.head.appendChild(styleElement);
@@ -185,7 +193,7 @@ export class MiClaroInteractiveInvoice {
           interactive: true,
           placement: isSummaryTooltip ? 'top' : 'top',
           theme: 'custom-white',
-          maxWidth: 350,
+          maxWidth: 'none', // Let CSS control max-width responsively
           arrow: true,
           animation: false,
           animateFill: false,
