@@ -74,6 +74,65 @@ export class MiClaroInteractiveInvoice {
     this.tooltipInstances = [];
   };
 
+  private injectGlobalTooltipStyles = () => {
+    // Check if styles are already injected
+    if (document.getElementById('tippy-custom-white-styles')) {
+      return;
+    }
+
+    const styleElement = document.createElement('style');
+    styleElement.id = 'tippy-custom-white-styles';
+    styleElement.textContent = `
+      /* Custom Tippy Tooltip Styles - Global (for Shadow DOM components) */
+      .tippy-box[data-theme~='custom-white'] {
+        background-color: #ffffff !important;
+        color: #3C3C3C !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 13px;
+        line-height: 1.4;
+        z-index: 10001 !important;
+      }
+
+      .tippy-box[data-theme~='custom-white'][data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: #ffffff;
+      }
+
+      .tippy-box[data-theme~='custom-white'][data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: #ffffff;
+      }
+
+      .tippy-box[data-theme~='custom-white'][data-placement^='left'] > .tippy-arrow::before {
+        border-left-color: #ffffff;
+      }
+
+      .tippy-box[data-theme~='custom-white'][data-placement^='right'] > .tippy-arrow::before {
+        border-right-color: #ffffff;
+      }
+
+      .tippy-box[data-theme~='custom-white'] .tippy-content {
+        padding: 10px 12px;
+      }
+
+      .tippy-box[data-theme~='custom-white'] .custom-tooltip-content {
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #3C3C3C;
+      }
+
+      .tippy-box[data-theme~='custom-white'] .custom-tooltip-content strong {
+        font-weight: 600;
+        color: #2C2C2C;
+        display: block;
+        margin-bottom: 4px;
+      }
+    `;
+    document.head.appendChild(styleElement);
+  };
+
   private getTooltipContent = (descripcion: string, sectionName: string): string => {
     // Use the descripcion from API if available
     if (descripcion) {
@@ -102,6 +161,8 @@ export class MiClaroInteractiveInvoice {
   private initializeTooltips = (detailData?: any) => {
     setTimeout(() => {
       this.cleanupTooltips();
+      // Inject global styles for tooltips (since they render outside Shadow DOM)
+      this.injectGlobalTooltipStyles();
       console.log(detailData)
 
       const infoIcons = this.el.shadowRoot.querySelectorAll('.info-icon[data-tooltip]');
@@ -132,6 +193,27 @@ export class MiClaroInteractiveInvoice {
           trigger: isTouchDevice ? 'click' : 'mouseenter focus',
           // Hide tooltip when clicking outside on touch devices
           hideOnClick: isTouchDevice ? true : 'toggle',
+          // Append to document body to escape shadow DOM and overflow containers
+          appendTo: () => document.body,
+          // Use fixed positioning strategy for iOS compatibility
+          popperOptions: {
+            strategy: 'fixed',
+            modifiers: [
+              {
+                name: 'preventOverflow',
+                options: {
+                  boundary: 'viewport',
+                  padding: 8,
+                },
+              },
+              {
+                name: 'flip',
+                options: {
+                  fallbackPlacements: ['bottom', 'left', 'right'],
+                },
+              },
+            ],
+          },
         });
         this.tooltipInstances.push(tooltipInstance);
       });

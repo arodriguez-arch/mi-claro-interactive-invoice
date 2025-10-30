@@ -2620,6 +2620,7 @@
   font-family: var(--font-primary);
   font-size: 13px;
   line-height: 1.4;
+  z-index: 10001 !important; /* Higher than modal overlay (10000) to prevent clipping on iOS */
 }
 
 
