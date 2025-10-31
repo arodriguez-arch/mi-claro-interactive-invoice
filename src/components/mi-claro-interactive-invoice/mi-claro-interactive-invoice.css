@@ -2237,9 +2237,18 @@
   .event-modal-container {
     margin: 0.25rem;
     max-width: calc(100% - 0.5rem);
+    max-height: 80vh; /* Further reduced for very small screens */
   }
 
   .event-modal-header {
+    padding: 0.5rem;
+  }
+
+  .event-modal-info {
+    padding: 0.5rem;
+  }
+
+  .event-modal-footer {
     padding: 0.5rem;
   }
 
@@ -3064,13 +3073,21 @@
 /* Mobile responsiveness for event charges */
 @media (max-width: 767px) {
   .event-modal-container {
-    max-height: 95vh;
+    max-height: 85vh;
     max-width: 100%;
     margin: 0.5rem;
   }
 
   .event-modal-header {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .event-modal-info {
+    padding: 0.75rem 1rem;
+  }
+
+  .event-modal-footer {
+    padding: 0.75rem 1rem;
   }
 
   .event-modal-title {
