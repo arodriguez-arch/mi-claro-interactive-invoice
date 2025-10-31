@@ -2237,7 +2237,7 @@
   .event-modal-container {
     margin: 0.25rem;
     max-width: calc(100% - 0.5rem);
-    max-height: 80vh; /* Further reduced for very small screens */
+    max-height: 65vh; /* Further reduced for very small screens */
   }
 
   .event-modal-header {
@@ -3073,7 +3073,7 @@
 /* Mobile responsiveness for event charges */
 @media (max-width: 767px) {
   .event-modal-container {
-    max-height: 85vh;
+    max-height: 70vh;
     max-width: 100%;
     margin: 0.5rem;
   }
