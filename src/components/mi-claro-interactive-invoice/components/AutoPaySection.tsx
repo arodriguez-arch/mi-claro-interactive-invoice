@@ -20,7 +20,7 @@ export const AutoPaySection: FunctionalComponent<AutoPaySectionProps> = ({
       </p> */}
 
       <div class="autopay-toggle-container">
-        <span class="toggle-label">Automatizar pago</span>
+        <span class="toggle-label">Activar Debito Directo</span>
         <div
           class={`toggle-switch ${autoPayEnabled ? 'enabled' : ''}`}
           onClick={onToggleAutoPay}
