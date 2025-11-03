@@ -14,10 +14,10 @@ export const AutoPaySection: FunctionalComponent<AutoPaySectionProps> = ({
 }) => {
   return (
     <div class="autopay-section">
-      <p class="autopay-question">¿Quieres reducir gastos mensuales?</p>
-      <p class="autopay-description">
+      {/* <p class="autopay-question">¿Quieres reducir gastos mensuales?</p> */}
+      {/* <p class="autopay-description">
         <span class="autopay-action">Activa el pago automático</span> y recibe $3 de descuento mensual en tus facturas mensuales.
-      </p>
+      </p> */}
 
       <div class="autopay-toggle-container">
         <span class="toggle-label">Automatizar pago</span>
