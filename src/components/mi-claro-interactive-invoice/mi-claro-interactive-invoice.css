@@ -1729,8 +1729,8 @@
     padding: 0.2rem 0.5rem;
   }
 
-  /* Hide pay button on mobile */
-  .table-cell:nth-child(5) {
+  /* Hide pay button on mobile (only for regular invoice table with 6 columns) */
+  .table-row:not(.history-table-row) .table-cell:nth-child(5) {
     display: none;
   }
 
@@ -1751,6 +1751,27 @@
   }
 
   .table-cell:nth-child(6) .detail-button .arrow {
+    font-size: 1rem;
+    color: var(--color-secondary);
+  }
+
+  /* History table - Detail button becomes a chevron on mobile */
+  .history-table-row .table-cell:nth-child(5) {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .history-table-row .table-cell:nth-child(5) .detail-button {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: var(--color-secondary);
+    font-size: 0;
+  }
+
+  .history-table-row .table-cell:nth-child(5) .detail-button .arrow {
     font-size: 1rem;
     color: var(--color-secondary);
   }
