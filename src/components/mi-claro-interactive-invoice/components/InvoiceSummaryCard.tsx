@@ -16,6 +16,7 @@ interface InvoiceSummaryCardProps {
   expandedSummarySection: { [key: string]: boolean };
   expandedSubscriberId: string | null;
   isLoadingDetail: boolean;
+  showDirectDebitToggle: boolean;
   formatCurrency: (amount: number | undefined | null) => string;
   formatDate: (date: string) => string;
   onToggleShowMore: () => void;
@@ -84,10 +85,12 @@ export const InvoiceSummaryCard: FunctionalComponent<InvoiceSummaryCardProps> = 
           />
 
           {/* Auto Pay Section */}
-          <AutoPaySection
-            autoPayEnabled={props.autoPayEnabled}
-            onToggleAutoPay={props.onToggleAutoPay}
-          />
+          {props.showDirectDebitToggle && (
+            <AutoPaySection
+              autoPayEnabled={props.autoPayEnabled}
+              onToggleAutoPay={props.onToggleAutoPay}
+            />
+          )}
         </div>
       </div>
 

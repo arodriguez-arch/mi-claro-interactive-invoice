@@ -57,6 +57,8 @@ export class MiClaroInteractiveInvoice {
   @Prop() customerName?: string;
   @Prop() totalAPagar?: number;
   @Prop() vencimientoDate?: string;
+  @Prop() showAccountSelector: boolean = true;
+  @Prop() showDirectDebitToggle: boolean = true;
 
   @Event() goToSupport: EventEmitter<void>;
   @Event() payBill: EventEmitter<{ billId: string; amount?: number }>;
@@ -741,6 +743,7 @@ export class MiClaroInteractiveInvoice {
               expandedSummarySection={this.expandedSummarySection}
               expandedSubscriberId={this.expandedSubscriberId}
               isLoadingDetail={this.loadingBillDetail['bill-0']}
+              showDirectDebitToggle={this.showDirectDebitToggle}
               formatCurrency={formatCurrency}
               formatDate={formatDate}
               onToggleShowMore={this.toggleShowMore}
@@ -756,20 +759,22 @@ export class MiClaroInteractiveInvoice {
             {/* Header Row */}
             <div class="invoice-header">
               <h2 class="invoice-title">Mi Factura</h2>
-              <div class="account-selector">
-                <label class="account-label">Número de cuenta</label>
-                <select class="account-select" onChange={this.handleAccountChange}>
-                  {
-                    this.accountList.map((item: any, index: number) => {
-                      return (
-                        <option key={index} value={item} selected={item === this.selectedAccount}>
-                          {item}
-                        </option>
-                      );
-                    })
-                  }
-                </select>
-              </div>
+              {this.showAccountSelector && (
+                <div class="account-selector">
+                  <label class="account-label">Número de cuenta</label>
+                  <select class="account-select" onChange={this.handleAccountChange}>
+                    {
+                      this.accountList.map((item: any, index: number) => {
+                        return (
+                          <option key={index} value={item} selected={item === this.selectedAccount}>
+                            {item}
+                          </option>
+                        );
+                      })
+                    }
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Invoice Details Card */}

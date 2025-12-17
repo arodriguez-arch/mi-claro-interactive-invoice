@@ -20,6 +20,14 @@ export namespace Components {
         "defaultSelectedAccount"?: string;
         "environment": Environment;
         /**
+          * @default true
+         */
+        "showAccountSelector": boolean;
+        /**
+          * @default true
+         */
+        "showDirectDebitToggle": boolean;
+        /**
           * @default ''
          */
         "token"?: string;
@@ -78,6 +86,14 @@ declare namespace LocalJSX {
         "onGoToSupport"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
         "onPayBill"?: (event: MiClaroInteractiveInvoiceCustomEvent<{ billId: string; amount?: number }>) => void;
         "onQuestionsPressed"?: (event: MiClaroInteractiveInvoiceCustomEvent<void>) => void;
+        /**
+          * @default true
+         */
+        "showAccountSelector"?: boolean;
+        /**
+          * @default true
+         */
+        "showDirectDebitToggle"?: boolean;
         /**
           * @default ''
          */

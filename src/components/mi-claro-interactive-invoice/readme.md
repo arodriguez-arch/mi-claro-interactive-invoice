@@ -36,6 +36,8 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 | `customerName`             | `customer-name`            |             | `string`                                                  | `undefined`                                                         |
 | `defaultSelectedAccount`   | `default-selected-account` |             | `string`                                                  | `''`                                                                |
 | `environment` _(required)_ | `environment`              |             | `"dev" \| "dss" \| "local" \| "prod" \| "uat" \| "uat40"` | `undefined`                                                         |
+| `showAccountSelector`      | `show-account-selector`    |             | `boolean`                                                 | `true`                                                              |
+| `showDirectDebitToggle`    | `show-direct-debit-toggle` |             | `boolean`                                                 | `true`                                                              |
 | `token`                    | `token`                    |             | `string`                                                  | `''`                                                                |
 | `totalAPagar`              | `total-a-pagar`            |             | `number`                                                  | `undefined`                                                         |
 | `vencimientoDate`          | `vencimiento-date`         |             | `string`                                                  | `undefined`                                                         |
