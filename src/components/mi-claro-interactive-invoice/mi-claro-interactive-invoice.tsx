@@ -5,7 +5,7 @@ import 'tippy.js/dist/tippy.css';
 
 // Import types
 // MessageDetail, CallDetail: kept for future modal re-enable
-import { Invoice, BillData, AccountData, UsageRateGroup, UsageRateDetail } from './types/invoice-types';
+import { Invoice, BillData, AccountData, UsageRateGroup } from './types/invoice-types';
 
 // Import utility functions
 import { formatDate, formatCurrency, getMonthFromDate } from './utils/format-utils';
@@ -15,6 +15,7 @@ import { calculateChartData } from './utils/chart-utils';
 import { FloatingPill } from './components/FloatingPill';
 import { InvoiceSummaryCard } from './components/InvoiceSummaryCard';
 import { SupportCard } from './components/SupportCard';
+import { ConsumoDetailModal } from './components/ConsumoDetailModal';
 // TODO: Re-enable when API provides detailed event data for modal
 // import { EventDetailsModal } from './components/EventDetailsModal';
 
@@ -50,18 +51,19 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
+  @State() consumoDetailModal: { title: string; unit: string; data: any[] } | null = null;
   // TODO: Re-enable when API provides detailed event data for modal
   // @State() eventModalData: { type: 'mensajes' | 'llamadas'; data: any[] } | null = null;
   // @Prop() accountList: string[] = [];
-  // @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569'];
-  @Prop() accountList: string[] = [
-  '7876175906',
-  "770289075",
-  "781076468",
-  "805437569",
-  "835070569",
-  "847751820"
-];
+  @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569', '781076468'];
+//   @Prop() accountList: string[] = [
+//   '7876175906',
+//   "770289075",
+//   "781076468",
+//   "805437569",
+//   "835070569",
+//   "847751820"
+// ];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -302,8 +304,11 @@ export class MiClaroInteractiveInvoice {
       );
 
       if (detailResponse.data && detailResponse.data.facturas.length > 0) {
+        // The service normalizes wrapper objects (detalle, metodosPago) into flat arrays
+        const facturaData = detailResponse.data.facturas[0] as any;
+
         // Cache the bill details
-        this.billDetails[cacheKey] = detailResponse.data.facturas[0];
+        this.billDetails[cacheKey] = facturaData;
 
         // Update the current or previous bill with detailed data
         if (isHistoryBill) {
@@ -312,8 +317,9 @@ export class MiClaroInteractiveInvoice {
           const originalBill = updatedBills[billIndex];
           updatedBills[billIndex] = {
             ...updatedBills[billIndex],
-            ...detailResponse.data.facturas[0],
-            detalle: detailResponse.data.facturas[0].detalle || [],
+            ...facturaData,
+            detalle: facturaData.detalle || [],
+            metodosPago: facturaData.metodosPago || [],
             // Preserve original key fields to prevent them from being overwritten by detail response
             fechaFactura: originalBill.fechaFactura,
             fechaVencimiento: originalBill.fechaVencimiento,
@@ -326,8 +332,9 @@ export class MiClaroInteractiveInvoice {
         } else {
           this.currentBill = {
             ...this.currentBill,
-            ...detailResponse.data.facturas[0],
-            detalle: detailResponse.data.facturas[0].detalle || []
+            ...facturaData,
+            detalle: facturaData.detalle || [],
+            metodosPago: facturaData.metodosPago || []
           };
         }
 
@@ -439,6 +446,14 @@ export class MiClaroInteractiveInvoice {
 
   private handleDownloadBills = () => {
     this.downloadBills.emit();
+  };
+
+  private openConsumoDetail = (title: string, unit: string, data: any[]) => {
+    this.consumoDetailModal = { title, unit, data };
+  };
+
+  private closeConsumoDetail = () => {
+    this.consumoDetailModal = null;
   };
 
   // TODO: Re-enable when API provides detailed event data for modal
@@ -723,6 +738,14 @@ export class MiClaroInteractiveInvoice {
 
     return (
       <div class="invoice-container">
+        <ConsumoDetailModal
+          isOpen={this.consumoDetailModal !== null}
+          title={this.consumoDetailModal?.title || null}
+          unit={this.consumoDetailModal?.unit || null}
+          data={this.consumoDetailModal?.data || null}
+          onClose={this.closeConsumoDetail}
+          formatCurrency={formatCurrency}
+        />
         {/* TODO: Re-enable when API provides detailed event data for modal */}
         {/* <EventDetailsModal
           isOpen={this.eventModalData !== null}
@@ -1255,37 +1278,56 @@ export class MiClaroInteractiveInvoice {
                                             </div>
                                           ))}
 
-                                          {/* Usage rate groups from API (Consumo section) */}
-                                          {servicio.usageRateGroups && servicio.usageRateGroups.length > 0 && (
-                                            <>
-                                              {servicio.usageRateGroups.map((group: UsageRateGroup, groupIndex: number) => (
-                                                <div key={`usage-${groupIndex}`}>
-                                                  {groupIndex > 0 && <div class="charge-divider"></div>}
-                                                  <div class="charge-row">
-                                                    <span class="charge-label">{group.rateGroupDesc}</span>
-                                                    <span class="charge-amount">{formatCurrency(group.detalle.reduce((sum: number, d: UsageRateDetail) => sum + d.cargos, 0))}</span>
+                                          {/* Usage rate groups from API (Consumo section) - pseudo-table */}
+                                          {servicio.usageRateGroups && servicio.usageRateGroups.length > 0 && (() => {
+                                            const groupsByUnit: { [unit: string]: UsageRateGroup[] } = {};
+                                            servicio.usageRateGroups.forEach((g: UsageRateGroup) => {
+                                              if (!groupsByUnit[g.unit]) groupsByUnit[g.unit] = [];
+                                              groupsByUnit[g.unit].push(g);
+                                            });
+
+                                            return Object.entries(groupsByUnit).map(([unit, groups]: [string, UsageRateGroup[]], sectionIndex: number) => {
+                                              const col1Header = unit === 'MIN' ? 'Llamadas' : unit === 'KB' ? 'Sesiones' : groups[0].unitDesc;
+                                              const col2Header = unit === 'MIN' ? 'Minutos' : unit === 'KB' ? 'KB/MB' : unit;
+
+                                              return (
+                                                <div key={`consumo-section-${sectionIndex}`} class="consumo-table">
+                                                  {sectionIndex > 0 && <div class="charge-divider"></div>}
+                                                  <div class="consumo-table-header">
+                                                    <span class="consumo-cell"></span>
+                                                    <span class="consumo-cell">{col1Header}</span>
+                                                    <span class="consumo-cell">{col2Header}</span>
+                                                    <span class="consumo-cell"></span>
+                                                    <span class="consumo-cell"></span>
                                                   </div>
-                                                  <div class="charge-sublist">
-                                                    {group.rateGroup === 'Q' ? (
-                                                      <div class="charge-subrow">
-                                                        <span class="charge-sublabel">
-                                                          {group.totalMins >= 1048576
-                                                            ? `${(group.totalMins / 1048576).toFixed(2)} GB`
-                                                            : `${(group.totalMins / 1024).toFixed(2)} MB`}
-                                                        </span>
-                                                        <span class="charge-subamount">{group.totalCalls} sesiones</span>
-                                                      </div>
-                                                    ) : (
-                                                      <div class="charge-subrow">
-                                                        <span class="charge-sublabel">{group.totalCalls} llamadas - {group.totalMins} minutos</span>
-                                                        <span class="charge-subamount"></span>
-                                                      </div>
-                                                    )}
-                                                  </div>
+                                                  {groups.map((group: UsageRateGroup, rowIndex: number) => (
+                                                    <div key={`consumo-row-${rowIndex}`} class="consumo-table-row">
+                                                      <span class="consumo-cell">{group.rateGroupDesc}</span>
+                                                      <span class="consumo-cell">{group.totalCalls}</span>
+                                                      <span class="consumo-cell">
+                                                        {unit === 'KB'
+                                                          ? (group.totalValue >= 1048576
+                                                              ? `${(group.totalValue / 1048576).toFixed(2)} GB`
+                                                              : `${(group.totalValue / 1024).toFixed(2)} MB`)
+                                                          : group.totalValue}
+                                                      </span>
+                                                      <span class="consumo-cell amount">{formatCurrency(group.cargoNeto)}</span>
+                                                      <span class="consumo-cell">
+                                                        {group.detalle && group.detalle.length > 0 && (
+                                                          <button class="consumo-detail-btn" onClick={(e) => { e.stopPropagation(); this.openConsumoDetail(group.rateGroupDesc, unit, group.detalle); }}>
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>
+                                                              <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
+                                                            </svg>
+                                                          </button>
+                                                        )}
+                                                      </span>
+                                                    </div>
+                                                  ))}
                                                 </div>
-                                              ))}
-                                            </>
-                                          )}
+                                              );
+                                            });
+                                          })()}
 
                                           {/* Keep old consumption details for fallback */}
                                           {servicio.detalleConsumo && (
@@ -1825,37 +1867,56 @@ export class MiClaroInteractiveInvoice {
                                                       </div>
                                                     ))}
 
-                                                    {/* Usage rate groups from API (Consumo section) */}
-                                                    {servicio.usageRateGroups && servicio.usageRateGroups.length > 0 && (
-                                                      <>
-                                                        {servicio.usageRateGroups.map((group: UsageRateGroup, groupIndex: number) => (
-                                                          <div key={`usage-${groupIndex}`}>
-                                                            {groupIndex > 0 && <div class="charge-divider"></div>}
-                                                            <div class="charge-row">
-                                                              <span class="charge-label">{group.rateGroupDesc}</span>
-                                                              <span class="charge-amount">{formatCurrency(group.detalle.reduce((sum: number, d: UsageRateDetail) => sum + d.cargos, 0))}</span>
+                                                    {/* Usage rate groups from API (Consumo section) - pseudo-table grouped by unit */}
+                                                    {servicio.usageRateGroups && servicio.usageRateGroups.length > 0 && (() => {
+                                                      const groupsByUnit: { [unit: string]: UsageRateGroup[] } = {};
+                                                      servicio.usageRateGroups.forEach((g: UsageRateGroup) => {
+                                                        if (!groupsByUnit[g.unit]) groupsByUnit[g.unit] = [];
+                                                        groupsByUnit[g.unit].push(g);
+                                                      });
+
+                                                      return Object.entries(groupsByUnit).map(([unit, groups]: [string, UsageRateGroup[]], sectionIndex: number) => {
+                                                        const col1Header = unit === 'MIN' ? 'Llamadas' : unit === 'KB' ? 'Sesiones' : groups[0].unitDesc;
+                                                        const col2Header = unit === 'MIN' ? 'Minutos' : unit === 'KB' ? 'KB/MB' : unit;
+
+                                                        return (
+                                                          <div key={`consumo-section-${sectionIndex}`} class="consumo-table">
+                                                            {sectionIndex > 0 && <div class="charge-divider"></div>}
+                                                            <div class="consumo-table-header">
+                                                              <span class="consumo-cell"></span>
+                                                              <span class="consumo-cell">{col1Header}</span>
+                                                              <span class="consumo-cell">{col2Header}</span>
+                                                              <span class="consumo-cell"></span>
+                                                              <span class="consumo-cell"></span>
                                                             </div>
-                                                            <div class="charge-sublist">
-                                                              {group.rateGroup === 'Q' ? (
-                                                                <div class="charge-subrow">
-                                                                  <span class="charge-sublabel">
-                                                                    {group.totalMins >= 1048576
-                                                                      ? `${(group.totalMins / 1048576).toFixed(2)} GB`
-                                                                      : `${(group.totalMins / 1024).toFixed(2)} MB`}
-                                                                  </span>
-                                                                  <span class="charge-subamount">{group.totalCalls} sesiones</span>
-                                                                </div>
-                                                              ) : (
-                                                                <div class="charge-subrow">
-                                                                  <span class="charge-sublabel">{group.totalCalls} llamadas - {group.totalMins} minutos</span>
-                                                                  <span class="charge-subamount"></span>
-                                                                </div>
-                                                              )}
-                                                            </div>
+                                                            {groups.map((group: UsageRateGroup, rowIndex: number) => (
+                                                              <div key={`consumo-row-${rowIndex}`} class="consumo-table-row">
+                                                                <span class="consumo-cell">{group.rateGroupDesc}</span>
+                                                                <span class="consumo-cell">{group.totalCalls}</span>
+                                                                <span class="consumo-cell">
+                                                                  {unit === 'KB'
+                                                                    ? (group.totalValue >= 1048576
+                                                                        ? `${(group.totalValue / 1048576).toFixed(2)} GB`
+                                                                        : `${(group.totalValue / 1024).toFixed(2)} MB`)
+                                                                    : group.totalValue}
+                                                                </span>
+                                                                <span class="consumo-cell amount">{formatCurrency(group.cargoNeto)}</span>
+                                                                <span class="consumo-cell">
+                                                                  {group.detalle && group.detalle.length > 0 && (
+                                                                    <button class="consumo-detail-btn" onClick={(e) => { e.stopPropagation(); this.openConsumoDetail(group.rateGroupDesc, unit, group.detalle); }}>
+                                                                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>
+                                                                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
+                                                                      </svg>
+                                                                    </button>
+                                                                  )}
+                                                                </span>
+                                                              </div>
+                                                            ))}
                                                           </div>
-                                                        ))}
-                                                      </>
-                                                    )}
+                                                        );
+                                                      });
+                                                    })()}
 
                                                     {/* Keep old consumption details for fallback */}
                                                     {servicio.detalleConsumo && (

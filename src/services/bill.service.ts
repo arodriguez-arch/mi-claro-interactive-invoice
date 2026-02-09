@@ -37,51 +37,57 @@ export interface BillDetailResponse {
       ajustes: number;
       totalActual: number;
       cargosDeCuenta: any;
-      detalle: Array<{
-        numero: string;
-        total: number;
-        tipoLinea: string;
-        detalleServicios: Array<{
-          seccion: string;
-          cargo: number;
-          descripcion: string;
-          periodo: string;
-          detalleEquipos: {
-            totalNeto: number;
-            items: Array<{
+      detalle: {
+        descripcion: string;
+        detalles: Array<{
+          numero: string;
+          total: number;
+          tipoLinea: string;
+          detalleServicios: Array<{
+            seccion: string;
+            cargo: number;
+            descripcion: string;
+            periodo: string;
+            detalleEquipos: {
+              totalNeto: number;
+              items: Array<{
+                descripcion: string;
+                cargo: number;
+                detalleCargos: {
+                  cargo: number;
+                  descuento: number;
+                };
+              }>;
+            } | null;
+            detalleTaxes: Array<{
+              descripcion: string;
+              cargo: number;
+            }> | null;
+            detalleItem: Array<{
               descripcion: string;
               cargo: number;
               detalleCargos: {
                 cargo: number;
                 descuento: number;
               };
-            }>;
-          } | null;
-          detalleTaxes: Array<{
-            descripcion: string;
-            cargo: number;
-          }> | null;
-          detalleItem: Array<{
-            descripcion: string;
-            cargo: number;
+            }> | null;
+            detallePlan: {
+              descripcion: string;
+              cargo: number;
+            } | null;
             detalleCargos: {
               cargo: number;
               descuento: number;
-            };
-          }> | null;
-          detallePlan: {
-            descripcion: string;
-            cargo: number;
-          } | null;
-          detalleCargos: {
-            cargo: number;
-            descuento: number;
-          } | null;
-          detalleCargosItems: any | null;
-          usageRateGroups: UsageRateGroup[] | null;
+            } | null;
+            detalleCargosItems: any | null;
+            usageRateGroups: UsageRateGroup[] | null;
+          }>;
         }>;
-      }>;
-      metodosPago: any[];
+      };
+      metodosPago: {
+        descripcion: string;
+        pagosDetallados: any[];
+      };
     }>;
   };
   isSuccess: boolean;
@@ -194,7 +200,28 @@ export class BillService {
 
       const data: BillDetailResponse = await response.json();
 
-      return data;
+      // Normalize new API wrapper structures so the component can consume flat arrays
+      if (data.data && data.data.facturas) {
+        data.data.facturas = data.data.facturas.map((factura: any) => {
+          const normalized = { ...factura };
+
+          // Normalize detalle: { descripcion, detalles[] } → flat array + description field
+          if (factura.detalle && !Array.isArray(factura.detalle)) {
+            normalized.detalleDescripcion = factura.detalle.descripcion || '';
+            normalized.detalle = factura.detalle.detalles || [];
+          }
+
+          // Normalize metodosPago: { descripcion, pagosDetallados[] } → flat array + description field
+          if (factura.metodosPago && !Array.isArray(factura.metodosPago)) {
+            normalized.metodosPagoDescripcion = factura.metodosPago.descripcion || '';
+            normalized.metodosPago = factura.metodosPago.pagosDetallados || [];
+          }
+
+          return normalized;
+        });
+      }
+
+      return data as any;
     } catch (error) {
       console.error('Error fetching bill detail:', error);
       throw error;

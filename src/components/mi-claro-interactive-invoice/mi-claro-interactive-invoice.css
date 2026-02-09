@@ -1378,6 +1378,111 @@
   white-space: nowrap;
 }
 
+/* Consumo pseudo-table (usageRateGroups) */
+.consumo-table {
+  margin-top: 0.25rem;
+}
+
+.consumo-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--color-text-gray);
+  text-transform: uppercase;
+}
+
+.consumo-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #F0F0F0;
+  font-family: var(--font-secondary);
+  font-size: 13px;
+  color: var(--color-text-gray);
+  align-items: center;
+}
+
+.consumo-table-row:last-child {
+  border-bottom: none;
+}
+
+.consumo-cell {
+  text-align: right;
+}
+
+.consumo-cell:first-child {
+  text-align: left;
+}
+
+.consumo-cell.amount {
+  font-weight: 700;
+}
+
+.consumo-detail-btn {
+  background: none;
+  border: 1px solid var(--color-secondary);
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consumo-detail-btn:hover {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+/* Consumo detail modal table */
+.consumo-modal-table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 2fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 2px solid var(--color-border);
+  font-family: var(--font-secondary);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--color-text-gray);
+  text-transform: uppercase;
+  background-color: #F8F9FA;
+}
+
+.consumo-modal-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr 2fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  border-bottom: 1px solid #F0F0F0;
+  font-family: var(--font-secondary);
+  font-size: 13px;
+  color: var(--color-text-gray);
+  align-items: center;
+}
+
+.consumo-modal-row:hover {
+  background-color: #F8F9FA;
+}
+
+.consumo-modal-row:last-child {
+  border-bottom: none;
+}
+
+.consumo-modal-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Bill Summary Sections */
 .bill-summary-sections {
   padding: 1rem 0;
@@ -1842,6 +1947,30 @@
     word-break: break-word;
     overflow-wrap: break-word;
     margin-right: 0.5rem;
+  }
+
+  .consumo-table-header {
+    font-size: 10px;
+    gap: 0.25rem;
+  }
+
+  .consumo-table-row {
+    font-size: 12px;
+    gap: 0.25rem;
+  }
+
+  .consumo-modal-table-header {
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 10px;
+  }
+
+  .consumo-modal-row {
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.4rem 1rem;
+    font-size: 11px;
   }
 
   /* Mobile pay button container - only visible on small screens */

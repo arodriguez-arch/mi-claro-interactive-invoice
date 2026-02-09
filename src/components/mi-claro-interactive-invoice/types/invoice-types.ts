@@ -58,6 +58,8 @@ export interface UsageRateDetail {
   hora: string;
   numeroLlamado: string;
   ciudad: string;
+  cantidad: number;
+  unit: string;
   minutos: number;
   tl: string;
   cargos: number;
@@ -67,7 +69,12 @@ export interface UsageRateGroup {
   rateGroup: string;
   rateGroupDesc: string;
   totalCalls: number;
-  totalMins: number;
+  totalValue: number;
+  unit: string;
+  unitDesc: string;
+  cargoNeto: number;
+  cargoBruto: number;
+  descuento: number;
   featureCodes: string[];
   detalle: UsageRateDetail[];
 }
@@ -121,6 +128,8 @@ export interface BillData {
       monto: number;
     }>;
   }>;
+  detalleDescripcion?: string;
+  metodosPagoDescripcion?: string;
   ban?: number;
   cycleRunYear?: number;
   cycleRunMonth?: number;
