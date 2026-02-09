@@ -4,7 +4,8 @@ import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
 // Import types
-import { Invoice, BillData, AccountData, MessageDetail, CallDetail } from './types/invoice-types';
+// MessageDetail, CallDetail: kept for future modal re-enable
+import { Invoice, BillData, AccountData, UsageRateGroup, UsageRateDetail } from './types/invoice-types';
 
 // Import utility functions
 import { formatDate, formatCurrency, getMonthFromDate } from './utils/format-utils';
@@ -14,7 +15,8 @@ import { calculateChartData } from './utils/chart-utils';
 import { FloatingPill } from './components/FloatingPill';
 import { InvoiceSummaryCard } from './components/InvoiceSummaryCard';
 import { SupportCard } from './components/SupportCard';
-import { EventDetailsModal } from './components/EventDetailsModal';
+// TODO: Re-enable when API provides detailed event data for modal
+// import { EventDetailsModal } from './components/EventDetailsModal';
 
 @Component({
   tag: 'mi-claro-interactive-invoice',
@@ -48,9 +50,18 @@ export class MiClaroInteractiveInvoice {
   @State() loadingHistoryDetail: { [key: string]: boolean } = {};
   @State() billDetails: { [key: string]: any } = {};
   @State() billForecast: BillForecastResponse | null = null;
-  @State() eventModalData: { type: 'mensajes' | 'llamadas'; data: any[] } | null = null;
+  // TODO: Re-enable when API provides detailed event data for modal
+  // @State() eventModalData: { type: 'mensajes' | 'llamadas'; data: any[] } | null = null;
   // @Prop() accountList: string[] = [];
-  @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569'];
+  // @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569'];
+  @Prop() accountList: string[] = [
+  '7876175906',
+  "770289075",
+  "781076468",
+  "805437569",
+  "835070569",
+  "847751820"
+];
   @Prop() environment!: Environment;
   @Prop() token?: string = '';
   @Prop() defaultSelectedAccount?: string = '';
@@ -430,13 +441,14 @@ export class MiClaroInteractiveInvoice {
     this.downloadBills.emit();
   };
 
-  private openEventModal = (type: 'mensajes' | 'llamadas', data: MessageDetail[] | CallDetail[]) => {
-    this.eventModalData = { type, data };
-  };
+  // TODO: Re-enable when API provides detailed event data for modal
+  // private openEventModal = (type: 'mensajes' | 'llamadas', data: MessageDetail[] | CallDetail[]) => {
+  //   this.eventModalData = { type, data };
+  // };
 
-  private closeEventModal = () => {
-    this.eventModalData = null;
-  };
+  // private closeEventModal = () => {
+  //   this.eventModalData = null;
+  // };
 
   private handleAccountChange = (event: Event) => {
     const selectedAccount = (event.target as HTMLSelectElement).value;
@@ -711,14 +723,14 @@ export class MiClaroInteractiveInvoice {
 
     return (
       <div class="invoice-container">
-        {/* Event Details Modal */}
-        <EventDetailsModal
+        {/* TODO: Re-enable when API provides detailed event data for modal */}
+        {/* <EventDetailsModal
           isOpen={this.eventModalData !== null}
           eventType={this.eventModalData?.type || null}
           data={this.eventModalData?.data || null}
           onClose={this.closeEventModal}
           formatCurrency={formatCurrency}
-        />
+        /> */}
 
         {/* Floating Pill Indicator - Mobile Only */}
         {this.activeFloatingPill && (
@@ -1243,6 +1255,38 @@ export class MiClaroInteractiveInvoice {
                                             </div>
                                           ))}
 
+                                          {/* Usage rate groups from API (Consumo section) */}
+                                          {servicio.usageRateGroups && servicio.usageRateGroups.length > 0 && (
+                                            <>
+                                              {servicio.usageRateGroups.map((group: UsageRateGroup, groupIndex: number) => (
+                                                <div key={`usage-${groupIndex}`}>
+                                                  {groupIndex > 0 && <div class="charge-divider"></div>}
+                                                  <div class="charge-row">
+                                                    <span class="charge-label">{group.rateGroupDesc}</span>
+                                                    <span class="charge-amount">{formatCurrency(group.detalle.reduce((sum: number, d: UsageRateDetail) => sum + d.cargos, 0))}</span>
+                                                  </div>
+                                                  <div class="charge-sublist">
+                                                    {group.rateGroup === 'Q' ? (
+                                                      <div class="charge-subrow">
+                                                        <span class="charge-sublabel">
+                                                          {group.totalMins >= 1048576
+                                                            ? `${(group.totalMins / 1048576).toFixed(2)} GB`
+                                                            : `${(group.totalMins / 1024).toFixed(2)} MB`}
+                                                        </span>
+                                                        <span class="charge-subamount">{group.totalCalls} sesiones</span>
+                                                      </div>
+                                                    ) : (
+                                                      <div class="charge-subrow">
+                                                        <span class="charge-sublabel">{group.totalCalls} llamadas - {group.totalMins} minutos</span>
+                                                        <span class="charge-subamount"></span>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              ))}
+                                            </>
+                                          )}
+
                                           {/* Keep old consumption details for fallback */}
                                           {servicio.detalleConsumo && (
                                             <>
@@ -1346,106 +1390,6 @@ export class MiClaroInteractiveInvoice {
                                   );
                                       })}
 
-                                      {/* Cargos por Eventos - Event Charges Section */}
-                                      {detail.cargosPorEventos && (
-                                        <div class="accordion-item event-charges-accordion">
-                                          <div
-                                            class="accordion-header"
-                                            onClick={() => this.toggleAccordionItem(`${subscriberId}-event-charges`)}
-                                          >
-                                            <div class="accordion-header-left">
-                                              <span class="accordion-title">Cargos por Eventos</span>
-                                              <div class="accordion-info">
-                                                <img
-                                                  src="/assets/icons/info.png"
-                                                  alt="Info"
-                                                  class="info-icon"
-                                                  data-tooltip="&lt;strong&gt;Cargos por Eventos&lt;/strong&gt;&lt;br/&gt;Cargos por uso de mensajes de texto y llamadas realizadas durante el período de facturación."
-                                                />
-                                              </div>
-                                            </div>
-                                            <div class="accordion-header-right">
-                                              <span class="accordion-price">{formatCurrency(detail.cargosPorEventos.totalCargosEventos)}</span>
-                                              <span class={`accordion-arrow ${this.expandedAccordionItem === `${subscriberId}-event-charges` ? 'expanded' : ''}`}>
-                                                <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="arrow-icon" />
-                                              </span>
-                                            </div>
-                                          </div>
-                                          <div class={`accordion-content ${this.expandedAccordionItem === `${subscriberId}-event-charges` ? 'expanded' : ''}`}>
-                                            <div class="event-charges-content">
-                                              {/* Mensajes de Texto Section */}
-                                              <div class="event-charge-section">
-                                                <div class="event-charge-header">
-                                                  <h5 class="event-charge-title">Mensajes de Texto</h5>
-                                                  <button
-                                                    class="event-detail-button"
-                                                    onClick={() => this.openEventModal('mensajes', detail.cargosPorEventos.mensajes.detalle)}
-                                                  >
-                                                    Ver detalle
-                                                  </button>
-                                                </div>
-                                                <div class="event-charge-summary">
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">Total de mensajes:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.mensajes.resumen.cantidad}</span>
-                                                  </div>
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">SMS:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.mensajes.resumen.desglose.sms}</span>
-                                                  </div>
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">MMS:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.mensajes.resumen.desglose.mms}</span>
-                                                  </div>
-                                                  <div class="event-summary-row total">
-                                                    <span class="event-summary-label">Cargo total:</span>
-                                                    <span class="event-summary-value">{formatCurrency(detail.cargosPorEventos.mensajes.resumen.cargo)}</span>
-                                                  </div>
-                                                </div>
-                                              </div>
-
-                                              {/* Llamadas Section */}
-                                              <div class="event-charge-section">
-                                                <div class="event-charge-header">
-                                                  <h5 class="event-charge-title">Llamadas</h5>
-                                                  <button
-                                                    class="event-detail-button"
-                                                    onClick={() => this.openEventModal('llamadas', detail.cargosPorEventos.llamadas.detalle)}
-                                                  >
-                                                    Ver detalle
-                                                  </button>
-                                                </div>
-                                                <div class="event-charge-summary">
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">Total de llamadas:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.cantidad}</span>
-                                                  </div>
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">Total de minutos:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.minutos}</span>
-                                                  </div>
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">Locales:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.desglose.locales}</span>
-                                                  </div>
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">Larga distancia:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.desglose.largaDistancia}</span>
-                                                  </div>
-                                                  <div class="event-summary-row">
-                                                    <span class="event-summary-label">Internacionales:</span>
-                                                    <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.desglose.internacionales}</span>
-                                                  </div>
-                                                  <div class="event-summary-row total">
-                                                    <span class="event-summary-label">Cargo total:</span>
-                                                    <span class="event-summary-value">{formatCurrency(detail.cargosPorEventos.llamadas.resumen.cargo)}</span>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -1881,6 +1825,38 @@ export class MiClaroInteractiveInvoice {
                                                       </div>
                                                     ))}
 
+                                                    {/* Usage rate groups from API (Consumo section) */}
+                                                    {servicio.usageRateGroups && servicio.usageRateGroups.length > 0 && (
+                                                      <>
+                                                        {servicio.usageRateGroups.map((group: UsageRateGroup, groupIndex: number) => (
+                                                          <div key={`usage-${groupIndex}`}>
+                                                            {groupIndex > 0 && <div class="charge-divider"></div>}
+                                                            <div class="charge-row">
+                                                              <span class="charge-label">{group.rateGroupDesc}</span>
+                                                              <span class="charge-amount">{formatCurrency(group.detalle.reduce((sum: number, d: UsageRateDetail) => sum + d.cargos, 0))}</span>
+                                                            </div>
+                                                            <div class="charge-sublist">
+                                                              {group.rateGroup === 'Q' ? (
+                                                                <div class="charge-subrow">
+                                                                  <span class="charge-sublabel">
+                                                                    {group.totalMins >= 1048576
+                                                                      ? `${(group.totalMins / 1048576).toFixed(2)} GB`
+                                                                      : `${(group.totalMins / 1024).toFixed(2)} MB`}
+                                                                  </span>
+                                                                  <span class="charge-subamount">{group.totalCalls} sesiones</span>
+                                                                </div>
+                                                              ) : (
+                                                                <div class="charge-subrow">
+                                                                  <span class="charge-sublabel">{group.totalCalls} llamadas - {group.totalMins} minutos</span>
+                                                                  <span class="charge-subamount"></span>
+                                                                </div>
+                                                              )}
+                                                            </div>
+                                                          </div>
+                                                        ))}
+                                                      </>
+                                                    )}
+
                                                     {/* Keep old consumption details for fallback */}
                                                     {servicio.detalleConsumo && (
                                                       <>
@@ -1984,106 +1960,6 @@ export class MiClaroInteractiveInvoice {
                                             );
                                           })}
 
-                                          {/* Cargos por Eventos - Event Charges Section */}
-                                          {detail.cargosPorEventos && (
-                                            <div class="accordion-item event-charges-accordion">
-                                              <div
-                                                class="accordion-header"
-                                                onClick={() => this.toggleAccordionItem(`${subscriberId}-event-charges`)}
-                                              >
-                                                <div class="accordion-header-left">
-                                                  <span class="accordion-title">Cargos por Eventos</span>
-                                                  <div class="accordion-info">
-                                                    <img
-                                                      src="/assets/icons/info.png"
-                                                      alt="Info"
-                                                      class="info-icon"
-                                                      data-tooltip="&lt;strong&gt;Cargos por Eventos&lt;/strong&gt;&lt;br/&gt;Cargos por uso de mensajes de texto y llamadas realizadas durante el período de facturación."
-                                                    />
-                                                  </div>
-                                                </div>
-                                                <div class="accordion-header-right">
-                                                  <span class="accordion-price">{formatCurrency(detail.cargosPorEventos.totalCargosEventos)}</span>
-                                                  <span class={`accordion-arrow ${this.expandedAccordionItem === `${subscriberId}-event-charges` ? 'expanded' : ''}`}>
-                                                    <img src="/assets/icons/chevron-down.png" alt="Arrow down" class="arrow-icon" />
-                                                  </span>
-                                                </div>
-                                              </div>
-                                              <div class={`accordion-content ${this.expandedAccordionItem === `${subscriberId}-event-charges` ? 'expanded' : ''}`}>
-                                                <div class="event-charges-content">
-                                                  {/* Mensajes de Texto Section */}
-                                                  <div class="event-charge-section">
-                                                    <div class="event-charge-header">
-                                                      <h5 class="event-charge-title">Mensajes de Texto</h5>
-                                                      <button
-                                                        class="event-detail-button"
-                                                        onClick={() => this.openEventModal('mensajes', detail.cargosPorEventos.mensajes.detalle)}
-                                                      >
-                                                        Ver detalle
-                                                      </button>
-                                                    </div>
-                                                    <div class="event-charge-summary">
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">Total de mensajes:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.mensajes.resumen.cantidad}</span>
-                                                      </div>
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">SMS:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.mensajes.resumen.desglose.sms}</span>
-                                                      </div>
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">MMS:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.mensajes.resumen.desglose.mms}</span>
-                                                      </div>
-                                                      <div class="event-summary-row total">
-                                                        <span class="event-summary-label">Cargo total:</span>
-                                                        <span class="event-summary-value">{formatCurrency(detail.cargosPorEventos.mensajes.resumen.cargo)}</span>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-
-                                                  {/* Llamadas Section */}
-                                                  <div class="event-charge-section">
-                                                    <div class="event-charge-header">
-                                                      <h5 class="event-charge-title">Llamadas</h5>
-                                                      <button
-                                                        class="event-detail-button"
-                                                        onClick={() => this.openEventModal('llamadas', detail.cargosPorEventos.llamadas.detalle)}
-                                                      >
-                                                        Ver detalle
-                                                      </button>
-                                                    </div>
-                                                    <div class="event-charge-summary">
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">Total de llamadas:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.cantidad}</span>
-                                                      </div>
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">Total de minutos:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.minutos}</span>
-                                                      </div>
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">Locales:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.desglose.locales}</span>
-                                                      </div>
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">Larga distancia:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.desglose.largaDistancia}</span>
-                                                      </div>
-                                                      <div class="event-summary-row">
-                                                        <span class="event-summary-label">Internacionales:</span>
-                                                        <span class="event-summary-value">{detail.cargosPorEventos.llamadas.resumen.desglose.internacionales}</span>
-                                                      </div>
-                                                      <div class="event-summary-row total">
-                                                        <span class="event-summary-label">Cargo total:</span>
-                                                        <span class="event-summary-value">{formatCurrency(detail.cargosPorEventos.llamadas.resumen.cargo)}</span>
-                                                      </div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          )}
                                         </div>
                                       </div>
                                             </div>

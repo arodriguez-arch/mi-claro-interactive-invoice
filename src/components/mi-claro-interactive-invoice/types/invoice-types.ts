@@ -53,6 +53,25 @@ export interface EventCharges {
   totalCargosEventos: number;
 }
 
+export interface UsageRateDetail {
+  fecha: string;
+  hora: string;
+  numeroLlamado: string;
+  ciudad: string;
+  minutos: number;
+  tl: string;
+  cargos: number;
+}
+
+export interface UsageRateGroup {
+  rateGroup: string;
+  rateGroupDesc: string;
+  totalCalls: number;
+  totalMins: number;
+  featureCodes: string[];
+  detalle: UsageRateDetail[];
+}
+
 export interface BillDetail {
   numero: string;
   total: number;
