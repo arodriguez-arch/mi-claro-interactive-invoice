@@ -1302,17 +1302,17 @@ export class MiClaroInteractiveInvoice {
                                                   </div>
                                                   {groups.map((group: UsageRateGroup, rowIndex: number) => (
                                                     <div key={`consumo-row-${rowIndex}`} class="consumo-table-row">
-                                                      <span class="consumo-cell">{group.rateGroupDesc}</span>
-                                                      <span class="consumo-cell">{group.totalCalls}</span>
-                                                      <span class="consumo-cell">
+                                                      <span class="consumo-cell consumo-cell-name">{group.rateGroupDesc}</span>
+                                                      <span class="consumo-cell" data-label={col1Header}>{group.totalCalls}</span>
+                                                      <span class="consumo-cell" data-label={col2Header}>
                                                         {unit === 'KB'
                                                           ? (group.totalValue >= 1048576
                                                               ? `${(group.totalValue / 1048576).toFixed(2)} GB`
                                                               : `${(group.totalValue / 1024).toFixed(2)} MB`)
                                                           : group.totalValue}
                                                       </span>
-                                                      <span class="consumo-cell amount">{formatCurrency(group.cargoNeto)}</span>
-                                                      <span class="consumo-cell">
+                                                      <span class="consumo-cell amount" data-label="Cargo">{formatCurrency(group.cargoNeto)}</span>
+                                                      <span class="consumo-cell consumo-cell-action">
                                                         {group.detalle && group.detalle.length > 0 && (
                                                           <button class="consumo-detail-btn" onClick={(e) => { e.stopPropagation(); this.openConsumoDetail(group.rateGroupDesc, unit, group.detalle); }}>
                                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1891,17 +1891,17 @@ export class MiClaroInteractiveInvoice {
                                                             </div>
                                                             {groups.map((group: UsageRateGroup, rowIndex: number) => (
                                                               <div key={`consumo-row-${rowIndex}`} class="consumo-table-row">
-                                                                <span class="consumo-cell">{group.rateGroupDesc}</span>
-                                                                <span class="consumo-cell">{group.totalCalls}</span>
-                                                                <span class="consumo-cell">
+                                                                <span class="consumo-cell consumo-cell-name">{group.rateGroupDesc}</span>
+                                                                <span class="consumo-cell" data-label={col1Header}>{group.totalCalls}</span>
+                                                                <span class="consumo-cell" data-label={col2Header}>
                                                                   {unit === 'KB'
                                                                     ? (group.totalValue >= 1048576
                                                                         ? `${(group.totalValue / 1048576).toFixed(2)} GB`
                                                                         : `${(group.totalValue / 1024).toFixed(2)} MB`)
                                                                     : group.totalValue}
                                                                 </span>
-                                                                <span class="consumo-cell amount">{formatCurrency(group.cargoNeto)}</span>
-                                                                <span class="consumo-cell">
+                                                                <span class="consumo-cell amount" data-label="Cargo">{formatCurrency(group.cargoNeto)}</span>
+                                                                <span class="consumo-cell consumo-cell-action">
                                                                   {group.detalle && group.detalle.length > 0 && (
                                                                     <button class="consumo-detail-btn" onClick={(e) => { e.stopPropagation(); this.openConsumoDetail(group.rateGroupDesc, unit, group.detalle); }}>
                                                                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

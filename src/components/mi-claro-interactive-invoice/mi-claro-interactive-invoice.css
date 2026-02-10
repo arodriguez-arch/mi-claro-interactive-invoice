@@ -1950,27 +1950,108 @@
   }
 
   .consumo-table-header {
-    font-size: 10px;
-    gap: 0.25rem;
+    display: none;
   }
 
   .consumo-table-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem 0.5rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #E8E8E8;
+    border-radius: 8px;
+    background: #FAFAFA;
     font-size: 12px;
-    gap: 0.25rem;
+    position: relative;
+  }
+
+  .consumo-table-row:last-child {
+    border-bottom: 1px solid #E8E8E8;
+    margin-bottom: 0;
+  }
+
+  .consumo-cell {
+    text-align: left;
+  }
+
+  .consumo-cell::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .consumo-cell.consumo-cell-name {
+    grid-column: 1 / -1;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--color-text);
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #E8E8E8;
+    margin-bottom: 0.25rem;
+  }
+
+  .consumo-cell.consumo-cell-name::before {
+    display: none;
+  }
+
+  .consumo-cell.amount {
+    text-align: left;
+  }
+
+  .consumo-cell.consumo-cell-action {
+    position: static;
+    grid-column: 1 / -1;
+    text-align: right;
+    padding-top: 0.25rem;
+    border-top: 1px solid #E8E8E8;
+    margin-top: 0.25rem;
+  }
+
+  .consumo-cell.consumo-cell-action::before {
+    display: none;
   }
 
   .consumo-modal-table-header {
-    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
-    gap: 0.25rem;
-    padding: 0.5rem 1rem;
-    font-size: 10px;
+    display: none;
   }
 
   .consumo-modal-row {
-    grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
-    gap: 0.25rem;
-    padding: 0.4rem 1rem;
-    font-size: 11px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.25rem 0.75rem;
+    padding: 0.75rem 1rem;
+    margin: 0 1rem 0.5rem;
+    border: 1px solid #E8E8E8;
+    border-radius: 8px;
+    background: #FAFAFA;
+    font-size: 12px;
+  }
+
+  .consumo-modal-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .consumo-modal-cell {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .consumo-modal-cell::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .consumo-modal-cell-cargo {
+    font-weight: 700;
   }
 
   /* Mobile pay button container - only visible on small screens */

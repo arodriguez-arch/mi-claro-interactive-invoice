@@ -59,12 +59,12 @@ export const ConsumoDetailModal: FunctionalComponent<ConsumoDetailModalProps> = 
         <div class="event-modal-body">
           {data.map((row: UsageRateDetail, index: number) => (
             <div key={index} class="consumo-modal-row">
-              <span class="consumo-modal-cell">{row.fecha}</span>
-              <span class="consumo-modal-cell">{row.hora}</span>
-              <span class="consumo-modal-cell">{row.numeroLlamado}</span>
-              <span class="consumo-modal-cell">{row.ciudad}</span>
-              <span class="consumo-modal-cell">{isMinutes ? row.minutos : row.cantidad}</span>
-              <span class="consumo-modal-cell">{formatCurrency(row.cargos)}</span>
+              <span class="consumo-modal-cell" data-label="Fecha">{row.fecha}</span>
+              <span class="consumo-modal-cell" data-label="Hora">{row.hora}</span>
+              <span class="consumo-modal-cell" data-label="Número">{row.numeroLlamado}</span>
+              <span class="consumo-modal-cell" data-label="Ciudad">{row.ciudad}</span>
+              <span class="consumo-modal-cell" data-label={isMinutes ? 'Minutos' : 'Cantidad'}>{isMinutes ? row.minutos : row.cantidad}</span>
+              <span class="consumo-modal-cell consumo-modal-cell-cargo" data-label="Cargos">{formatCurrency(row.cargos)}</span>
             </div>
           ))}
         </div>
