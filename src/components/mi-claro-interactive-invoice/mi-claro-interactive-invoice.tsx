@@ -837,30 +837,27 @@ export class MiClaroInteractiveInvoice {
                       <div class="table-header">
                         <div class="header-cell">Fecha</div>
                         <div class="header-cell">Monto</div>
-                        <div class="header-cell">Estado</div>
+                        {/* <div class="header-cell">Estado</div> */}
                         <div class="header-cell">Vencimiento</div>
-                        <div class="header-cell"></div>
                         <div class="header-cell"></div>
                       </div>
                       {this.invoices.map(invoice => {
-                    const isPaid = invoice.status === 'Pagado';
+                    // const isPaid = invoice.status === 'Pagado';
                     return (
                       <div key={invoice.id} class={`table-row-container ${this.expandedInvoiceId === invoice.id ? 'expanded' : ''}`}>
                         <div class="table-row">
                           {/*<div class="table-cell cell-bold" data-name={invoice.title} data-date={invoice.date}>{invoice.title}</div>*/}
                           <div class="table-cell">{invoice.date}</div>
                           <div class="table-cell cell-amount">{invoice.amount}</div>
-                          <div class="table-cell">
+                          {/* <div class="table-cell">
                             <span class={`status ${isPaid ? 'pagado' : 'pendiente'}`}>
                               {invoice.status}
                             </span>
-                          </div>
+                          </div> */}
                           <div class="table-cell">{invoice.dueDate}</div>
 
-                          <div class="table-cell">
+                          <div class="table-cell cell-actions">
                             <button class="pay-button" onClick={() => this.handlePayBill(invoice.id)}>Pagar factura</button>
-                          </div>
-                          <div class="table-cell">
                             <button
                               class="detail-button"
                               onClick={() => this.toggleInvoiceDetail(invoice.id)}
@@ -1487,23 +1484,23 @@ export class MiClaroInteractiveInvoice {
                       <div class="table-header history-table-header">
                         <div class="header-cell">Fecha</div>
                         <div class="header-cell">Monto</div>
-                        <div class="header-cell">Estado</div>
+                        {/* <div class="header-cell">Estado</div> */}
                         <div class="header-cell">Vencimiento</div>
                         <div class="header-cell"></div>
                       </div>
                       {this.previousBills.map((bill, index) => {
                         const billId = `prev-${index}`;
-                        const isPaid = bill.pagosRecibidos >= bill.totalActual;
+                        // const isPaid = bill.pagosRecibidos >= bill.totalActual;
                         return (
                           <div key={billId} class={`table-row-container ${this.expandedInvoiceId === billId ? 'expanded' : ''}`}>
                             <div class="table-row history-table-row">
                               <div class="table-cell">{formatDate(bill.fechaFactura)}</div>
                               <div class="table-cell cell-amount">{formatCurrency(bill.totalActual)}</div>
-                              <div class="table-cell">
+                              {/* <div class="table-cell">
                                 <span class={`status ${isPaid ? 'pagada' : 'vencida'}`}>
                                   {isPaid ? 'Pagada' : 'Vencida'}
                                 </span>
-                              </div>
+                              </div> */}
                               <div class="table-cell">{formatDate(bill.fechaVencimiento)}</div>
                               <div class="table-cell">
                                 <button
