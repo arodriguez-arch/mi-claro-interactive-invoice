@@ -1463,6 +1463,7 @@
   color: var(--color-text-gray);
   text-transform: uppercase;
   background-color: #F8F9FA;
+  flex-shrink: 0;
 }
 
 .consumo-modal-row {
@@ -2473,11 +2474,13 @@
     word-break: break-word;
   }
 
-  /* Event modal adjustments for very small screens */
+  /* Event modal adjustments for very small screens — keep bottom-sheet shape */
   .event-modal-container {
-    margin: 0.25rem;
-    max-width: calc(100% - 0.5rem);
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
     max-height: 65vh; /* Further reduced for very small screens */
+    border-radius: 16px 16px 0 0;
   }
 
   .event-modal-header {
@@ -3141,6 +3144,7 @@
   padding: 1.5rem;
   border-bottom: 2px solid var(--color-secondary);
   background-color: #F8F9FA;
+  flex-shrink: 0;
 }
 
 .event-modal-title {
@@ -3150,6 +3154,8 @@
   line-height: 24px;
   color: var(--color-text);
   margin: 0;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .event-modal-close {
@@ -3172,6 +3178,7 @@
   padding: 1rem 1.5rem;
   background-color: #F8F9FA;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .event-modal-count {
@@ -3290,6 +3297,7 @@
   display: flex;
   justify-content: flex-end;
   background-color: #F8F9FA;
+  flex-shrink: 0;
 }
 
 .event-modal-button-close {
@@ -3312,10 +3320,20 @@
 
 /* Mobile responsiveness for event charges */
 @media (max-width: 767px) {
+  /* Bottom-sheet on mobile: anchor modal to bottom of viewport so the header
+     stays visible even when an ancestor traps position:fixed and the host app
+     chrome (header/tabs) overlays the top of the visible area. */
+  .event-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
   .event-modal-container {
     max-height: 70vh;
     max-width: 100%;
-    margin: 0.5rem;
+    width: 100%;
+    margin: 0;
+    border-radius: 16px 16px 0 0;
   }
 
   .event-modal-header {

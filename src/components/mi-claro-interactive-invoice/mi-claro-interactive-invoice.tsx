@@ -1,5 +1,6 @@
 import { Component, State, h, Prop, Event, EventEmitter, Element } from '@stencil/core';
 import { BillService, Environment, BillApiResponse, BillForecastResponse } from '../../services/bill.service';
+import { MockBillService } from './utils/mock-bill-data';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
@@ -55,7 +56,7 @@ export class MiClaroInteractiveInvoice {
   // TODO: Re-enable when API provides detailed event data for modal
   // @State() eventModalData: { type: 'mensajes' | 'llamadas'; data: any[] } | null = null;
   // @Prop() accountList: string[] = [];
-  @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569', '781076468'];
+  @Prop() accountList: string[] = ['846045754', '769001587', '805437569', '799704751', '805437569', '781076468', '805437459'];
 //   @Prop() accountList: string[] = [
 //   '7876175906',
 //   "770289075",
@@ -72,6 +73,7 @@ export class MiClaroInteractiveInvoice {
   @Prop() vencimientoDate?: string;
   @Prop() showAccountSelector: boolean = true;
   @Prop() showDirectDebitToggle: boolean = true;
+  @Prop() useMockData: boolean = false;
 
   @Event() goToSupport: EventEmitter<void>;
   @Event() payBill: EventEmitter<{ billId: string; amount?: number }>;
@@ -632,7 +634,9 @@ export class MiClaroInteractiveInvoice {
 
   componentWillLoad() {
     // Initialize bill service with environment and token props
-    this.billService = new BillService(this.environment, this.token || '');
+    this.billService = this.useMockData
+      ? new MockBillService()
+      : new BillService(this.environment, this.token || '');
 
     // Set initial selected account and fetch data on component initialization
     if (this.accountList && this.accountList.length > 0) {

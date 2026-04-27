@@ -30,17 +30,18 @@ The component uses Shadow DOM for style encapsulation. Key design elements:
 
 ## Properties
 
-| Property                   | Attribute                  | Description | Type                                                      | Default                                                                          |
-| -------------------------- | -------------------------- | ----------- | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `accountList`              | `account-list`             |             | `string[]`                                                | `['846045754', '769001587', '805437569', '799704751', '805437569', '781076468']` |
-| `customerName`             | `customer-name`            |             | `string`                                                  | `undefined`                                                                      |
-| `defaultSelectedAccount`   | `default-selected-account` |             | `string`                                                  | `''`                                                                             |
-| `environment` _(required)_ | `environment`              |             | `"dev" \| "dss" \| "local" \| "prod" \| "uat" \| "uat40"` | `undefined`                                                                      |
-| `showAccountSelector`      | `show-account-selector`    |             | `boolean`                                                 | `true`                                                                           |
-| `showDirectDebitToggle`    | `show-direct-debit-toggle` |             | `boolean`                                                 | `true`                                                                           |
-| `token`                    | `token`                    |             | `string`                                                  | `''`                                                                             |
-| `totalAPagar`              | `total-a-pagar`            |             | `number`                                                  | `undefined`                                                                      |
-| `vencimientoDate`          | `vencimiento-date`         |             | `string`                                                  | `undefined`                                                                      |
+| Property                   | Attribute                  | Description | Type                                                      | Default                                                                                       |
+| -------------------------- | -------------------------- | ----------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `accountList`              | `account-list`             |             | `string[]`                                                | `['846045754', '769001587', '805437569', '799704751', '805437569', '781076468', '805437459']` |
+| `customerName`             | `customer-name`            |             | `string`                                                  | `undefined`                                                                                   |
+| `defaultSelectedAccount`   | `default-selected-account` |             | `string`                                                  | `''`                                                                                          |
+| `environment` _(required)_ | `environment`              |             | `"dev" \| "dss" \| "local" \| "prod" \| "uat" \| "uat40"` | `undefined`                                                                                   |
+| `showAccountSelector`      | `show-account-selector`    |             | `boolean`                                                 | `true`                                                                                        |
+| `showDirectDebitToggle`    | `show-direct-debit-toggle` |             | `boolean`                                                 | `true`                                                                                        |
+| `token`                    | `token`                    |             | `string`                                                  | `''`                                                                                          |
+| `totalAPagar`              | `total-a-pagar`            |             | `number`                                                  | `undefined`                                                                                   |
+| `useMockData`              | `use-mock-data`            |             | `boolean`                                                 | `false`                                                                                       |
+| `vencimientoDate`          | `vencimiento-date`         |             | `string`                                                  | `undefined`                                                                                   |
 
 
 ## Events
